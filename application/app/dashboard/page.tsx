@@ -1,5 +1,5 @@
 "use client";
-import CvForm from '@/application/app/components/cvForm';
+import CvForm from '@/app/components/cvForm';
 import { Space, Typography } from 'antd';
 
 const DashboardPage = () => {

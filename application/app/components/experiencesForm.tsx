@@ -1,6 +1,15 @@
 "use client";
 import { Formik, FieldArray } from "formik";
-import { Form, Input, Select, Checkbox, DatePicker } from 'formik-antd';
+import Input from 'formik-antd/es/input';
+import 'formik-antd/es/input/style';
+import Form from 'formik-antd/es/form';
+import 'formik-antd/es/form/style';
+import Select from 'formik-antd/es/select';
+import 'formik-antd/es/select/style';
+import Checkbox from 'formik-antd/es/checkbox';
+import 'formik-antd/es/checkbox/style';
+import DatePicker from 'formik-antd/es/date-picker';
+import 'formik-antd/es/date-picker/style';
 import { withFormikDevtools } from "formik-devtools-extension";
 import { Button, Row, Space, Card, Typography } from 'antd';
 import { useFormContext } from "./cvForm";
