@@ -8,7 +8,7 @@ on:
       - main
     paths:
       - application/**
-      - .github/workflows/preview.yaml
+      - .github/workflows/production.yaml
 defaults:
   run:
     working-directory: ./application
