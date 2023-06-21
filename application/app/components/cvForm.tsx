@@ -1,6 +1,6 @@
 "use client";
 import { useState, createContext, useContext } from 'react';
-import { Layout, Tabs } from 'antd';
+import { Tabs } from 'antd';
 import BioForm from './bioForm';
 import JobPostingForm from './jobPostingForm';
 import ExperiencesForm from './experiencesForm';

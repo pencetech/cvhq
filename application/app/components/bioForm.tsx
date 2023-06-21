@@ -2,7 +2,7 @@
 import { Formik } from "formik";
 import { Form, Input, Select } from 'formik-antd';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Row, Typography, Space } from 'antd';
+import { Button, Row, Typography } from 'antd';
 import * as Yup from 'yup';
 import { useFormContext } from './cvForm';
 
