@@ -101,43 +101,41 @@ const ExperiencesForm = (props: OtherProps) => {
             { props => {
                 withFormikDevtools(props);
                 return (
-                    <Space>
+                    <Form {...formItemLayout}>
                         <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
-                        <Form {...formItemLayout}>
-                            <FieldArray
-                                name='experiences'
-                                render={(arrayHelpers: any) => (
-                                    <Space direction='vertical' className='w-full'>
-                                        {props.values.experiences.map((experience, index) => (
-                                            <Card key={index}>
-                                                {experienceForm(props, index)}
-                                                <Row justify='end'>
-                                                    <Button onClick={() => arrayHelpers.remove(index)}>Remove</Button>
-                                                </Row>
-                                            </Card>
-                                        ))}
-                                            <Button 
-                                                type='dashed' 
-                                                block
-                                                onClick={() => arrayHelpers.push({
-                                                    title: '',
-                                                    isCurrent: false,
-                                                    startDate: new Date(),
-                                                    endDate: new Date(),
-                                                    achievements: ''
-                                                })}
-                                            >+ Add experience</Button>
+                        <FieldArray
+                            name='experiences'
+                            render={(arrayHelpers: any) => (
+                                <Space direction='vertical' className='w-full'>
+                                    {props.values.experiences.map((experience, index) => (
+                                        <Card key={index}>
+                                            {experienceForm(props, index)}
                                             <Row justify='end'>
-                                                <Space>
-                                                    <Button onClick={e => handleBack(e)}>Back</Button>
-                                                    <Button type='primary' htmlType='submit'>Save</Button>
-                                                </Space>
+                                                <Button onClick={() => arrayHelpers.remove(index)}>Remove</Button>
                                             </Row>
-                                    </Space>
-                                )}
-                            />
-                        </Form>
-                    </Space>
+                                        </Card>
+                                    ))}
+                                        <Button 
+                                            type='dashed' 
+                                            block
+                                            onClick={() => arrayHelpers.push({
+                                                title: '',
+                                                isCurrent: false,
+                                                startDate: new Date(),
+                                                endDate: new Date(),
+                                                achievements: ''
+                                            })}
+                                        >+ Add experience</Button>
+                                        <Row justify='end'>
+                                            <Space>
+                                                <Button onClick={e => handleBack(e)}>Back</Button>
+                                                <Button type='primary' htmlType='submit'>Save</Button>
+                                            </Space>
+                                        </Row>
+                                </Space>
+                            )}
+                        />
+                    </Form>
                 )
             }}
             

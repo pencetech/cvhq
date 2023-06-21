@@ -1,23 +1,17 @@
 import './globals.css';
-import { Inter } from 'next/font/google';
-import { RootStyleRegistry } from '@/scripts/root-style-registry';
-
-const inter = Inter({ subsets: ['latin'] })
+import type { PropsWithChildren } from 'react';
+import { AntdProvider } from '@/scripts/root-style-registry';
 
 export const metadata = {
-  title: 'Formant - Job-specific CV builder',
+  title: 'CVHQ - Job-specific CV builder',
   description: 'Build CVs that match job postings.',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <RootStyleRegistry>{children}</RootStyleRegistry>
+      <body>
+        <AntdProvider>{children}</AntdProvider>
       </body>
     </html>
   )
