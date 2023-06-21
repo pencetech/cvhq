@@ -70,7 +70,7 @@ const CvForm = () => {
             children: <JobPostingForm message="Job Posting" />
         },
         {
-            label: 'Your Experiences',
+            label: 'Experiences',
             key: '3',
             children: <ExperiencesForm message="Experiences" />
         }
