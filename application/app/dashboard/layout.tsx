@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Logo from '@/public/CVHQ.png';
 import { Layout, Button, MenuProps } from 'antd';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Footer } = Layout;
 
 const DashboardLayout = ({
     children,

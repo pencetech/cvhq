@@ -1,6 +1,11 @@
 "use client";
 import { Formik } from "formik";
-import { Form, Input, Select } from 'formik-antd';
+import Input from 'formik-antd/es/input';
+import 'formik-antd/es/input/style';
+import Form from 'formik-antd/es/form';
+import 'formik-antd/es/form/style';
+import Select from 'formik-antd/es/select';
+import 'formik-antd/es/select/style';
 import { withFormikDevtools } from "formik-devtools-extension";
 import { Button, Typography, Space, Row } from 'antd';
 import { useFormContext } from "./cvForm";
