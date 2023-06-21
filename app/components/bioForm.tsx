@@ -1,8 +1,8 @@
 "use client";
-import { Formik, FormikProps, withFormik } from "formik";
+import { Formik } from "formik";
 import { Form, Input, Select } from 'formik-antd';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Row, Typography } from 'antd';
+import { Button, Row, Typography, Space } from 'antd';
 import * as Yup from 'yup';
 import { useFormContext } from './cvForm';
 
@@ -88,29 +88,29 @@ const BioForm = (props: OtherProps) => {
             { props => {
                 withFormikDevtools(props);
                 return (
-                    <Form
-                        {...formItemLayout}
-                    >
-                        <Typography.Title level={5} style={{ margin: 0 }}>{message}</Typography.Title>
-                        <Form.Item required={true} name='userBio.firstName' label='First name'>
-                            <Input name='userBio.firstName' placeholder='Jane' />
-                        </Form.Item>
-                        <Form.Item required={true} name='userBio.lastName' label='Last name'>
-                            <Input name='userBio.lastName' placeholder='Doe' />
-                        </Form.Item>
-                        <Form.Item required={true} name='userBio.email' label='Email address'>
-                            <Input name='userBio.email' placeholder='jane.doe@example.com' />
-                        </Form.Item>
-                        <Form.Item required={true} label='Telephone no.' name='userBio.phone[1]'>
-                            <Input addonBefore={prefixSelector} name='userBio.phone[1]' />
-                        </Form.Item>
-                        <Form.Item required={true} label='Home address' name='userBio.address'>
-                            <Input.TextArea showCount maxLength={100} name='userBio.address' />
-                        </Form.Item>
-                        <Row justify='end'>
-                            <Button type='primary' htmlType='submit'>Save & Next</Button>
-                        </Row>
-                    </Form>
+                        <Form
+                            {...formItemLayout}
+                        >   
+                            <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
+                            <Form.Item required={true} name='userBio.firstName' label='First name'>
+                                <Input name='userBio.firstName' placeholder='Jane' />
+                            </Form.Item>
+                            <Form.Item required={true} name='userBio.lastName' label='Last name'>
+                                <Input name='userBio.lastName' placeholder='Doe' />
+                            </Form.Item>
+                            <Form.Item required={true} name='userBio.email' label='Email address'>
+                                <Input name='userBio.email' placeholder='jane.doe@example.com' />
+                            </Form.Item>
+                            <Form.Item required={true} label='Telephone no.' name='userBio.phone[1]'>
+                                <Input addonBefore={prefixSelector} name='userBio.phone[1]' />
+                            </Form.Item>
+                            <Form.Item required={true} label='Home address' name='userBio.address'>
+                                <Input.TextArea showCount maxLength={100} name='userBio.address' />
+                            </Form.Item>
+                            <Row justify='end'>
+                                <Button type='primary' htmlType='submit'>Save & Next</Button>
+                            </Row>
+                        </Form>
                 )
             }}
         </Formik>

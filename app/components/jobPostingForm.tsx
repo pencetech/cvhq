@@ -1,8 +1,8 @@
 "use client";
-import { FormikProps, Formik } from "formik";
+import { Formik } from "formik";
 import { Form, Input, Select } from 'formik-antd';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Row, Typography } from 'antd';
+import { Button, Typography, Space, Row } from 'antd';
 import { useFormContext } from "./cvForm";
 import * as Yup from 'yup';
 
@@ -50,6 +50,11 @@ const JobPostingForm = (props: OtherProps) => {
         wrapperCol: { span: 14 },
     };
 
+    const handleBack = (e: any) => {
+        e.preventDefault();
+        setActiveStepIndex(activeStepIndex - 1);
+    }
+
     return (
         <Formik
             initialValues={{
@@ -71,7 +76,7 @@ const JobPostingForm = (props: OtherProps) => {
                 withFormikDevtools(props);
                 return (
                     <Form {...formItemLayout}>
-                        <Typography.Title level={5} style={{ margin: 0 }}>{message}</Typography.Title>
+                        <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
                         <Form.Item required={true} name='jobPosting.title' label='Job title'>
                             <Input name='jobPosting.title' />
                         </Form.Item>
@@ -85,7 +90,10 @@ const JobPostingForm = (props: OtherProps) => {
                             <Input.TextArea name='jobPosting.addOn' showCount maxLength={300} />
                         </Form.Item>
                         <Row justify='end'>
-                            <Button type='primary' htmlType="submit">Save & Next</Button>
+                            <Space>
+                                <Button onClick={e => handleBack(e)}>Back</Button>
+                                <Button type='primary' htmlType="submit">Save & Next</Button>
+                            </Space>
                         </Row>
                     </Form>
                 )

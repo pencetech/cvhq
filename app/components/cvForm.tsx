@@ -1,6 +1,6 @@
 "use client";
 import { useState, createContext, useContext } from 'react';
-import { Space, Tabs, Typography } from 'antd';
+import { Layout, Tabs } from 'antd';
 import BioForm from './bioForm';
 import JobPostingForm from './jobPostingForm';
 import ExperiencesForm from './experiencesForm';
@@ -78,11 +78,11 @@ const CvForm = () => {
 
     return (
         <FormContext.Provider value={{activeStepIndex, setActiveStepIndex, formData, setFormData }}>
-            <Tabs
-                items={tabItems}
-                activeKey={activeStepIndex.toString()}
-                style={{ margin: '16px 0'}}
-            />
+                <Tabs
+                    items={tabItems}
+                    activeKey={activeStepIndex.toString()}
+                    style={{ margin: '16px 0', minHeight: '100%' }}
+                />
         </FormContext.Provider>
     )
 }

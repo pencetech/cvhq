@@ -68,7 +68,7 @@ const DashboardLayout = ({
             <Breadcrumb style={{ margin: '16px 0' }}>
                 <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
             </Breadcrumb>
-                <div style={{ padding: 24, minHeight: 360, background: '#FFFFFF' }}>{children}</div>
+                <div style={{ padding: 24, minHeight: '100%', background: '#FFFFFF' }}>{children}</div>
             </Content>
             <Footer style={{ textAlign: 'center' }}>Formant ©2023</Footer>
         </Layout>
