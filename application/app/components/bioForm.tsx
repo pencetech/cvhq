@@ -98,16 +98,16 @@ const BioForm = (props: OtherProps) => {
                         >   
                             <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
                             <Form.Item required={true} name='userBio.firstName' label='First name'>
-                                <Input name='userBio.firstName' placeholder='Jane' />
+                                <Input name='userBio.firstName' placeholder='Jane' suffix />
                             </Form.Item>
                             <Form.Item required={true} name='userBio.lastName' label='Last name'>
-                                <Input name='userBio.lastName' placeholder='Doe' />
+                                <Input name='userBio.lastName' placeholder='Doe' suffix />
                             </Form.Item>
                             <Form.Item required={true} name='userBio.email' label='Email address'>
-                                <Input name='userBio.email' placeholder='jane.doe@example.com' />
+                                <Input name='userBio.email' placeholder='jane.doe@example.com' suffix />
                             </Form.Item>
                             <Form.Item required={true} label='Telephone no.' name='userBio.phone[1]'>
-                                <Input addonBefore={prefixSelector} name='userBio.phone[1]' />
+                                <Input addonBefore={prefixSelector} name='userBio.phone[1]' suffix />
                             </Form.Item>
                             <Form.Item required={true} label='Home address' name='userBio.address'>
                                 <Input.TextArea showCount maxLength={100} name='userBio.address' />

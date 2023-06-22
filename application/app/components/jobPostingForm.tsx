@@ -83,16 +83,16 @@ const JobPostingForm = (props: OtherProps) => {
                     <Form {...formItemLayout}>
                         <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
                         <Form.Item required={true} name='jobPosting.title' label='Job title'>
-                            <Input name='jobPosting.title' />
+                            <Input name='jobPosting.title' suffix />
                         </Form.Item>
                         <Form.Item required={true} name='jobPosting.company' label='Company name'>
-                            <Input name='jobPosting.company' />
+                            <Input name='jobPosting.company' suffix />
                         </Form.Item>
                         <Form.Item required={true} name='jobPosting.requirements' label='Requirements'>
-                            <Input.TextArea showCount maxLength={300} name='jobPosting.requirements' />
+                            <Input.TextArea showCount maxLength={300} name='jobPosting.requirements' autoSize={{ minRows: 3, maxRows: 15 }} />
                         </Form.Item>
                         <Form.Item name='jobPosting.addOn' label='Nice-to-haves'>
-                            <Input.TextArea name='jobPosting.addOn' showCount maxLength={300} />
+                            <Input.TextArea name='jobPosting.addOn' showCount maxLength={300} autoSize={{ minRows: 3, maxRows: 15 }} />
                         </Form.Item>
                         <Row justify='end'>
                             <Space>
