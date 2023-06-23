@@ -1,8 +1,9 @@
 "use client";
 import { useState, FC } from 'react';
-import { FireFilled } from '@ant-design/icons';
+import { gql, useMutation } from '@apollo/client';
 import { FormikProps } from 'formik';
-import { Card, Row, Button, Space, Drawer, theme } from 'antd';
+import { Row, Button, Space, Drawer, theme } from 'antd';
+import { FireFilled } from '@ant-design/icons';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
@@ -31,9 +32,16 @@ interface ExperienceCardProps {
     onClick: () => {}
 }
 
+// const GENERATE_ACHIEVEMENTS = gql`
+//     mutation GenerateAchievements {
+
+//     }
+// `
+
 const ExperienceCard: FC<ExperienceCardProps> = ({
     props, index, onClick
 }: ExperienceCardProps) => {
+    // const [generateAchievements, { data, loading, error }] = useMutation(GENERATE_ACHIEVEMENTS);
     const { token } = theme.useToken();
     const [open, setOpen] = useState(false);
 
@@ -44,6 +52,17 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
     const onClose = () => {
         setOpen(false);
     };
+
+    const enhanceAchievements = () => {
+        // generateAchievements(
+        //     {
+        //         variables: {
+
+        //         }
+        //     }
+        // )
+        showDrawer();
+    }
 
     const containerStyle: React.CSSProperties = {
         position: 'relative',
@@ -78,7 +97,7 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                         name={`experiences[${index}].achievements`} 
                         autoSize={{ minRows: 3, maxRows: 15 }}
                         showCount />
-                    <Button type="primary" size="large" icon={<FireFilled />} onClick={showDrawer}>Enhance</Button>
+                    <Button type="primary" size="large" icon={<FireFilled />} onClick={enhanceAchievements}>Enhance</Button>
                 </div>
             </Form.Item>
             <Row justify='end'>

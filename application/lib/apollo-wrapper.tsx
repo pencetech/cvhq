@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  gql,
   ApolloClient,
   ApolloLink,
   HttpLink,
