@@ -77,7 +77,7 @@ const BioForm = (props: OtherProps) => {
         <Formik
             initialValues={{
                 userBio: {
-                    firstName: '',
+                    firstName: formData.userBio || '',
                     lastName: '',
                     email: '',
                     phone: ['',''],
