@@ -2,6 +2,20 @@
 
 package model
 
+type AchievementInput struct {
+	JobPosting  *JobPostingInput `json:"jobPosting"`
+	Achievement string           `json:"achievement"`
+}
+
+type Cv struct {
+	Type    string `json:"type"`
+	Content string `json:"content"`
+}
+
+type EnhancedAchievement struct {
+	Experience string `json:"experience"`
+}
+
 type Experience struct {
 	Title        string  `json:"title"`
 	IsCurrent    bool    `json:"isCurrent"`

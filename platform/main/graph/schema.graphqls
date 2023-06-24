@@ -67,6 +67,22 @@ type Profile {
   experiences: [Experience!]!
 }
 
+type CV {
+  type: String!
+  content: String!
+}
+
+input AchievementInput {
+  jobPosting: JobPostingInput!
+  achievement: String!
+}
+
+type EnhancedAchievement {
+  experience: String!
+}
+
 type Mutation {
   createProfile(input: ProfileInput!): Profile!
+  enhanceAchievement(input: AchievementInput!): EnhancedAchievement!
+  generateCV(input: ProfileInput!): CV!
 }
