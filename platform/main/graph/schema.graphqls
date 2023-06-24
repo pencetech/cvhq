@@ -1,0 +1,88 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type UserBio {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: [String!]!
+  address: String!
+}
+
+type JobPosting {
+  title: String!
+  company: String!
+  requirements: String!
+  addOn: String
+}
+
+type Experience {
+  title: String!
+  isCurrent: Boolean!
+  startDate: String!
+  endDate: String
+  achievements: String!
+}
+
+input UserBioInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: [String!]!
+  address: String!
+}
+
+input JobPostingInput {
+  title: String!
+  company: String!
+  requirements: String!
+  addOn: String
+}
+
+input ExperienceInput {
+  id: ID!
+  title: String!
+  isCurrent: Boolean!
+  startDate: String!
+  endDate: String
+  achievements: String!
+}
+
+type Query {
+  profile: Profile!
+}
+
+input ProfileInput {
+  id: ID!
+  userBio: UserBioInput!
+  jobPosting: JobPostingInput!
+  experiences: [ExperienceInput!]!
+}
+
+type Profile {
+  id: ID!
+  userBio: UserBio!
+  jobPosting: JobPosting!
+  experiences: [Experience!]!
+}
+
+type CV {
+  type: String!
+  content: String!
+}
+
+input AchievementInput {
+  jobPosting: JobPostingInput!
+  achievement: String!
+}
+
+type EnhancedAchievement {
+  experience: String!
+}
+
+type Mutation {
+  createProfile(input: ProfileInput!): Profile!
+  enhanceAchievement(input: AchievementInput!): EnhancedAchievement!
+  generateCV(input: ProfileInput!): CV!
+}
