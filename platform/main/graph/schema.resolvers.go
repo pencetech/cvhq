@@ -19,9 +19,7 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input model.Profil
 
 // EnhanceAchievement is the resolver for the enhanceAchievement field.
 func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.AchievementInput) (*model.EnhancedAchievement, error) {
-	var enhanced model.EnhancedAchievement
-
-
+	panic(fmt.Errorf("not implemented: CreateProfile - createProfile"))
 }
 
 // GenerateCv is the resolver for the generateCV field.
