@@ -2,8 +2,8 @@
 import React from 'react';
 import { Formik, FieldArray } from "formik";
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Row, Space, Typography } from 'antd';
-import ExperienceCard from '@/app/components/experienceCard';
+import { Button, Typography, Space, Row } from 'antd';
+import EducationCard from '@/app/components/educationCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import { useFormContext } from "./cvForm";
@@ -13,28 +13,29 @@ interface OtherProps {
     message: string;
 }
 
-const experienceValidationSchema = Yup.object().shape({
-    experiences: Yup.array().of(
+const educationValidationSchema = Yup.object().shape({
+    education: Yup.array().of(
         Yup.object().shape({
-        title: Yup.string()
-            .min(3, 'Too short!')
-            .max(50, 'Too long!')
-            .required('Required'),
-        company: Yup.string()
-            .required('Required'),
-        isCurrent: Yup.boolean().required('Required'),
-        startDate: Yup.date().required('Required'),
-        endDate: Yup.date().required('Required'),
-        achievements: Yup.string()
-            .min(5, 'Too short!')
-            .required('Required')
+            subject: Yup.string()
+                .min(3, 'Too short!')
+                .max(50, 'Too long!')
+                .required('Required'),
+            institution: Yup.string()
+                .min(3, 'Too short!')
+                .max(50, 'Too long!')
+                .required('Required'),
+            degree: Yup.string()
+                .min(5, 'Too short!')
+                .required('Required'),
+            startDate: Yup.date().required('Required'),
+            endDate: Yup.date().required('Required'),
         })
     )
-    .min(1, 'Need at least one experience')
+    .min(1, 'Need at least one education')
     .required('Required')
-});
+})
 
-const ExperiencesForm = (props: OtherProps) => {
+const EducationForm = (props: OtherProps) => {
     const { message } = props;
     const { activeStepIndex, setActiveStepIndex, formData, setFormData } = useFormContext();
 
@@ -51,9 +52,9 @@ const ExperiencesForm = (props: OtherProps) => {
     return (
         <Formik
             initialValues={{
-                experiences: formData.experiences
+                education: formData.education
             }}
-            validationSchema={experienceValidationSchema}
+            validationSchema={educationValidationSchema}
             onSubmit={(values, actions) => {
                 const data = { ...formData, ...values };
                 setFormData(data);
@@ -66,12 +67,12 @@ const ExperiencesForm = (props: OtherProps) => {
                     <Form {...formItemLayout}>
                         <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
                         <FieldArray
-                            name='experiences'
+                            name='education'
                             render={(arrayHelpers: any) => (
                                 <Space direction='vertical' className='w-full'>
-                                    {props.values.experiences.map((experience, index) => (
+                                    {props.values.education.map((ed, index) => (
                                         <React.Fragment key={index}>
-                                            <ExperienceCard props={props} index={index} onClick={() => arrayHelpers.remove(index)} />
+                                            <EducationCard index={index} onClick={() => arrayHelpers.remove(index)} />
                                         </React.Fragment>
                                     ))}
                                         <Button 
@@ -84,7 +85,7 @@ const ExperiencesForm = (props: OtherProps) => {
                                                 endDate: new Date(),
                                                 achievements: ''
                                             })}
-                                        >+ Add experience</Button>
+                                        >+ Add education</Button>
                                         <Row justify='end'>
                                             <Space>
                                                 <Button onClick={e => handleBack(e)}>Back</Button>
@@ -101,4 +102,4 @@ const ExperiencesForm = (props: OtherProps) => {
         </Formik>);
 }
 
-export default ExperiencesForm;
+export default EducationForm;

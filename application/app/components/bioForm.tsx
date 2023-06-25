@@ -17,10 +17,6 @@ interface OtherProps {
     message: string;
 }
 
-interface FormValues {
-    userBio: UserBio
-}
-
 interface UserBio {
     firstName: string;
     lastName: string;
@@ -76,13 +72,8 @@ const BioForm = (props: OtherProps) => {
     return (
         <Formik
             initialValues={{
-                userBio: {
-                    firstName: '',
-                    lastName: '',
-                    email: '',
-                    phone: ['',''],
-                    address: '',
-            }}}
+                userBio: formData.userBio
+            }}
             validationSchema={bioValidationSchema}
             onSubmit={(values, actions) => {
                 const data = { ...formData, ...values };
