@@ -25,6 +25,23 @@ type Experience {
   achievements: String!
 }
 
+type Education {
+  subject: String!
+  institution: String!
+  degree: String!
+  startDate: String!
+  endDate: String!
+}
+
+type Skillset {
+  skillsets: String!
+}
+
+type Match {
+  matchFactor: Int
+  reason: String!
+}
+
 input UserBioInput {
   firstName: String!
   lastName: String!
@@ -36,6 +53,7 @@ input UserBioInput {
 input JobPostingInput {
   title: String!
   company: String!
+  sector: String!
   requirements: String!
   addOn: String
 }
@@ -43,10 +61,23 @@ input JobPostingInput {
 input ExperienceInput {
   id: ID!
   title: String!
+  company: String!
   isCurrent: Boolean!
   startDate: String!
   endDate: String
   achievements: String!
+}
+
+input EducationInput {
+  subject: String!
+  institution: String!
+  degree: String!
+  startDate: String!
+  endDate: String!
+}
+
+input SkillsetInput {
+  skillsets: String!
 }
 
 type Query {
@@ -58,6 +89,8 @@ input ProfileInput {
   userBio: UserBioInput!
   jobPosting: JobPostingInput!
   experiences: [ExperienceInput!]!
+  education: [EducationInput!]!
+  skillsets: SkillsetInput
 }
 
 type Profile {
@@ -65,6 +98,8 @@ type Profile {
   userBio: UserBio!
   jobPosting: JobPosting!
   experiences: [Experience!]!
+  education: [Education!]!
+  skillsets: Skillset
 }
 
 type CV {
@@ -73,12 +108,14 @@ type CV {
 }
 
 input AchievementInput {
+  userBio: UserBioInput!
   jobPosting: JobPostingInput!
-  achievement: String!
+  experience: ExperienceInput!
 }
 
 type EnhancedAchievement {
-  experience: String!
+  match: Match!
+  achievements: String!
 }
 
 type Mutation {

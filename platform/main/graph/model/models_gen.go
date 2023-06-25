@@ -3,8 +3,9 @@
 package model
 
 type AchievementInput struct {
-	JobPosting  *JobPostingInput `json:"jobPosting"`
-	Achievement string           `json:"achievement"`
+	UserBio    *UserBioInput    `json:"userBio"`
+	JobPosting *JobPostingInput `json:"jobPosting"`
+	Experience *ExperienceInput `json:"experience"`
 }
 
 type Cv struct {
@@ -12,8 +13,25 @@ type Cv struct {
 	Content string `json:"content"`
 }
 
+type Education struct {
+	Subject     string `json:"subject"`
+	Institution string `json:"institution"`
+	Degree      string `json:"degree"`
+	StartDate   string `json:"startDate"`
+	EndDate     string `json:"endDate"`
+}
+
+type EducationInput struct {
+	Subject     string `json:"subject"`
+	Institution string `json:"institution"`
+	Degree      string `json:"degree"`
+	StartDate   string `json:"startDate"`
+	EndDate     string `json:"endDate"`
+}
+
 type EnhancedAchievement struct {
-	Experience string `json:"experience"`
+	Match        *Match `json:"match"`
+	Achievements string `json:"achievements"`
 }
 
 type Experience struct {
@@ -27,6 +45,7 @@ type Experience struct {
 type ExperienceInput struct {
 	ID           string  `json:"id"`
 	Title        string  `json:"title"`
+	Company      string  `json:"company"`
 	IsCurrent    bool    `json:"isCurrent"`
 	StartDate    string  `json:"startDate"`
 	EndDate      *string `json:"endDate,omitempty"`
@@ -43,8 +62,14 @@ type JobPosting struct {
 type JobPostingInput struct {
 	Title        string  `json:"title"`
 	Company      string  `json:"company"`
+	Sector       string  `json:"sector"`
 	Requirements string  `json:"requirements"`
 	AddOn        *string `json:"addOn,omitempty"`
+}
+
+type Match struct {
+	MatchFactor *int   `json:"matchFactor,omitempty"`
+	Reason      string `json:"reason"`
 }
 
 type Profile struct {
@@ -52,6 +77,8 @@ type Profile struct {
 	UserBio     *UserBio      `json:"userBio"`
 	JobPosting  *JobPosting   `json:"jobPosting"`
 	Experiences []*Experience `json:"experiences"`
+	Education   []*Education  `json:"education"`
+	Skillsets   *Skillset     `json:"skillsets,omitempty"`
 }
 
 type ProfileInput struct {
@@ -59,6 +86,16 @@ type ProfileInput struct {
 	UserBio     *UserBioInput      `json:"userBio"`
 	JobPosting  *JobPostingInput   `json:"jobPosting"`
 	Experiences []*ExperienceInput `json:"experiences"`
+	Education   []*EducationInput  `json:"education"`
+	Skillsets   *SkillsetInput     `json:"skillsets,omitempty"`
+}
+
+type Skillset struct {
+	Skillsets string `json:"skillsets"`
+}
+
+type SkillsetInput struct {
+	Skillsets string `json:"skillsets"`
 }
 
 type UserBio struct {
