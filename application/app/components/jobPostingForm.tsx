@@ -27,6 +27,9 @@ const jobPostingValidationSchema = Yup.object().shape({
             .min(3, 'Too short!')
             .max(50, 'Too long!')
             .required('Required'),
+        sector: Yup.string()
+            .max(50, 'Too long!')
+            .required('Required'),
         requirements: Yup.string()
             .min(5, 'Too short!')
             .required('Required'),
@@ -71,6 +74,9 @@ const JobPostingForm = (props: OtherProps) => {
                         </Form.Item>
                         <Form.Item required={true} name='jobPosting.company' label='Company name'>
                             <Input name='jobPosting.company' suffix />
+                        </Form.Item>
+                        <Form.Item required={true} name='jobPosting.sector' label='Company sector'>
+                            <Input name='jobPosting.sector' suffix />
                         </Form.Item>
                         <Form.Item required={true} name='jobPosting.requirements' label='Requirements'>
                             <Input.TextArea showCount maxLength={300} name='jobPosting.requirements' autoSize={{ minRows: 3, maxRows: 15 }} />
