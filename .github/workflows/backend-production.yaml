@@ -20,4 +20,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only --config ./fly.production.toml
+     - run: flyctl secrets set OPENAI_KEY=${{ secrets.OPENAI_KEY }} -t ${{ secrets.FLY_API_TOKEN_CVHQ }} --config ./fly.staging.toml
+      - run: flyctl deploy --remote-only -t ${{ secrets.FLY_API_TOKEN_CVHQ }} --config ./fly.staging.toml

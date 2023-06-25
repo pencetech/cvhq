@@ -7,9 +7,8 @@ import (
 	"regexp"
 	"strings"
 	"fmt"
+	"os"
 )
-
-var OPENAI_KEY = "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"
 
 var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }} is currently a {{ .Experience.Title }} at {{ .Experience.Company }}, 
 	and needs to write a CV for a {{ .JobPosting.Title }} role at {{ .JobPosting.Company }}, a {{ .JobPosting.Sector }} company. 
@@ -53,7 +52,7 @@ func InjectPrompt(prompt string, data any) (string, error) {
 }
 
 func ChatCompletion(content string) (string, error) {
-	client := openai.NewClient(OPENAI_KEY)
+	client := openai.NewClient(os.Getenv("OPENAI_KEY"))
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
