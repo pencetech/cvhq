@@ -36,6 +36,7 @@ export interface UserBio {
 export interface JobPosting {
     title: string;
     company: string;
+    sector: string;
     requirements: string;
     addOn: string;
 }
@@ -79,6 +80,7 @@ const CvForm = () => {
         jobPosting: {
             title: '',
             company: '',
+            sector: '',
             requirements: '',
             addOn: ''
         },
