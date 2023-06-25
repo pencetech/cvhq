@@ -1,6 +1,5 @@
 "use client";
-import { useState, FC } from 'react';
-import { FormikProps } from 'formik';
+import { FC } from 'react';
 import { Row, Button, theme } from 'antd';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
@@ -9,25 +8,12 @@ import 'formik-antd/es/form/style';
 import DatePicker from 'formik-antd/es/date-picker';
 import 'formik-antd/es/date-picker/style';
 
-
-interface EducationList {
-    education: Education[]
-}
-
-interface Education {
-    subject: string,
-    institution: string,
-    degree: string,
-    startDate: Date,
-    endDate: Date
-}
-
 interface EducationCardProps {
     index: number,
     onClick: () => {}
 }
 
-const ExperienceCard: FC<EducationCardProps> = ({
+const EducationCard: FC<EducationCardProps> = ({
     index, onClick
 }: EducationCardProps) => {
     const { token } = theme.useToken();
@@ -43,13 +29,13 @@ const ExperienceCard: FC<EducationCardProps> = ({
 
     return (
         <div style={containerStyle}>
-            <Form.Item required={true} name={`education[${index}].subject`} label='Job title'>
+            <Form.Item required={true} name={`education[${index}].subject`} label='Subject'>
                 <Input name={`education[${index}].subject`} suffix />
             </Form.Item>
-            <Form.Item required={true} name={`education[${index}].institution`} label='Job title'>
+            <Form.Item required={true} name={`education[${index}].institution`} label='Institution'>
                 <Input name={`education[${index}].institution`} suffix />
             </Form.Item>
-            <Form.Item required={true} name={`education[${index}].degree`} label='Job title'>
+            <Form.Item required={true} name={`education[${index}].degree`} label='Degree'>
                 <Input name={`education[${index}].degree`} suffix />
             </Form.Item>
             <Form.Item required={true} name={`education[${index}].startDate`} label='Start date'>
@@ -68,4 +54,4 @@ const ExperienceCard: FC<EducationCardProps> = ({
     )
 }
 
-export default ExperienceCard;
+export default EducationCard;

@@ -4,14 +4,11 @@ import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
-import Select from 'formik-antd/es/select';
-import 'formik-antd/es/select/style';
 import { withFormikDevtools } from "formik-devtools-extension";
 import { Button, Typography, Space, Row } from 'antd';
 import { useFormContext } from "./cvForm";
 import * as Yup from 'yup';
 
-const { Option } = Select;
 
 interface OtherProps {
     message: string;
@@ -35,7 +32,7 @@ const jobPostingValidationSchema = Yup.object().shape({
     })
 })
 
-const JobPostingForm = (props: OtherProps) => {
+const SkillsetForm = (props: OtherProps) => {
     const { message } = props;
     const { activeStepIndex, setActiveStepIndex, formData, setFormData } = useFormContext();
 
@@ -52,7 +49,7 @@ const JobPostingForm = (props: OtherProps) => {
     return (
         <Formik
             initialValues={{
-                jobPosting: formData.jobPosting
+                skillsets: formData.skillsets
             }}
             validationSchema={jobPostingValidationSchema}
             onSubmit={(values, actions) => {
@@ -66,22 +63,13 @@ const JobPostingForm = (props: OtherProps) => {
                 return (
                     <Form {...formItemLayout}>
                         <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
-                        <Form.Item required={true} name='jobPosting.title' label='Job title'>
-                            <Input name='jobPosting.title' suffix />
-                        </Form.Item>
-                        <Form.Item required={true} name='jobPosting.company' label='Company name'>
-                            <Input name='jobPosting.company' suffix />
-                        </Form.Item>
-                        <Form.Item required={true} name='jobPosting.requirements' label='Requirements'>
-                            <Input.TextArea showCount maxLength={300} name='jobPosting.requirements' autoSize={{ minRows: 3, maxRows: 15 }} />
-                        </Form.Item>
-                        <Form.Item name='jobPosting.addOn' label='Nice-to-haves'>
-                            <Input.TextArea name='jobPosting.addOn' showCount maxLength={300} autoSize={{ minRows: 3, maxRows: 15 }} />
+                        <Form.Item required={true} name='skillsets.skillsets' label='Skillsets'>
+                            <Input.TextArea name='skillsets.skillsets' showCount autoSize={{ minRows: 3, maxRows: 15 }}/>
                         </Form.Item>
                         <Row justify='end'>
                             <Space>
                                 <Button onClick={e => handleBack(e)}>Back</Button>
-                                <Button type='primary' htmlType="submit">Save & Next</Button>
+                                <Button type='primary' htmlType="submit">Save</Button>
                             </Space>
                         </Row>
                     </Form>
@@ -90,4 +78,4 @@ const JobPostingForm = (props: OtherProps) => {
         </Formik>);
 }
 
-export default JobPostingForm;
+export default SkillsetForm;

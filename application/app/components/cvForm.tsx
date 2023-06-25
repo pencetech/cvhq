@@ -5,12 +5,13 @@ import BioForm from './bioForm';
 import JobPostingForm from './jobPostingForm';
 import ExperiencesForm from './experiencesForm';
 import EducationForm from './educationForm';
+import SkillsetForm from './skillsetForm';
 
 interface FormContextValue {
     activeStepIndex: number,
     setActiveStepIndex: React.Dispatch<React.SetStateAction<number>>,
-    formData: {},
-    setFormData: React.Dispatch<React.SetStateAction<{}>>
+    formData: FormData,
+    setFormData: React.Dispatch<React.SetStateAction<FormData>>
 }
 
 export const FormContext = createContext<FormContextValue | undefined >(undefined);
@@ -25,9 +26,81 @@ export const useFormContext = () => {
     return context;
 }
 
+export interface UserBio {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string[];
+    address: string;
+}
+export interface JobPosting {
+    title: string;
+    company: string;
+    requirements: string;
+    addOn: string;
+}
+export interface Experience {
+    title: string;
+    company: string;
+    isCurrent: boolean;
+    startDate: Date;
+    endDate: Date;
+    achievements: string;
+}
+export interface Education {
+    subject: string,
+    institution: string,
+    degree: string,
+    startDate: Date,
+    endDate: Date
+}
+
+export interface Skillset {
+    skillsets: string
+}
+interface FormData {
+    userBio: UserBio,
+    jobPosting: JobPosting,
+    experiences: Experience[],
+    education: Education[],
+    skillsets: Skillset
+};
+
 const CvForm = () => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState<FormData>({
+        userBio: {
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: ['', ''],
+            address: '',
+        },
+        jobPosting: {
+            title: '',
+            company: '',
+            requirements: '',
+            addOn: ''
+        },
+        experiences: [{
+            title: '',
+            company: '',
+            isCurrent: false,
+            startDate: new Date(),
+            endDate: new Date(),
+            achievements: ''
+        }],
+        education: [{
+            subject: '',
+            institution: '',
+            degree: '',
+            startDate: new Date(),
+            endDate: new Date(),
+        }],
+        skillsets: {
+            skillsets: '',
+        }
+    });
     const { token } = theme.useToken();
 
     const rawItems = [
@@ -49,7 +122,12 @@ const CvForm = () => {
         {
             key: 'education',
             label: 'Education',
-            content: <EducationForm message="Experiences" />
+            content: <EducationForm message="Education" />
+        },
+        {
+            key: 'skillsets',
+            label: 'Skillsets',
+            content: <SkillsetForm message="Skillsets" />
         }
     ]
 

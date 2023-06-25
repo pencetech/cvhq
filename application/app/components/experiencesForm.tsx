@@ -20,6 +20,8 @@ const experienceValidationSchema = Yup.object().shape({
             .min(3, 'Too short!')
             .max(50, 'Too long!')
             .required('Required'),
+        company: Yup.string()
+            .required('Required'),
         isCurrent: Yup.boolean().required('Required'),
         startDate: Yup.date().required('Required'),
         endDate: Yup.date().required('Required'),
@@ -49,13 +51,7 @@ const ExperiencesForm = (props: OtherProps) => {
     return (
         <Formik
             initialValues={{
-                experiences: [{
-                    title: '',
-                    isCurrent: false,
-                    startDate: new Date(),
-                    endDate: new Date(),
-                    achievements: ''
-                }]
+                experiences: formData.experiences
             }}
             validationSchema={experienceValidationSchema}
             onSubmit={(values, actions) => {
@@ -92,7 +88,7 @@ const ExperiencesForm = (props: OtherProps) => {
                                         <Row justify='end'>
                                             <Space>
                                                 <Button onClick={e => handleBack(e)}>Back</Button>
-                                                <Button type='primary' htmlType='submit'>Save</Button>
+                                                <Button type='primary' htmlType='submit'>Save & Next</Button>
                                             </Space>
                                         </Row>
                                 </Space>

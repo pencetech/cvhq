@@ -35,7 +35,7 @@ const educationValidationSchema = Yup.object().shape({
     .required('Required')
 })
 
-const JobPostingForm = (props: OtherProps) => {
+const EducationForm = (props: OtherProps) => {
     const { message } = props;
     const { activeStepIndex, setActiveStepIndex, formData, setFormData } = useFormContext();
 
@@ -52,13 +52,7 @@ const JobPostingForm = (props: OtherProps) => {
     return (
         <Formik
             initialValues={{
-                experiences: [{
-                    title: '',
-                    isCurrent: false,
-                    startDate: new Date(),
-                    endDate: new Date(),
-                    achievements: ''
-                }]
+                education: formData.education
             }}
             validationSchema={educationValidationSchema}
             onSubmit={(values, actions) => {
@@ -73,10 +67,10 @@ const JobPostingForm = (props: OtherProps) => {
                     <Form {...formItemLayout}>
                         <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
                         <FieldArray
-                            name='experiences'
+                            name='education'
                             render={(arrayHelpers: any) => (
                                 <Space direction='vertical' className='w-full'>
-                                    {props.values.experiences.map((experience, index) => (
+                                    {props.values.education.map((ed, index) => (
                                         <React.Fragment key={index}>
                                             <EducationCard index={index} onClick={() => arrayHelpers.remove(index)} />
                                         </React.Fragment>
@@ -91,11 +85,11 @@ const JobPostingForm = (props: OtherProps) => {
                                                 endDate: new Date(),
                                                 achievements: ''
                                             })}
-                                        >+ Add experience</Button>
+                                        >+ Add education</Button>
                                         <Row justify='end'>
                                             <Space>
                                                 <Button onClick={e => handleBack(e)}>Back</Button>
-                                                <Button type='primary' htmlType='submit'>Save</Button>
+                                                <Button type='primary' htmlType='submit'>Save & Next</Button>
                                             </Space>
                                         </Row>
                                 </Space>
@@ -108,4 +102,4 @@ const JobPostingForm = (props: OtherProps) => {
         </Formik>);
 }
 
-export default JobPostingForm;
+export default EducationForm;

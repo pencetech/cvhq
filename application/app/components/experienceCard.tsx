@@ -2,6 +2,7 @@
 import { useState, FC } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { FormikProps } from 'formik';
+import { Experience } from '@/app/components/cvForm'
 import { Row, Button, Space, Drawer, theme } from 'antd';
 import { FireFilled } from '@ant-design/icons';
 import Input from 'formik-antd/es/input';
@@ -16,14 +17,6 @@ import 'formik-antd/es/date-picker/style';
 
 interface Experiences {
     experiences: Experience[]
-}
-
-interface Experience {
-    title: string;
-    isCurrent: boolean;
-    startDate: Date;
-    endDate: Date;
-    achievements: string;
 }
 
 interface ExperienceCardProps {
@@ -78,7 +71,10 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
             <Form.Item required={true} name={`experiences[${index}].title`} label='Job title'>
                 <Input name={`experiences[${index}].title`} suffix />
             </Form.Item>
-            <Form.Item required={true} name={`experiences[${index}].isCurrent`} label='My current job'>
+            <Form.Item required={true} name={`experiences[${index}].company`} label='Company'>
+                <Input name={`experiences[${index}].company`} suffix />
+            </Form.Item>
+            <Form.Item name={`experiences[${index}].isCurrent`} label='My current job'>
                 <Checkbox name={`experiences[${index}].isCurrent`} />
             </Form.Item>
             <Form.Item required={true} name={`experiences[${index}].startDate`} label='Start date'>
