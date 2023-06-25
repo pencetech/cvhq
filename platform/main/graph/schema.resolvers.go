@@ -6,9 +6,10 @@ package graph
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
-	"encoding/json"
+
 	"github.com/pencetech/cvhq/graph/model"
 )
 
@@ -32,7 +33,9 @@ func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.A
 		return nil, err
 	}
 
-	err = json.Unmarshal([]byte(objStr), &enhanced)
+	lineEscapedObjStr := escapeNewline(&objStr)
+	tabEscapedObjStr := escapeTabs(&lineEscapedObjStr)
+	err = json.Unmarshal([]byte(tabEscapedObjStr), &enhanced)
 	if err != nil {
 		log.Println("ERROR: JSON unmarshaling failed -> ", err)
 		return nil, err
@@ -40,6 +43,7 @@ func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.A
 
 	return &enhanced, nil
 }
+
 // GenerateCv is the resolver for the generateCV field.
 func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileInput) (*model.Cv, error) {
 	panic(fmt.Errorf("not implemented: GenerateCv - generateCV"))

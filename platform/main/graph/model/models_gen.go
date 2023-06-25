@@ -30,8 +30,8 @@ type EducationInput struct {
 }
 
 type EnhancedAchievement struct {
-	Match       *Match `json:"match"`
-	Achievement string `json:"achievement"`
+	Match        *Match `json:"match"`
+	Achievements string `json:"achievements"`
 }
 
 type Experience struct {
@@ -45,6 +45,7 @@ type Experience struct {
 type ExperienceInput struct {
 	ID           string  `json:"id"`
 	Title        string  `json:"title"`
+	Company      string  `json:"company"`
 	IsCurrent    bool    `json:"isCurrent"`
 	StartDate    string  `json:"startDate"`
 	EndDate      *string `json:"endDate,omitempty"`
@@ -61,6 +62,7 @@ type JobPosting struct {
 type JobPostingInput struct {
 	Title        string  `json:"title"`
 	Company      string  `json:"company"`
+	Sector       string  `json:"sector"`
 	Requirements string  `json:"requirements"`
 	AddOn        *string `json:"addOn,omitempty"`
 }

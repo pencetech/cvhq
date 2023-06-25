@@ -59,8 +59,8 @@ type ComplexityRoot struct {
 	}
 
 	EnhancedAchievement struct {
-		Achievement func(childComplexity int) int
-		Match       func(childComplexity int) int
+		Achievements func(childComplexity int) int
+		Match        func(childComplexity int) int
 	}
 
 	Experience struct {
@@ -188,12 +188,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Education.Subject(childComplexity), true
 
-	case "EnhancedAchievement.achievement":
-		if e.complexity.EnhancedAchievement.Achievement == nil {
+	case "EnhancedAchievement.achievements":
+		if e.complexity.EnhancedAchievement.Achievements == nil {
 			break
 		}
 
-		return e.complexity.EnhancedAchievement.Achievement(childComplexity), true
+		return e.complexity.EnhancedAchievement.Achievements(childComplexity), true
 
 	case "EnhancedAchievement.match":
 		if e.complexity.EnhancedAchievement.Match == nil {
@@ -993,8 +993,8 @@ func (ec *executionContext) fieldContext_EnhancedAchievement_match(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _EnhancedAchievement_achievement(ctx context.Context, field graphql.CollectedField, obj *model.EnhancedAchievement) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_EnhancedAchievement_achievement(ctx, field)
+func (ec *executionContext) _EnhancedAchievement_achievements(ctx context.Context, field graphql.CollectedField, obj *model.EnhancedAchievement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EnhancedAchievement_achievements(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1007,7 +1007,7 @@ func (ec *executionContext) _EnhancedAchievement_achievement(ctx context.Context
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Achievement, nil
+		return obj.Achievements, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1024,7 +1024,7 @@ func (ec *executionContext) _EnhancedAchievement_achievement(ctx context.Context
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_EnhancedAchievement_achievement(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_EnhancedAchievement_achievements(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "EnhancedAchievement",
 		Field:      field,
@@ -1622,8 +1622,8 @@ func (ec *executionContext) fieldContext_Mutation_enhanceAchievement(ctx context
 			switch field.Name {
 			case "match":
 				return ec.fieldContext_EnhancedAchievement_match(ctx, field)
-			case "achievement":
-				return ec.fieldContext_EnhancedAchievement_achievement(ctx, field)
+			case "achievements":
+				return ec.fieldContext_EnhancedAchievement_achievements(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type EnhancedAchievement", field.Name)
 		},
@@ -4357,7 +4357,7 @@ func (ec *executionContext) unmarshalInputExperienceInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "title", "isCurrent", "startDate", "endDate", "achievements"}
+	fieldsInOrder := [...]string{"id", "title", "company", "isCurrent", "startDate", "endDate", "achievements"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4382,6 +4382,15 @@ func (ec *executionContext) unmarshalInputExperienceInput(ctx context.Context, o
 				return it, err
 			}
 			it.Title = data
+		case "company":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("company"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Company = data
 		case "isCurrent":
 			var err error
 
@@ -4431,7 +4440,7 @@ func (ec *executionContext) unmarshalInputJobPostingInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "company", "requirements", "addOn"}
+	fieldsInOrder := [...]string{"title", "company", "sector", "requirements", "addOn"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4456,6 +4465,15 @@ func (ec *executionContext) unmarshalInputJobPostingInput(ctx context.Context, o
 				return it, err
 			}
 			it.Company = data
+		case "sector":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sector"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Sector = data
 		case "requirements":
 			var err error
 
@@ -4775,8 +4793,8 @@ func (ec *executionContext) _EnhancedAchievement(ctx context.Context, sel ast.Se
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "achievement":
-			out.Values[i] = ec._EnhancedAchievement_achievement(ctx, field, obj)
+		case "achievements":
+			out.Values[i] = ec._EnhancedAchievement_achievements(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

@@ -4,19 +4,21 @@ import (
     "github.com/sashabaranov/go-openai"
     "context"
 	"text/template"
+	"regexp"
 	"strings"
 	"fmt"
-	"os"
 )
 
+var OPENAI_KEY = "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"
+
 var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }} is currently a {{ .Experience.Title }} at {{ .Experience.Company }}, 
-	and needs to write a CV for a {{ .JobPosting.Title }} role at {{ .JobPosting.Company }}, a {{ .JobPosting.Vertical }} company. 
+	and needs to write a CV for a {{ .JobPosting.Title }} role at {{ .JobPosting.Company }}, a {{ .JobPosting.Sector }} company. 
 	Your task is to help improve on {{ .UserBio.FirstName }}'s bullet points for each of his experiences. The content has to 
 	demonstrate that {{ .UserBio.FirstName }} meets most of the following job requirements and nice-to-haves: 
 	- requirements: "{{ .JobPosting.Requirements }}"
 	- nice-to-haves: "{{ .JobPosting.AddOn }}"
 	Now, to achieve the abovementioned objective, follow exactly the following: 
-	1. Before doing any improvements, state the match factor (0-10) of the requirements to {{ .UserBio.FirstName }}'s original or given experience, 
+	1. Before doing any improvements, state the match factor, an integer from 0-10 of the requirements to {{ .UserBio.FirstName }}'s original or given experience, 
 	stating which bullet points do not meet the requirements and the reasons why. 
 	2. Here is the list of {{ .UserBio.FirstName }}'s experience: "{{ .Experience.Achievements }}"
 	containing the bullet points you need to improve. Return the improved bullet points. Please do the 
@@ -51,7 +53,7 @@ func InjectPrompt(prompt string, data any) (string, error) {
 }
 
 func ChatCompletion(content string) (string, error) {
-	client := openai.NewClient(os.Getenv("OPENAI_KEY"))
+	client := openai.NewClient(OPENAI_KEY)
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
@@ -71,4 +73,22 @@ func ChatCompletion(content string) (string, error) {
 	}
 
 	return resp.Choices[0].Message.Content, nil
+}
+
+func escapeNewline(rawStr *string) string {
+	matchNewlines := regexp.MustCompile(`[\r\n]`)
+	escapeNewlines := func(s string) string {
+		return matchNewlines.ReplaceAllString(s, "\\n")
+	}
+	re := regexp.MustCompile(`"[^"\\]*(?:\\[\s\S][^"\\]*)*"`)
+	return re.ReplaceAllStringFunc(*rawStr, escapeNewlines)
+}
+
+func escapeTabs(rawStr *string) string {
+	matchTabs := regexp.MustCompile(`[\r\t]`)
+	escapeTabs := func(s string) string {
+		return matchTabs.ReplaceAllString(s, "\\t")
+	}
+	re := regexp.MustCompile(`"[^"\\]*(?:\\[\s\S][^"\\]*)*"`)
+	return re.ReplaceAllStringFunc(*rawStr, escapeTabs)
 }

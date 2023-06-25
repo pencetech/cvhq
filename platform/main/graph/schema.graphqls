@@ -53,6 +53,7 @@ input UserBioInput {
 input JobPostingInput {
   title: String!
   company: String!
+  sector: String!
   requirements: String!
   addOn: String
 }
@@ -60,6 +61,7 @@ input JobPostingInput {
 input ExperienceInput {
   id: ID!
   title: String!
+  company: String!
   isCurrent: Boolean!
   startDate: String!
   endDate: String
@@ -113,7 +115,7 @@ input AchievementInput {
 
 type EnhancedAchievement {
   match: Match!
-  achievement: String!
+  achievements: String!
 }
 
 type Mutation {
