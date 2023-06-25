@@ -1,0 +1,23 @@
+name: Deploy Backend Prod
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - platform/main/**
+      - .github/workflows/backend-production.yaml
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    container:
+      image: birudeghi/cvhq:latest
+      ports:
+        - 8080
+    defaults:
+      run:
+        working-directory: ./platform/main
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only --config ./fly.production.toml
