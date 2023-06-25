@@ -7,9 +7,9 @@ package graph
 import (
 	"context"
 	"fmt"
-
+	"log"
+	"encoding/json"
 	"github.com/pencetech/cvhq/graph/model"
-	
 )
 
 // CreateProfile is the resolver for the createProfile field.
@@ -19,9 +19,27 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input model.Profil
 
 // EnhanceAchievement is the resolver for the enhanceAchievement field.
 func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.AchievementInput) (*model.EnhancedAchievement, error) {
-	panic(fmt.Errorf("not implemented: CreateProfile - createProfile"))
-}
+	var enhanced model.EnhancedAchievement
+	content, err := InjectPrompt(EnhanceAchievementPrompt, input)
+	if err != nil {
+		log.Println("ERROR: prompt injection failed -> ", err)
+		return nil, err
+	}
 
+	objStr, err := ChatCompletion(content)
+	if err != nil {
+		log.Println("ERROR: chat completion failed -> ", err)
+		return nil, err
+	}
+
+	err = json.Unmarshal([]byte(objStr), &enhanced)
+	if err != nil {
+		log.Println("ERROR: JSON unmarshaling failed -> ", err)
+		return nil, err
+	}
+
+	return &enhanced, nil
+}
 // GenerateCv is the resolver for the generateCV field.
 func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileInput) (*model.Cv, error) {
 	panic(fmt.Errorf("not implemented: GenerateCv - generateCV"))
@@ -40,10 +58,3 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
