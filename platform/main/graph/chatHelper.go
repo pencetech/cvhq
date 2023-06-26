@@ -1,13 +1,14 @@
 package graph
 
 import (
-    "github.com/sashabaranov/go-openai"
-    "context"
-	"text/template"
-	"regexp"
-	"strings"
+	"context"
 	"fmt"
 	"os"
+	"regexp"
+	"strings"
+	"text/template"
+
+	"github.com/sashabaranov/go-openai"
 )
 
 var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }} is currently a {{ .Experience.Title }} at {{ .Experience.Company }}, 
@@ -41,6 +42,10 @@ var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }}
 	Where "match" is the overall match of {{ .UserBio.FirstName }}'s achievements to the job requireemnts as stated in step 1, 
 	and "achievements" is the improved version of {{ .UserBio.FirstName }}'s achievements as stated in step 2.
 `
+
+var GenerateCVPrompt = `Generate a CV in markdown using the following information: %s, 
+where 'userBio' is the profile you'll put in the header, 'achievements' will be the main body of the CV, 
+'education' and 'skillsets' will be at the bottom. Make sure that the header is justify centered using div tags.`
 
 func InjectPrompt(prompt string, data any) (string, error) {
 	t := template.Must(template.New("prompt").Parse(prompt))

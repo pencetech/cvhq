@@ -14,6 +14,7 @@ type Cv struct {
 }
 
 type Education struct {
+	ID          string `json:"id"`
 	Subject     string `json:"subject"`
 	Institution string `json:"institution"`
 	Degree      string `json:"degree"`
@@ -22,6 +23,7 @@ type Education struct {
 }
 
 type EducationInput struct {
+	ID          string `json:"id"`
 	Subject     string `json:"subject"`
 	Institution string `json:"institution"`
 	Degree      string `json:"degree"`
@@ -35,6 +37,7 @@ type EnhancedAchievement struct {
 }
 
 type Experience struct {
+	ID           string  `json:"id"`
 	Title        string  `json:"title"`
 	IsCurrent    bool    `json:"isCurrent"`
 	StartDate    string  `json:"startDate"`
@@ -75,7 +78,6 @@ type Match struct {
 type Profile struct {
 	ID          string        `json:"id"`
 	UserBio     *UserBio      `json:"userBio"`
-	JobPosting  *JobPosting   `json:"jobPosting"`
 	Experiences []*Experience `json:"experiences"`
 	Education   []*Education  `json:"education"`
 	Skillsets   *Skillset     `json:"skillsets,omitempty"`
@@ -84,7 +86,6 @@ type Profile struct {
 type ProfileInput struct {
 	ID          string             `json:"id"`
 	UserBio     *UserBioInput      `json:"userBio"`
-	JobPosting  *JobPostingInput   `json:"jobPosting"`
 	Experiences []*ExperienceInput `json:"experiences"`
 	Education   []*EducationInput  `json:"education"`
 	Skillsets   *SkillsetInput     `json:"skillsets,omitempty"`

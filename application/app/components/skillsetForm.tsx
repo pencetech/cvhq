@@ -55,6 +55,7 @@ const SkillsetForm = (props: OtherProps) => {
             onSubmit={(values, actions) => {
                 const data = { ...formData, ...values };
                 setFormData(data);
+                // mutation here through formcontext
                 setActiveStepIndex(activeStepIndex + 1);
             }}
         >
@@ -69,7 +70,7 @@ const SkillsetForm = (props: OtherProps) => {
                         <Row justify='end'>
                             <Space>
                                 <Button onClick={e => handleBack(e)}>Back</Button>
-                                <Button type='primary' htmlType="submit">Save</Button>
+                                <Button type='primary' htmlType="submit">Generate CV</Button>
                             </Space>
                         </Row>
                     </Form>

@@ -46,7 +46,24 @@ func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.A
 
 // GenerateCv is the resolver for the generateCV field.
 func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileInput) (*model.Cv, error) {
-	panic(fmt.Errorf("not implemented: GenerateCv - generateCV"))
+	var cv model.Cv
+	cv.Type = "markdown"
+	inputBytes, err := json.Marshal(input)
+	if err != nil {
+		log.Println("ERROR: JSON marshaling failed -> ", err)
+	}
+
+	content := fmt.Sprintf(GenerateCVPrompt, string(inputBytes))
+	objStr, err := ChatCompletion(content)
+	if err != nil {
+		log.Println("ERROR: chat completion failed -> ", err)
+		return nil, err
+	}
+
+	lineEscapedObjStr := escapeNewline(&objStr)
+	tabEscapedObjStr := escapeTabs(&lineEscapedObjStr)
+	cv.Content = tabEscapedObjStr
+	return &cv, nil
 }
 
 // Profile is the resolver for the profile field.
