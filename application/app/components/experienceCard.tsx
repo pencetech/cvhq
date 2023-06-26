@@ -160,7 +160,7 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                 }
             >   
                 {loading ? <Spin indicator={antIcon} /> : null}
-                {error ? <Text type="danger">Ant Design (danger)</Text> : null}
+                {error ? <Text type="danger">An error occured</Text> : null}
                 {data && data.enhanceAchievement ? enhanceDrawerContent() : null}
             </Drawer>
         </div>
