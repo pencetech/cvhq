@@ -1,12 +1,14 @@
 package graph
 
 import (
-    "github.com/sashabaranov/go-openai"
-    "context"
-	"text/template"
+	"context"
+	"fmt"
+	"os"
 	"regexp"
 	"strings"
-	"fmt"
+	"text/template"
+
+	"github.com/sashabaranov/go-openai"
 )
 
 var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }} is currently a {{ .Experience.Title }} at {{ .Experience.Company }}, 
@@ -55,7 +57,7 @@ func InjectPrompt(prompt string, data any) (string, error) {
 }
 
 func ChatCompletion(content string) (string, error) {
-	client := openai.NewClient("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")
+	client := openai.NewClient(os.Getenv("OPENAI_KEY"))
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
