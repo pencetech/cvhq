@@ -1,5 +1,5 @@
 "use client";
-import { useState, FC } from 'react';
+import { useState, useEffect, FC } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { FormikProps, useFormikContext } from 'formik';
 import { Experience, useFormContext } from '@/app/components/cvForm'
@@ -47,7 +47,10 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
             input: {
                 userBio: formData.userBio,
                 jobPosting: formData.jobPosting,
-                experience: formData.experiences[index]
+                experience: {
+                    id: 1,
+                    ...formData.experiences[index]
+                }
             }
         },
     });
@@ -55,6 +58,12 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
     const { token } = theme.useToken();
     const [open, setOpen] = useState(false);
     const [newAchievements, setNewAchievements] = useState("");
+
+    useEffect(() => {
+        if (data && data.enhanceAchievement) {
+            setNewAchievements(data.enhanceAchievement.achievements);
+        }
+      }, [data])
 
     const showDrawer = () => {
         setOpen(true);
@@ -85,8 +94,8 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
 
     const enhanceDrawerContent = () => {
         return (
-            <>
-            <Card bordered={false}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <Card>
                 <Statistic
                 title="Match Factor"
                 value={data.enhanceAchievement.match.matchFactor}
@@ -98,12 +107,18 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
             <Card size="small" title="Assessment" style={{ width: '100%' }}>
                 <p>{data.enhanceAchievement.match.reason}</p>
             </Card>
-            <Card title="Enhanced achievements" style={{ width: '100%' }}>
-                <Typography.Title editable={{ onChange: s => setNewAchievements(s) }} level={5} style={{ margin: 0 }}>
-                    {data.enhanceAchievement.achievements}
+            <Card size="small" title="Enhanced achievements" style={{ width: '100%' }}>
+                <Typography.Title editable={{ 
+                    onChange: s => setNewAchievements(s),
+                    text: newAchievements
+                }} level={5} style={{ margin: 0 }}>
+                    {newAchievements}
                 </Typography.Title>
             </Card>
-            </>
+            <Row justify='end'>
+                <Button onClick={generateAchievements}>Retry</Button>
+            </Row>
+            </div>
         )
     };
 
