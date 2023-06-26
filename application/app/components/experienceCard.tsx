@@ -48,7 +48,7 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                 userBio: formData.userBio,
                 jobPosting: formData.jobPosting,
                 experience: {
-                    id: 1,
+                    id: index,
                     ...formData.experiences[index]
                 }
             }
