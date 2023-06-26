@@ -7,7 +7,6 @@ import (
 	"regexp"
 	"strings"
 	"fmt"
-	"os"
 )
 
 var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }} is currently a {{ .Experience.Title }} at {{ .Experience.Company }}, 
@@ -42,6 +41,10 @@ var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }}
 	and "achievements" is the improved version of {{ .UserBio.FirstName }}'s achievements as stated in step 2.
 `
 
+var GenerateCVPrompt = `Generate a CV in markdown using the following information: %s, 
+where 'userBio' is the profile you'll put in the header, 'achievements' will be the main body of the CV, 
+'education' and 'skillsets' will be at the bottom. Make sure that the header is justify centered using div tags.`
+
 func InjectPrompt(prompt string, data any) (string, error) {
 	t := template.Must(template.New("prompt").Parse(prompt))
 	builder := &strings.Builder{}
@@ -52,7 +55,7 @@ func InjectPrompt(prompt string, data any) (string, error) {
 }
 
 func ChatCompletion(content string) (string, error) {
-	client := openai.NewClient(os.Getenv("OPENAI_KEY"))
+	client := openai.NewClient("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")
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{

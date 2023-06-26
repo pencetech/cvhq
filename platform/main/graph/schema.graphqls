@@ -18,6 +18,7 @@ type JobPosting {
 }
 
 type Experience {
+  id: ID!
   title: String!
   isCurrent: Boolean!
   startDate: String!
@@ -26,6 +27,7 @@ type Experience {
 }
 
 type Education {
+  id: ID!
   subject: String!
   institution: String!
   degree: String!
@@ -69,6 +71,7 @@ input ExperienceInput {
 }
 
 input EducationInput {
+  id: ID!
   subject: String!
   institution: String!
   degree: String!
@@ -87,7 +90,6 @@ type Query {
 input ProfileInput {
   id: ID!
   userBio: UserBioInput!
-  jobPosting: JobPostingInput!
   experiences: [ExperienceInput!]!
   education: [EducationInput!]!
   skillsets: SkillsetInput
@@ -96,7 +98,6 @@ input ProfileInput {
 type Profile {
   id: ID!
   userBio: UserBio!
-  jobPosting: JobPosting!
   experiences: [Experience!]!
   education: [Education!]!
   skillsets: Skillset
