@@ -1,10 +1,10 @@
 "use client";
 import { useState, FC } from 'react';
 import { gql, useMutation } from '@apollo/client';
-import { FormikProps } from 'formik';
-import { Experience } from '@/app/components/cvForm'
-import { Row, Button, Space, Drawer, theme } from 'antd';
-import { FireFilled } from '@ant-design/icons';
+import { FormikProps, useFormikContext } from 'formik';
+import { Experience, useFormContext } from '@/app/components/cvForm'
+import { Row, Button, Card, Space, Statistic, Drawer, Spin, Typography, theme } from 'antd';
+import { FireFilled, LoadingOutlined } from '@ant-design/icons';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
@@ -14,6 +14,7 @@ import 'formik-antd/es/checkbox/style';
 import DatePicker from 'formik-antd/es/date-picker';
 import 'formik-antd/es/date-picker/style';
 
+const { Text } = Typography;
 
 interface Experiences {
     experiences: Experience[]
@@ -25,18 +26,35 @@ interface ExperienceCardProps {
     onClick: () => {}
 }
 
-// const GENERATE_ACHIEVEMENTS = gql`
-//     mutation GenerateAchievements {
-
-//     }
-// `
+const GENERATE_ACHIEVEMENTS = gql`
+mutation enhanceAchievement($input: AchievementInput!) {
+    enhanceAchievement(input: $input) {
+      match {
+        matchFactor
+        reason
+      }
+      achievements
+    }
+  }
+`
 
 const ExperienceCard: FC<ExperienceCardProps> = ({
     props, index, onClick
 }: ExperienceCardProps) => {
-    // const [generateAchievements, { data, loading, error }] = useMutation(GENERATE_ACHIEVEMENTS);
+    const { formData } = useFormContext();
+    const [generateAchievements, { data, loading, error }] = useMutation(GENERATE_ACHIEVEMENTS, {
+        variables: {
+            input: {
+                userBio: formData.userBio,
+                jobPosting: formData.jobPosting,
+                experience: formData.experiences[index]
+            }
+        },
+    });
+    const { setFieldValue } = useFormikContext();
     const { token } = theme.useToken();
     const [open, setOpen] = useState(false);
+    const [newAchievements, setNewAchievements] = useState("");
 
     const showDrawer = () => {
         setOpen(true);
@@ -46,14 +64,13 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
         setOpen(false);
     };
 
-    const enhanceAchievements = () => {
-        // generateAchievements(
-        //     {
-        //         variables: {
+    const applyNewAchievements = () => {
+        setFieldValue(`experiences[${index}].achievements`, newAchievements);
+        onClose();
+    }
 
-        //         }
-        //     }
-        // )
+    const enhanceAchievements = () => {
+        generateAchievements();
         showDrawer();
     }
 
@@ -64,7 +81,33 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
         background: token.colorFillAlter,
         border: `1px solid ${token.colorBorderSecondary}`,
         borderRadius: token.borderRadiusLG,
-      };
+    };
+
+    const enhanceDrawerContent = () => {
+        return (
+            <>
+            <Card bordered={false}>
+                <Statistic
+                title="Match Factor"
+                value={data.enhanceAchievement.match.matchFactor}
+                precision={0}
+                valueStyle={{ color: '#1677ff' }}
+                suffix="/ 10"
+                />
+            </Card>
+            <Card size="small" title="Assessment" style={{ width: '100%' }}>
+                <p>{data.enhanceAchievement.match.reason}</p>
+            </Card>
+            <Card title="Enhanced achievements" style={{ width: '100%' }}>
+                <Typography.Title editable={{ onChange: s => setNewAchievements(s) }} level={5} style={{ margin: 0 }}>
+                    {data.enhanceAchievement.achievements}
+                </Typography.Title>
+            </Card>
+            </>
+        )
+    };
+
+    const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
     return (
         <div style={containerStyle}>
@@ -110,12 +153,15 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                 extra={
                 <Space>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button onClick={onClose} type="primary">
+                    <Button onClick={applyNewAchievements} type="primary">
                         Apply
                     </Button>
                 </Space>
                 }
-            >
+            >   
+                {loading ? <Spin indicator={antIcon} /> : null}
+                {error ? <Text type="danger">Ant Design (danger)</Text> : null}
+                {data && data.enhanceAchievement ? enhanceDrawerContent() : null}
             </Drawer>
         </div>
     )
