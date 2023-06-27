@@ -62,7 +62,7 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileIn
 	lineEscapedObjStr := escapeNewline(&objStr)
 	tabEscapedObjStr := escapeTabs(&lineEscapedObjStr)
 	filename := generateFileName(input.UserBio.FirstName, input.UserBio.LastName)
-	err = PutCV(tabEscapedObjStr, filename)
+	err = putCV(tabEscapedObjStr, filename)
 
 	if err != nil {
 		log.Println("ERROR: put CV failed -> ", err)
