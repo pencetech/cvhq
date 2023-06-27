@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"log"
 	"os"
 
@@ -30,9 +29,9 @@ type Resolver struct{
 	ProfileStore map[string]model.Profile
 }
 
-func getCV(filename string) (io.ReadCloser, error) {
-	accessKey := os.Getenv("AWS_ACCESS_KEY")
-	secretKey := os.Getenv("AWS_SECRET_KEY")
+func GetCV(filename string) ([]byte, error) {
+	accessKey := "AKIA5ZWKIYYRKP2EP4GM"
+	secretKey := "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"
 	options := s3.Options{
 		Region:      "eu-west-2",
 		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
@@ -49,10 +48,13 @@ func getCV(filename string) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	return res.Body, nil
+	defer res.Body.Close()
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	return buf.Bytes(), nil
 }
 
-func putCV(md string, filename string) error {
+func PutCV(md string, filename string) error {
 	accessKey := os.Getenv("AWS_ACCESS_KEY")
 	secretKey := os.Getenv("AWS_SECRET_KEY")
 	html := mdToHtml([]byte(md))
