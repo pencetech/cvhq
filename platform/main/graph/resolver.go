@@ -135,6 +135,6 @@ func htmlToPdf(source []byte) []byte {
 }
 
 func generateFileName(firstName string, lastName string) string {
-	return firstName + "_" + lastName + uuid.New().String()
+	return firstName + "_" + lastName + "_" + uuid.New().String() + ".pdf"
 
 }
