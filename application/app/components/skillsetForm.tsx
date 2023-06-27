@@ -1,11 +1,12 @@
 "use client";
+import { useState } from 'react';
 import { Formik } from "formik";
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Typography, Space, Row } from 'antd';
+import { Button, Typography, Space, Row, Modal } from 'antd';
 import { useFormContext } from "./cvForm";
 import * as Yup from 'yup';
 
@@ -34,11 +35,24 @@ const jobPostingValidationSchema = Yup.object().shape({
 
 const SkillsetForm = (props: OtherProps) => {
     const { message } = props;
-    const { activeStepIndex, setActiveStepIndex, formData, setFormData } = useFormContext();
+    const { activeStepIndex, setActiveStepIndex, formData, setFormData, generateCV, data, loading, error } = useFormContext();
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const formItemLayout = {
         labelCol: { span: 6 },
         wrapperCol: { span: 14 },
+    };
+
+    const showModal = () => {
+        setIsModalOpen(true);
+      };
+    
+    const handleOk = () => {
+    setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+    setIsModalOpen(false);
     };
 
     const handleBack = (e: any) => {
@@ -53,10 +67,11 @@ const SkillsetForm = (props: OtherProps) => {
             }}
             validationSchema={jobPostingValidationSchema}
             onSubmit={(values, actions) => {
-                const data = { ...formData, ...values };
-                setFormData(data);
-                // mutation here through formcontext
+                const reqData = { ...formData, ...values };
+                setFormData(reqData);
+                generateCV();
                 setActiveStepIndex(activeStepIndex + 1);
+                showModal();
             }}
         >
             { props => {
@@ -73,6 +88,11 @@ const SkillsetForm = (props: OtherProps) => {
                                 <Button type='primary' htmlType="submit">Generate CV</Button>
                             </Space>
                         </Row>
+                        <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                            <p>Some contents...</p>
+                            <p>Some contents...</p>
+                            <p>Some contents...</p>
+                        </Modal>
                     </Form>
                 )
             }}
