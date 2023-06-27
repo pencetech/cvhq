@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"log"
 	"os"
 
@@ -30,7 +29,7 @@ type Resolver struct{
 	ProfileStore map[string]model.Profile
 }
 
-func getCV(filename string) (io.ReadCloser, error) {
+func GetCV(filename string) ([]byte, error) {
 	accessKey := os.Getenv("AWS_ACCESS_KEY")
 	secretKey := os.Getenv("AWS_SECRET_KEY")
 	options := s3.Options{
@@ -49,10 +48,13 @@ func getCV(filename string) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	return res.Body, nil
+	defer res.Body.Close()
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	return buf.Bytes(), nil
 }
 
-func putCV(md string, filename string) error {
+func PutCV(md string, filename string) error {
 	accessKey := os.Getenv("AWS_ACCESS_KEY")
 	secretKey := os.Getenv("AWS_SECRET_KEY")
 	html := mdToHtml([]byte(md))
