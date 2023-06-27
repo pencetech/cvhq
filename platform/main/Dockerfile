@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . ./
 
-RUN sudo apt-get install wkhtmltopdf
+RUN apt update && apt -y install wkhtmltopdf
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /cvhq
 
