@@ -1,5 +1,6 @@
 "use client";
 import { useState, createContext, useContext } from 'react';
+import { gql, useMutation, MutationFunctionOptions, ApolloCache, ApolloError, OperationVariables, DefaultContext } from '@apollo/client';
 import { Steps, theme } from 'antd';
 import BioForm from './bioForm';
 import JobPostingForm from './jobPostingForm';
@@ -11,10 +12,14 @@ interface FormContextValue {
     activeStepIndex: number,
     setActiveStepIndex: React.Dispatch<React.SetStateAction<number>>,
     formData: FormData,
-    setFormData: React.Dispatch<React.SetStateAction<FormData>>
+    setFormData: React.Dispatch<React.SetStateAction<FormData>>,
+    generateCV: (options?: MutationFunctionOptions<any, OperationVariables, DefaultContext, ApolloCache<any>>) => Promise<any>,
+    data: any,
+    loading: boolean,
+    error: ApolloError | undefined
 }
 
-export const FormContext = createContext<FormContextValue | undefined >(undefined);
+export const FormContext = createContext<FormContextValue | undefined>(undefined);
 
 export const useFormContext = () => {
     const context = useContext(FormContext);
@@ -67,8 +72,18 @@ interface FormData {
     skillsets: Skillset
 };
 
+const GENERATE_CV = gql`
+mutation generateCV($input: ProfileInput!) {
+    generateCV(input: $input) {
+      type
+      content
+    }
+  }
+`
+
 const CvForm = () => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
+    const { token } = theme.useToken();
     const [formData, setFormData] = useState<FormData>({
         userBio: {
             firstName: '',
@@ -103,7 +118,17 @@ const CvForm = () => {
             skillsets: '',
         }
     });
-    const { token } = theme.useToken();
+    const [generateCV, { data, loading, error }] = useMutation(GENERATE_CV, {
+        variables: {
+            input: {
+                id: 1,
+                userBio: formData.userBio,
+                experiences: formData.experiences,
+                education: formData.education,
+                skillsets: formData.skillsets
+            }
+        }
+    })
 
     const rawItems = [
         {   
@@ -149,7 +174,7 @@ const CvForm = () => {
     };
 
     return (
-        <FormContext.Provider value={{activeStepIndex, setActiveStepIndex, formData, setFormData }}>
+        <FormContext.Provider value={{activeStepIndex, setActiveStepIndex, formData, setFormData, generateCV, data, loading, error }}>
                 <Steps
                     items={items}
                     current={activeStepIndex}

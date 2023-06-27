@@ -104,8 +104,7 @@ type Profile {
 }
 
 type CV {
-  type: String!
-  content: String!
+  filename: String!
 }
 
 input AchievementInput {

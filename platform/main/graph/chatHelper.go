@@ -43,9 +43,10 @@ var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }}
 	and "achievements" is the improved version of {{ .UserBio.FirstName }}'s achievements as stated in step 2.
 `
 
-var GenerateCVPrompt = `Generate a CV in markdown using the following information: %s, 
+var GenerateCVPrompt = `Generate a professional-looking CV in Markdown using the following information: %s, 
 where 'userBio' is the profile you'll put in the header, 'achievements' will be the main body of the CV, 
-'education' and 'skillsets' will be at the bottom. Make sure that the header is justify centered using div tags.`
+'education' and 'skillsets' will be at the bottom. Make sure that: 1. the whole CV is styled with <link> and <style> tags 2. The header is centered using <div> tags 
+3. Each section has a horizonal divider.`
 
 func InjectPrompt(prompt string, data any) (string, error) {
 	t := template.Must(template.New("prompt").Parse(prompt))
@@ -78,6 +79,8 @@ func ChatCompletion(content string) (string, error) {
 
 	return resp.Choices[0].Message.Content, nil
 }
+
+
 
 func escapeNewline(rawStr *string) string {
 	matchNewlines := regexp.MustCompile(`[\r\n]`)
