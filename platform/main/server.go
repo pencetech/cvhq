@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"context"
 	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -38,3 +39,29 @@ func main() {
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
+
+func CvCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	  filename := chi.URLParam(r, "filename")
+	  fileReader, err := graph.GetCV(filename)
+	  if err != nil {
+		http.Error(w, http.StatusText(404), 404)
+		return
+	  }
+	  ctx := context.WithValue(r.Context(), "file", fileReader)
+	  next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func getCV(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	file, ok := ctx.Value("file").([]byte)
+	if !ok {
+	  http.Error(w, http.StatusText(422), 422)
+	  return
+	}
+
+	header := w.Header()
+	header.Add("Content-Type", "application/pdf")
+	w.Write(file)
+  }
