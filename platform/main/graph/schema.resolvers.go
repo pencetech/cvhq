@@ -47,7 +47,6 @@ func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.A
 // GenerateCv is the resolver for the generateCV field.
 func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileInput) (*model.Cv, error) {
 	var cv model.Cv
-	cv.Type = "markdown"
 	inputBytes, err := json.Marshal(input)
 	if err != nil {
 		log.Println("ERROR: JSON marshaling failed -> ", err)
@@ -59,10 +58,18 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileIn
 		log.Println("ERROR: chat completion failed -> ", err)
 		return nil, err
 	}
-
+	fmt.Println("MD received")
 	lineEscapedObjStr := escapeNewline(&objStr)
 	tabEscapedObjStr := escapeTabs(&lineEscapedObjStr)
-	cv.Content = tabEscapedObjStr
+	filename := generateFileName(input.UserBio.FirstName, input.UserBio.LastName)
+	err = putCV(tabEscapedObjStr, filename)
+
+	if err != nil {
+		log.Println("ERROR: put CV failed -> ", err)
+		return nil, err
+	}
+
+	cv.Filename = filename
 	return &cv, nil
 }
 

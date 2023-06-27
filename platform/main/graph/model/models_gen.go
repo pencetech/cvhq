@@ -9,8 +9,7 @@ type AchievementInput struct {
 }
 
 type Cv struct {
-	Type    string `json:"type"`
-	Content string `json:"content"`
+	Filename string `json:"filename"`
 }
 
 type Education struct {
