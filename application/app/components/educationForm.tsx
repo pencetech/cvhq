@@ -75,10 +75,11 @@ const EducationForm = (props: OtherProps) => {
                                             <EducationCard index={index} onClick={() => arrayHelpers.remove(index)} />
                                         </React.Fragment>
                                     ))}
-                                        <Button 
+                                       <Button 
                                             type='dashed' 
                                             block
                                             onClick={() => arrayHelpers.push({
+                                                id: props.values.education.length + 1,
                                                 title: '',
                                                 isCurrent: false,
                                                 startDate: new Date(),

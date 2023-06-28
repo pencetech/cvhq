@@ -15,28 +15,16 @@ interface OtherProps {
     message: string;
 }
 
-const jobPostingValidationSchema = Yup.object().shape({
-    jobPosting: Yup.object().shape({
-        title: Yup.string()
-            .min(3, 'Too short!')
-            .max(50, 'Too long!')
-            .required('Required'),
-        company: Yup.string()
-            .min(3, 'Too short!')
-            .max(50, 'Too long!')
-            .required('Required'),
-        requirements: Yup.string()
-            .min(5, 'Too short!')
-            .required('Required'),
-        addOn: Yup.string()
-            .min(5, 'Too short!')
+const skillsetsValidationSchema = Yup.object().shape({
+    skillsets: Yup.object().shape({
+        skillsets: Yup.string().required("Required")
     })
 })
 
 const SkillsetForm = (props: OtherProps) => {
     const { message } = props;
-    const { activeStepIndex, setActiveStepIndex, formData, setFormData, generateCV, data, loading, error } = useFormContext();
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const { activeStepIndex, setActiveStepIndex, formData, setFormData, generateCV, loading, error, cvBlobUrl } = useFormContext();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const formItemLayout = {
         labelCol: { span: 6 },
@@ -53,7 +41,7 @@ const SkillsetForm = (props: OtherProps) => {
 
     const handleCancel = () => {
     setIsModalOpen(false);
-    };
+    };    
 
     const handleBack = (e: any) => {
         e.preventDefault();
@@ -65,12 +53,11 @@ const SkillsetForm = (props: OtherProps) => {
             initialValues={{
                 skillsets: formData.skillsets
             }}
-            validationSchema={jobPostingValidationSchema}
+            validationSchema={skillsetsValidationSchema}
             onSubmit={(values, actions) => {
                 const reqData = { ...formData, ...values };
                 setFormData(reqData);
                 generateCV();
-                setActiveStepIndex(activeStepIndex + 1);
                 showModal();
             }}
         >
@@ -85,14 +72,27 @@ const SkillsetForm = (props: OtherProps) => {
                         <Row justify='end'>
                             <Space>
                                 <Button onClick={e => handleBack(e)}>Back</Button>
-                                <Button type='primary' htmlType="submit">Generate CV</Button>
+                                <Button type='primary' htmlType="submit" loading={loading}>{loading ? "Generating..." : "Generate CV"}</Button>
                             </Space>
-                        </Row>
-                        <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-                            <p>Some contents...</p>
-                            <p>Some contents...</p>
-                            <p>Some contents...</p>
-                        </Modal>
+                        </Row> 
+                        {!loading ? <Modal
+                            title="You are once step closer to your dream job!"
+                            open={isModalOpen}
+                            onOk={handleOk}
+                            onCancel={handleCancel}
+                            footer={[
+                                <Button key="cancel" onClick={handleCancel}>Return</Button>,
+                                <Button 
+                                    key="download"
+                                    type="primary"
+                                    onClick={handleOk}
+                                    download
+                                    href={cvBlobUrl}
+                                >Download</Button>
+                            ]}
+                            >
+                                Please download here!
+                        </Modal> : null}
                     </Form>
                 )
             }}
