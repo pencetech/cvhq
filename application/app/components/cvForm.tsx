@@ -139,7 +139,7 @@ const CvForm = () => {
     })
 
     const fetchCV = async (filename: string) => {
-        const res = await fetch(`https://cvhq-platform-production/cv/${filename}`)
+        const res = await fetch(`https://cvhq-platform-production.fly.dev/cv/${filename}`)
         if (!res.ok) {
             // This will activate the closest `error.js` Error Boundary
             throw new Error('Failed to fetch data')

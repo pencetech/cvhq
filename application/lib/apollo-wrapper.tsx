@@ -15,7 +15,7 @@ import {
 
 function makeClient() {
   const httpLink = new HttpLink({
-      uri: "https://cvhq-platform-production/query",
+      uri: "https://cvhq-platform-production.fly.dev/query",
   });
 
   return new ApolloClient({
