@@ -47,13 +47,11 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
             input: {
                 userBio: formData.userBio,
                 jobPosting: formData.jobPosting,
-                experience: {
-                    id: index,
-                    ...formData.experiences[index]
+                experience: formData.experiences[index]
                 }
             }
-        },
-    });
+        }
+    );
     const { setFieldValue } = useFormikContext();
     const { token } = theme.useToken();
     const [open, setOpen] = useState(false);

@@ -35,6 +35,12 @@ func main() {
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", srv)
+	router.Route("/cv", func(r chi.Router) {
+		r.Route("/{filename}", func(r chi.Router) {
+			r.Use(CvCtx)
+			r.Get("/", getCV)
+		})
+	})
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))

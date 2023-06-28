@@ -16,7 +16,8 @@ interface FormContextValue {
     generateCV: (options?: MutationFunctionOptions<any, OperationVariables, DefaultContext, ApolloCache<any>>) => Promise<any>,
     data: any,
     loading: boolean,
-    error: ApolloError | undefined
+    error: ApolloError | undefined,
+    cvBlobUrl: string
 }
 
 export const FormContext = createContext<FormContextValue | undefined>(undefined);
@@ -46,6 +47,7 @@ export interface JobPosting {
     addOn: string;
 }
 export interface Experience {
+    id: number,
     title: string;
     company: string;
     isCurrent: boolean;
@@ -54,6 +56,7 @@ export interface Experience {
     achievements: string;
 }
 export interface Education {
+    id: number,
     subject: string,
     institution: string,
     degree: string,
@@ -65,6 +68,7 @@ export interface Skillset {
     skillsets: string
 }
 interface FormData {
+    id: number,
     userBio: UserBio,
     jobPosting: JobPosting,
     experiences: Experience[],
@@ -75,16 +79,17 @@ interface FormData {
 const GENERATE_CV = gql`
 mutation generateCV($input: ProfileInput!) {
     generateCV(input: $input) {
-      type
-      content
+      filename
     }
   }
 `
 
 const CvForm = () => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
+    const [cvBlobUrl, setCvBlobUrl] = useState("");
     const { token } = theme.useToken();
     const [formData, setFormData] = useState<FormData>({
+        id: 1,
         userBio: {
             firstName: '',
             lastName: '',
@@ -100,6 +105,7 @@ const CvForm = () => {
             addOn: ''
         },
         experiences: [{
+            id: 1,
             title: '',
             company: '',
             isCurrent: false,
@@ -108,6 +114,7 @@ const CvForm = () => {
             achievements: ''
         }],
         education: [{
+            id: 1,
             subject: '',
             institution: '',
             degree: '',
@@ -127,8 +134,20 @@ const CvForm = () => {
                 education: formData.education,
                 skillsets: formData.skillsets
             }
-        }
+        },
+        onCompleted: async (data: any) => await fetchCV(data.generateCV.filename)
     })
+
+    const fetchCV = async (filename: string) => {
+        const res = await fetch(`https://cvhq-platform-production/cv/${filename}`)
+        if (!res.ok) {
+            // This will activate the closest `error.js` Error Boundary
+            throw new Error('Failed to fetch data')
+        }
+        const blob = await res.blob();
+        const blobUrl = window.URL.createObjectURL(blob)
+        setCvBlobUrl(blobUrl);
+    }
 
     const rawItems = [
         {   
@@ -174,7 +193,7 @@ const CvForm = () => {
     };
 
     return (
-        <FormContext.Provider value={{activeStepIndex, setActiveStepIndex, formData, setFormData, generateCV, data, loading, error }}>
+        <FormContext.Provider value={{activeStepIndex, setActiveStepIndex, formData, setFormData, generateCV, data, loading, error, cvBlobUrl }}>
                 <Steps
                     items={items}
                     current={activeStepIndex}
