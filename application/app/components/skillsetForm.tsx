@@ -76,7 +76,7 @@ const SkillsetForm = (props: OtherProps) => {
                             </Space>
                         </Row> 
                         {!loading ? <Modal
-                            title="You are once step closer to your dream job!"
+                            title="You are one step closer to your dream job!"
                             open={isModalOpen}
                             onOk={handleOk}
                             onCancel={handleCancel}
