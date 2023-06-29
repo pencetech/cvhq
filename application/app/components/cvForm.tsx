@@ -50,9 +50,10 @@ export interface Experience {
     id: number,
     title: string;
     company: string;
+    sector: string;
     isCurrent: boolean;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     achievements: string;
 }
 export interface Education {
@@ -60,8 +61,8 @@ export interface Education {
     subject: string,
     institution: string,
     degree: string,
-    startDate: Date,
-    endDate: Date
+    startDate: string,
+    endDate: string
 }
 
 export interface Skillset {
@@ -108,9 +109,10 @@ const CvForm = () => {
             id: 1,
             title: '',
             company: '',
+            sector: '',
             isCurrent: false,
-            startDate: new Date(),
-            endDate: new Date(),
+            startDate: '',
+            endDate: '',
             achievements: ''
         }],
         education: [{
@@ -118,8 +120,8 @@ const CvForm = () => {
             subject: '',
             institution: '',
             degree: '',
-            startDate: new Date(),
-            endDate: new Date(),
+            startDate: '',
+            endDate: '',
         }],
         skillsets: {
             skillsets: '',

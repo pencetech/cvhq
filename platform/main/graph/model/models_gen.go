@@ -38,6 +38,8 @@ type EnhancedAchievement struct {
 type Experience struct {
 	ID           string  `json:"id"`
 	Title        string  `json:"title"`
+	Company      string  `json:"company"`
+	Sector       string  `json:"sector"`
 	IsCurrent    bool    `json:"isCurrent"`
 	StartDate    string  `json:"startDate"`
 	EndDate      *string `json:"endDate,omitempty"`
@@ -48,6 +50,7 @@ type ExperienceInput struct {
 	ID           string  `json:"id"`
 	Title        string  `json:"title"`
 	Company      string  `json:"company"`
+	Sector       string  `json:"sector"`
 	IsCurrent    bool    `json:"isCurrent"`
 	StartDate    string  `json:"startDate"`
 	EndDate      *string `json:"endDate,omitempty"`
@@ -57,6 +60,7 @@ type ExperienceInput struct {
 type JobPosting struct {
 	Title        string  `json:"title"`
 	Company      string  `json:"company"`
+	Sector       string  `json:"sector"`
 	Requirements string  `json:"requirements"`
 	AddOn        *string `json:"addOn,omitempty"`
 }

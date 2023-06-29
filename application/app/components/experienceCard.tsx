@@ -3,8 +3,8 @@ import { useState, useEffect, FC } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { FormikProps, useFormikContext } from 'formik';
 import { Experience, useFormContext } from '@/app/components/cvForm'
-import { Row, Button, Card, Space, Statistic, Drawer, Spin, Typography, theme } from 'antd';
-import { FireFilled, LoadingOutlined } from '@ant-design/icons';
+import { Row, Button, Card, Space, Statistic, Drawer, Spin, Typography, Modal, theme, Popover } from 'antd';
+import { FireFilled, InfoCircleOutlined, InfoCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
@@ -52,7 +52,7 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
             }
         }
     );
-    const { setFieldValue } = useFormikContext();
+    const { setFieldValue, values } = useFormikContext<Experiences>();
     const { token } = theme.useToken();
     const [open, setOpen] = useState(false);
     const [newAchievements, setNewAchievements] = useState("");
@@ -77,6 +77,13 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
     }
 
     const enhanceAchievements = () => {
+        if (!values.experiences[index].achievements) {
+            Modal.error({
+                title: 'Achievements empty',
+                content: 'Please fill in your achievements.',
+              });
+            return;
+        }
         generateAchievements();
         showDrawer();
     }
@@ -120,6 +127,12 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
         )
     };
 
+    const popoverContent = (
+        <div>
+          We suggest content based on your job experience and the job posting.
+        </div>
+      );
+
     const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
     return (
@@ -130,16 +143,21 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
             <Form.Item required={true} name={`experiences[${index}].company`} label='Company'>
                 <Input name={`experiences[${index}].company`} suffix />
             </Form.Item>
+            <Form.Item required={true} name={`experiences[${index}].sector`} label='Company sector'>
+                <Input name={`experiences[${index}].sector`} suffix />
+            </Form.Item>
             <Form.Item name={`experiences[${index}].isCurrent`} label='My current job'>
                 <Checkbox name={`experiences[${index}].isCurrent`} />
             </Form.Item>
             <Form.Item required={true} name={`experiences[${index}].startDate`} label='Start date'>
-                <DatePicker name={`experiences[${index}].startDate`} picker='month' />
-            </Form.Item>
-            <Form.Item name={`experiences[${index}].endDate`} label='endDate'>
                 <DatePicker 
+                    name={`experiences[${index}].startDate`} 
+                    picker='month' />
+            </Form.Item>
+            <Form.Item name={`experiences[${index}].endDate`} label='End date'>
+                <DatePicker
+                    picker="month"
                     name={`experiences[${index}].endDate`} 
-                    picker='month'
                     disabled={props.values.experiences[index].isCurrent ? true : false} />
             </Form.Item>
             <Form.Item required={true} name={`experiences[${index}].achievements`} label='Achievements'>
@@ -148,7 +166,8 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                         style={{ width: '100%' }} 
                         name={`experiences[${index}].achievements`} 
                         autoSize={{ minRows: 3, maxRows: 15 }}
-                        showCount />
+                        showCount
+                        maxLength={1000} />
                     <Button type="primary" size="large" icon={<FireFilled />} onClick={enhanceAchievements}>Enhance</Button>
                 </div>
             </Form.Item>
@@ -156,7 +175,14 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                 <Button onClick={onClick}>Remove</Button>
             </Row>
             <Drawer
-                title="Enhance achievements"
+                title={
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                    Enhance
+                    <Popover content={popoverContent} title="How does it work?">
+                        <InfoCircleTwoTone />
+                    </Popover>
+                    </div> 
+                }
                 placement="right"
                 width={720}
                 onClose={onClose}
