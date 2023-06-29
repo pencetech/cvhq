@@ -43,10 +43,34 @@ var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }}
 	and "achievements" is the improved version of {{ .UserBio.FirstName }}'s achievements as stated in step 2.
 `
 
-var GenerateCVPrompt = `Generate a professional-looking CV in Markdown using the following information: %s, 
-where 'userBio' is the profile you'll put in the header, 'achievements' will be the main body of the CV, 
-'education' and 'skillsets' will be at the bottom. Make sure that: 1. the whole CV is styled with <link> and <style> tags 2. The header is centered using <div> tags 
-3. Each section has a horizonal divider.`
+var GenerateCVPrompt = `Generate a CV in a markdown format using the following PROFILE: "${JSON.stringify(profile)}", following these exact and crucial steps, treating them as each of their own CV section,
+  
+(1)
+"userBio" is the profile you'll put in as the header section. Only this section should be visually centered using div tags. DO NOT leave out the opening and the closing of the div tags for this section. Make sure to include the name, email, phone and address inside the div tags. 
+
+(2)
+As a start, open this section with "---" as a line separator in the markdown format. Put the heading as "Experiences" above the line separator.
+  "achievements" will be the main body of the CV as the second section. Make sure to list the start and end date of each achievements. However, ONLY list the dates alongside the job role and its company, instead of listing it in each bullet point.
+  Write the dates in the format of: "From (Starting Date) to (end Date)", in a subscript format, alongside the job role and company line. See this example: 
+  (- **Software Engineer** at Starling Bank _(June 2023 - Present)_)
+  Only write the role and the company in the format of: (Job Role) at (Company)
+
+	Finally, close this section with "---" as a line separator in the markdown format
+  
+(3)
+Generate the "education" as the penultimate section of the CV. Put the heading as "Education" above the line separator.
+Write the dates of the education in the format of: "From (Starting Date) to (end Date)", in a subscript format, alongside the degree role and institution line. See this example: 
+  (- **MEng** at Harvard University _(June 2023 - Present)_)
+  Only write the degree and the institution in the format of: (Degree) at (Institution)
+
+(4) IF "skillsets" in the PROFILE is empty: Omit this section, as if it doesn't exist in the CV. in other words, DO NOT include any mention of skillsets, or include any "Skillsets" label or string in the markdown format or anywhere in the CV.  DO NOT put any skillsets heading and any Skillsets section in any way. DO NOT put any disclaimer as a result of this omission
+ELSE:
+Generate "skillsets" as the last section of the CV. Put the heading as "Skillsets"
+As the last section, do not insert "---" as a line separator in the markdown format
+
+In the case where "skillsets" is not in the CV, DO NOT insert "---" as the line separator after the "education" section.
+
+ DO NOT put any note or any disclaimer in the markdown or the result of this prompt.`
 
 func InjectPrompt(prompt string, data any) (string, error) {
 	t := template.Must(template.New("prompt").Parse(prompt))
