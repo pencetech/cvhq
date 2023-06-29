@@ -26,7 +26,7 @@ const experienceValidationSchema = Yup.object().shape({
             .required('Required'),
         isCurrent: Yup.boolean().required('Required'),
         startDate: Yup.string().required('Required'),
-        endDate: Yup.string().required('Required'),
+        endDate: Yup.string(),
         achievements: Yup.string()
             .min(5, 'Too short!')
             .required('Required')

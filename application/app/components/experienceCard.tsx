@@ -3,8 +3,8 @@ import { useState, useEffect, FC } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { FormikProps, useFormikContext } from 'formik';
 import { Experience, useFormContext } from '@/app/components/cvForm'
-import { Row, Button, Card, Space, Statistic, Drawer, Spin, Typography, theme } from 'antd';
-import { FireFilled, LoadingOutlined } from '@ant-design/icons';
+import { Row, Button, Card, Space, Statistic, Drawer, Spin, Typography, Modal, theme, Popover } from 'antd';
+import { FireFilled, InfoCircleOutlined, InfoCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
@@ -52,7 +52,7 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
             }
         }
     );
-    const { setFieldValue } = useFormikContext();
+    const { setFieldValue, values } = useFormikContext<Experiences>();
     const { token } = theme.useToken();
     const [open, setOpen] = useState(false);
     const [newAchievements, setNewAchievements] = useState("");
@@ -77,6 +77,13 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
     }
 
     const enhanceAchievements = () => {
+        if (!values.experiences[index].achievements) {
+            Modal.error({
+                title: 'Achievements empty',
+                content: 'Please fill in your achievements.',
+              });
+            return;
+        }
         generateAchievements();
         showDrawer();
     }
@@ -120,6 +127,12 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
         )
     };
 
+    const popoverContent = (
+        <div>
+          We suggest content based on your job experience and the job posting.
+        </div>
+      );
+
     const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
     return (
@@ -162,7 +175,14 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                 <Button onClick={onClick}>Remove</Button>
             </Row>
             <Drawer
-                title="Enhance achievements"
+                title={
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                    Enhance
+                    <Popover content={popoverContent} title="How does it work?">
+                        <InfoCircleTwoTone />
+                    </Popover>
+                    </div> 
+                }
                 placement="right"
                 width={720}
                 onClose={onClose}
