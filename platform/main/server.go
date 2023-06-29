@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"context"
+	"bytes"
 	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -40,6 +41,9 @@ func main() {
 			r.Use(CvCtx)
 			r.Get("/", getCV)
 		})
+		r.Route("/create", func(r chi.Router) {
+			r.Put("/", createCV)
+		})
 	})
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
@@ -57,6 +61,20 @@ func CvCtx(next http.Handler) http.Handler {
 	  ctx := context.WithValue(r.Context(), "file", fileReader)
 	  next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func createCV(w http.ResponseWriter, r *http.Request) {
+	markdown := r.Body
+	defer r.Body.Close()
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(markdown)
+	markdownBytes := buf.Bytes()
+	htmlByte := graph.MdToHtml(markdownBytes)
+	pdfByte := graph.HtmlToPdf(htmlByte)
+
+	header := w.Header()
+	header.Add("Content-Type", "application/pdf")
+	w.Write(pdfByte)
 }
 
 func getCV(w http.ResponseWriter, r *http.Request) {
