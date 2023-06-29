@@ -57,8 +57,8 @@ func GetCV(filename string) ([]byte, error) {
 func PutCV(md string, filename string) error {
 	accessKey := os.Getenv("AWS_ACCESS_KEY")
 	secretKey := os.Getenv("AWS_SECRET_KEY")
-	html := mdToHtml([]byte(md))
-	pdf := htmlToPdf(html)
+	html := MdToHtml([]byte(md))
+	pdf := HtmlToPdf(html)
 
 	body := bytes.NewReader(pdf)
 
@@ -84,7 +84,7 @@ func PutCV(md string, filename string) error {
 	return nil
 }
 
-func mdToHtml(source []byte) []byte {
+func MdToHtml(source []byte) []byte {
 	md := goldmark.New(
 		goldmark.WithExtensions(
 			extension.GFM,
@@ -110,7 +110,7 @@ func mdToHtml(source []byte) []byte {
 }
 
 // htmltopdf uses go-wkhtmltopdf to render the source html as a pdf
-func htmlToPdf(source []byte) []byte {
+func HtmlToPdf(source []byte) []byte {
 	// Create new PDF generator
 	pdfg, err := pdf.NewPDFGenerator()
 	if err != nil {
