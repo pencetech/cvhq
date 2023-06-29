@@ -13,6 +13,7 @@ type UserBio {
 type JobPosting {
   title: String!
   company: String!
+  sector: String!
   requirements: String!
   addOn: String
 }
@@ -20,6 +21,8 @@ type JobPosting {
 type Experience {
   id: ID!
   title: String!
+  company: String!
+  sector:  String!
   isCurrent: Boolean!
   startDate: String!
   endDate: String
@@ -64,6 +67,7 @@ input ExperienceInput {
   id: ID!
   title: String!
   company: String!
+  sector:  String!
   isCurrent: Boolean!
   startDate: String!
   endDate: String

@@ -130,16 +130,21 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
             <Form.Item required={true} name={`experiences[${index}].company`} label='Company'>
                 <Input name={`experiences[${index}].company`} suffix />
             </Form.Item>
+            <Form.Item required={true} name={`experiences[${index}].sector`} label='Company sector'>
+                <Input name={`experiences[${index}].sector`} suffix />
+            </Form.Item>
             <Form.Item name={`experiences[${index}].isCurrent`} label='My current job'>
                 <Checkbox name={`experiences[${index}].isCurrent`} />
             </Form.Item>
             <Form.Item required={true} name={`experiences[${index}].startDate`} label='Start date'>
-                <DatePicker name={`experiences[${index}].startDate`} picker='month' />
-            </Form.Item>
-            <Form.Item name={`experiences[${index}].endDate`} label='endDate'>
                 <DatePicker 
+                    name={`experiences[${index}].startDate`} 
+                    picker='month' />
+            </Form.Item>
+            <Form.Item name={`experiences[${index}].endDate`} label='End date'>
+                <DatePicker
+                    picker="month"
                     name={`experiences[${index}].endDate`} 
-                    picker='month'
                     disabled={props.values.experiences[index].isCurrent ? true : false} />
             </Form.Item>
             <Form.Item required={true} name={`experiences[${index}].achievements`} label='Achievements'>
@@ -148,7 +153,8 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                         style={{ width: '100%' }} 
                         name={`experiences[${index}].achievements`} 
                         autoSize={{ minRows: 3, maxRows: 15 }}
-                        showCount />
+                        showCount
+                        maxLength={1000} />
                     <Button type="primary" size="large" icon={<FireFilled />} onClick={enhanceAchievements}>Enhance</Button>
                 </div>
             </Form.Item>

@@ -22,9 +22,11 @@ const experienceValidationSchema = Yup.object().shape({
             .required('Required'),
         company: Yup.string()
             .required('Required'),
+        sector: Yup.string()
+            .required('Required'),
         isCurrent: Yup.boolean().required('Required'),
-        startDate: Yup.date().required('Required'),
-        endDate: Yup.date().required('Required'),
+        startDate: Yup.string().required('Required'),
+        endDate: Yup.string().required('Required'),
         achievements: Yup.string()
             .min(5, 'Too short!')
             .required('Required')

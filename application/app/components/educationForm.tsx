@@ -27,8 +27,8 @@ const educationValidationSchema = Yup.object().shape({
             degree: Yup.string()
                 .min(5, 'Too short!')
                 .required('Required'),
-            startDate: Yup.date().required('Required'),
-            endDate: Yup.date().required('Required'),
+            startDate: Yup.string().required('Required'),
+            endDate: Yup.string().required('Required'),
         })
     )
     .min(1, 'Need at least one education')

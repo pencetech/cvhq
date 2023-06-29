@@ -65,9 +65,11 @@ type ComplexityRoot struct {
 
 	Experience struct {
 		Achievements func(childComplexity int) int
+		Company      func(childComplexity int) int
 		EndDate      func(childComplexity int) int
 		ID           func(childComplexity int) int
 		IsCurrent    func(childComplexity int) int
+		Sector       func(childComplexity int) int
 		StartDate    func(childComplexity int) int
 		Title        func(childComplexity int) int
 	}
@@ -76,6 +78,7 @@ type ComplexityRoot struct {
 		AddOn        func(childComplexity int) int
 		Company      func(childComplexity int) int
 		Requirements func(childComplexity int) int
+		Sector       func(childComplexity int) int
 		Title        func(childComplexity int) int
 	}
 
@@ -209,6 +212,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Experience.Achievements(childComplexity), true
 
+	case "Experience.company":
+		if e.complexity.Experience.Company == nil {
+			break
+		}
+
+		return e.complexity.Experience.Company(childComplexity), true
+
 	case "Experience.endDate":
 		if e.complexity.Experience.EndDate == nil {
 			break
@@ -229,6 +239,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Experience.IsCurrent(childComplexity), true
+
+	case "Experience.sector":
+		if e.complexity.Experience.Sector == nil {
+			break
+		}
+
+		return e.complexity.Experience.Sector(childComplexity), true
 
 	case "Experience.startDate":
 		if e.complexity.Experience.StartDate == nil {
@@ -264,6 +281,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.JobPosting.Requirements(childComplexity), true
+
+	case "JobPosting.sector":
+		if e.complexity.JobPosting.Sector == nil {
+			break
+		}
+
+		return e.complexity.JobPosting.Sector(childComplexity), true
 
 	case "JobPosting.title":
 		if e.complexity.JobPosting.Title == nil {
@@ -1125,6 +1149,94 @@ func (ec *executionContext) fieldContext_Experience_title(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Experience_company(ctx context.Context, field graphql.CollectedField, obj *model.Experience) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Experience_company(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Company, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Experience_company(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Experience",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Experience_sector(ctx context.Context, field graphql.CollectedField, obj *model.Experience) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Experience_sector(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sector, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Experience_sector(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Experience",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Experience_isCurrent(ctx context.Context, field graphql.CollectedField, obj *model.Experience) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Experience_isCurrent(ctx, field)
 	if err != nil {
@@ -1374,6 +1486,50 @@ func (ec *executionContext) _JobPosting_company(ctx context.Context, field graph
 }
 
 func (ec *executionContext) fieldContext_JobPosting_company(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "JobPosting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _JobPosting_sector(ctx context.Context, field graphql.CollectedField, obj *model.JobPosting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_JobPosting_sector(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sector, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_JobPosting_sector(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "JobPosting",
 		Field:      field,
@@ -1886,6 +2042,10 @@ func (ec *executionContext) fieldContext_Profile_experiences(ctx context.Context
 				return ec.fieldContext_Experience_id(ctx, field)
 			case "title":
 				return ec.fieldContext_Experience_title(ctx, field)
+			case "company":
+				return ec.fieldContext_Experience_company(ctx, field)
+			case "sector":
+				return ec.fieldContext_Experience_sector(ctx, field)
 			case "isCurrent":
 				return ec.fieldContext_Experience_isCurrent(ctx, field)
 			case "startDate":
@@ -4354,7 +4514,7 @@ func (ec *executionContext) unmarshalInputExperienceInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "title", "company", "isCurrent", "startDate", "endDate", "achievements"}
+	fieldsInOrder := [...]string{"id", "title", "company", "sector", "isCurrent", "startDate", "endDate", "achievements"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4388,6 +4548,15 @@ func (ec *executionContext) unmarshalInputExperienceInput(ctx context.Context, o
 				return it, err
 			}
 			it.Company = data
+		case "sector":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sector"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Sector = data
 		case "isCurrent":
 			var err error
 
@@ -4830,6 +4999,16 @@ func (ec *executionContext) _Experience(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "company":
+			out.Values[i] = ec._Experience_company(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "sector":
+			out.Values[i] = ec._Experience_sector(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "isCurrent":
 			out.Values[i] = ec._Experience_isCurrent(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -4888,6 +5067,11 @@ func (ec *executionContext) _JobPosting(ctx context.Context, sel ast.SelectionSe
 			}
 		case "company":
 			out.Values[i] = ec._JobPosting_company(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "sector":
+			out.Values[i] = ec._JobPosting_sector(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

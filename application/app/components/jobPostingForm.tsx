@@ -79,10 +79,10 @@ const JobPostingForm = (props: OtherProps) => {
                             <Input name='jobPosting.sector' suffix />
                         </Form.Item>
                         <Form.Item required={true} name='jobPosting.requirements' label='Requirements'>
-                            <Input.TextArea showCount maxLength={300} name='jobPosting.requirements' autoSize={{ minRows: 3, maxRows: 15 }} />
+                            <Input.TextArea showCount maxLength={1000} name='jobPosting.requirements' autoSize={{ minRows: 3, maxRows: 15 }} />
                         </Form.Item>
                         <Form.Item name='jobPosting.addOn' label='Nice-to-haves'>
-                            <Input.TextArea name='jobPosting.addOn' showCount maxLength={300} autoSize={{ minRows: 3, maxRows: 15 }} />
+                            <Input.TextArea name='jobPosting.addOn' showCount maxLength={1000} autoSize={{ minRows: 3, maxRows: 15 }} />
                         </Form.Item>
                         <Row justify='end'>
                             <Space>
