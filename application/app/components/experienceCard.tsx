@@ -79,10 +79,13 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
     }
 
     const enhanceAchievements = () => {
-        if (!values.experiences[index].achievements) {
+        if (!values.experiences[index].title ||
+            !values.experiences[index].company ||
+            !values.experiences[index].sector ||
+            !values.experiences[index].achievements) {
             Modal.error({
-                title: 'Achievements empty',
-                content: 'Please fill in your achievements.',
+                title: 'Experience incomplete',
+                content: 'Please complete your experience.',
               });
             return;
         }

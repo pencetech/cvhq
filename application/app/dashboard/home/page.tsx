@@ -30,7 +30,7 @@ const HomePage = async () => {
     return {
       id: obj.profile_id,
       description: obj.profile_name,
-      createdAt: obj.created_at
+      createdAt: obj.inserted_at
     }})
   
   return (

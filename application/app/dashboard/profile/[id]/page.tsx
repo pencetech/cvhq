@@ -79,10 +79,12 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
                 throw error;
             }
 
-            return data?.map(file => ({
+            const files = data?.map(file => ({
                 filename: file.filename,
                 createdAt: file.inserted_at
             }))
+            console.log(files)
+            return files;
         }
     }
 
@@ -132,7 +134,6 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
                             skillsets: skill[0].skillset
                         }
                     } as FormData
-                    console.log(data)
                     return data;
                 }
             }

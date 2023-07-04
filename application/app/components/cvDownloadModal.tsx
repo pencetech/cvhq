@@ -2,10 +2,11 @@
 import { Button, Modal } from "antd";
 import { useRouter } from "next/navigation";
 
-const CvDownloadModal = ({ open, onOk, onCancel, blobUrl }: { 
+const CvDownloadModal = ({ open, onOk, onCancel, filename, blobUrl }: { 
     open: boolean, 
     onOk: (() => void) | undefined,
     onCancel: (() => void) | undefined,
+    filename: string
     blobUrl: string
 }) => {
     
@@ -26,7 +27,7 @@ const CvDownloadModal = ({ open, onOk, onCancel, blobUrl }: {
                     key="download"
                     type="primary"
                     onClick={onOk}
-                    download
+                    download={filename}
                     href={blobUrl}
                 >Download</Button>,
                 <Button
