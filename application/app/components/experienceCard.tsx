@@ -2,9 +2,9 @@
 import { useState, useEffect, FC } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { FormikProps, useFormikContext } from 'formik';
-import { Experience, useFormContext } from '@/app/components/cvForm'
+import { Experience, JobPosting, UserBio } from '@/models/cv';
 import { Row, Button, Card, Space, Statistic, Drawer, Spin, Typography, Modal, theme, Popover } from 'antd';
-import { FireFilled, InfoCircleOutlined, InfoCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
+import { FireFilled, InfoCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
@@ -21,7 +21,10 @@ interface Experiences {
 }
 
 interface ExperienceCardProps {
-    props: FormikProps<Experiences>, 
+    formProps: FormikProps<Experiences>, 
+    value: Experience,
+    userBio: UserBio,
+    jobPosting: JobPosting,
     index: number,
     onClick: () => {}
 }
@@ -39,15 +42,14 @@ mutation enhanceAchievement($input: AchievementInput!) {
 `
 
 const ExperienceCard: FC<ExperienceCardProps> = ({
-    props, index, onClick
+    formProps, value, userBio, jobPosting, index, onClick
 }: ExperienceCardProps) => {
-    const { formData } = useFormContext();
     const [generateAchievements, { data, loading, error }] = useMutation(GENERATE_ACHIEVEMENTS, {
         variables: {
             input: {
-                userBio: formData.userBio,
-                jobPosting: formData.jobPosting,
-                experience: formData.experiences[index]
+                userBio: userBio,
+                jobPosting: jobPosting,
+                experience: value
                 }
             }
         }
@@ -129,9 +131,9 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
 
     const popoverContent = (
         <div>
-          We suggest content based on your job experience and the job posting.
+            We suggest content based on your job experience and the job posting.
         </div>
-      );
+    );
 
     const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -158,7 +160,7 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                 <DatePicker
                     picker="month"
                     name={`experiences[${index}].endDate`} 
-                    disabled={props.values.experiences[index].isCurrent ? true : false} />
+                    disabled={formProps.values.experiences[index].isCurrent ? true : false} />
             </Form.Item>
             <Form.Item required={true} name={`experiences[${index}].achievements`} label='Achievements'>
                 <div style={{ display: "flex", gap: "12px" }}>
