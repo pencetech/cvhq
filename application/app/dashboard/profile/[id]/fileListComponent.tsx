@@ -1,4 +1,5 @@
 "use client";
+import { useState } from 'react';
 import { FilePdfTwoTone, DownloadOutlined } from '@ant-design/icons';
 import { List, Button, Row, Divider, Card } from 'antd';
 import { CvFile } from '@/models/cv';
@@ -13,7 +14,7 @@ const FileListComponent = ({ files, onFileClick, onGenerateClick, loading }: {
   return (
   <Card>
     <Row justify='end'>
-      <Button type='primary' onClick={() => onGenerateClick()}>Generate CV</Button>
+      <Button type='primary' loading={loading} onClick={() => onGenerateClick()}>Generate CV</Button>
     </Row> 
     <Divider />
     <List
@@ -24,7 +25,6 @@ const FileListComponent = ({ files, onFileClick, onGenerateClick, loading }: {
           actions={[
             <Button 
               key="download" 
-              loading={loading}
               type="primary" 
               icon={<DownloadOutlined />} 
               onClick={() => onFileClick(item.filename)} />
@@ -32,7 +32,7 @@ const FileListComponent = ({ files, onFileClick, onGenerateClick, loading }: {
         >
           <List.Item.Meta
             avatar={<FilePdfTwoTone twoToneColor="#eb2f96" />}
-            title={<a download href={`https://cvhq-platform-production.fly.dev/cv/${item.filename}`}>{item.filename}</a>}
+            title={<a download={item.filename} href={`https://cvhq-platform-production.fly.dev/cv/${item.filename}`}>{item.filename}</a>}
             description={`Created at ${item.createdAt}`}
           />
         </List.Item>

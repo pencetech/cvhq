@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { UserOutlined, RightOutlined, FileTextOutlined, LoadingOutlined } from '@ant-design/icons';
+import { RightOutlined, FileTextOutlined, LoadingOutlined, HomeOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Logo from '@/public/CVHQ.png';
 import Breadcrumbs from '../components/breadcrumbs';
@@ -8,7 +8,7 @@ import type { MenuProps } from 'antd';
 import { Layout, Menu, Button, theme, Spin } from 'antd';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -30,6 +30,7 @@ const DashboardLayout = ({
   const [user, setUser] = useState("");
   const [profiles, setProfiles] = useState<ProfileData[]>([]);
   const pathname = usePathname();
+  const router = useRouter();
   const supabase = createClientComponentClient<Database>();
 
   useEffect(() => {
@@ -89,18 +90,30 @@ const DashboardLayout = ({
 
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-  const loadingProfileIcon = loading ? <Spin indicator={antIcon} /> : null
+  const loadingProfileIcon = loading ? <Spin indicator={antIcon} /> : <FileTextOutlined />
 
   const items: MenuItem[] = [
-      getItem("Home", "home", <FileTextOutlined />), 
+      getItem("Home", "home", <HomeOutlined />), 
       getItem("Profiles", "profile", loadingProfileIcon, profiles.map(p => {
         return getItem(p.description, p.id)
       }))
   ]
 
-  const handleClick: MenuProps['onClick'] = (e) => {
-    console.log('click ', e);
+  const handleClick: MenuProps['onClick'] = (menu: any) => {
+    console.log(menu);
+    const reversed = menu.keyPath.reverse();
+    const basePath = "/dashboard/"
+    const suffixPath = reversed.join('/');
+    const completePath = basePath + suffixPath;
+    router.push(completePath);
   };
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      throw error;
+    }
+  }
 
   const selectedKeys = () => {
     const asPathNoQuery = pathname.split("?")[0];
@@ -120,7 +133,7 @@ const DashboardLayout = ({
     // TODO: delete this once routing is fixed
     crumbList = crumbList.slice(1);
 
-    return crumbList.map(crumb => { return crumb.title; })
+    return crumbList.map(crumb => { return crumb.title; }).reverse()
   };
 
   return (
@@ -134,15 +147,7 @@ const DashboardLayout = ({
                         fill={false}
                         priority 
                     />
-                    <Button 
-                        href="" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        shape='round'
-                        icon={<RightOutlined />}
-                    >
-                        Did we land you an interview?
-                    </Button>
+                    <Button type="text" style={{ color: "#FFFFFF" }} onClick={handleSignOut}>Sign out</Button>
                 </div>
       </Header>
       <Layout hasSider>
@@ -152,7 +157,6 @@ const DashboardLayout = ({
             mode="inline"
             defaultSelectedKeys={['home']}
             selectedKeys={selectedKeys()}
-            defaultOpenKeys={['sub1']}
             style={{ height: '100%', borderRight: 0 }}
             items={items}
           />

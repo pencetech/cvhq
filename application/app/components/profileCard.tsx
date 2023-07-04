@@ -15,8 +15,18 @@ const ProfileCard = ({ profileId, profile }: { profileId: number, profile: FormD
     const [messageApi, contextHolder] = message.useMessage();
     const { token } = theme.useToken();
     const supabase = createClientComponentClient<Database>();
+    const [formData, setFormData] = useState<FormData>({
+        userBio: profile.userBio,
+        jobPosting: profile.jobPosting,
+        experiences: profile.experiences,
+        education: profile.education,
+        skillsets: profile.skillsets
+    });
     
     const setUserBio = async (user: UserBio) => {
+        const values = { userBio: user }
+        const data = { ...formData, ...values };
+        setFormData(data);
         await supabase.from('user_bio')
         .update({
             first_name: user.firstName,
@@ -29,6 +39,9 @@ const ProfileCard = ({ profileId, profile }: { profileId: number, profile: FormD
     }
 
     const setJobPosting = async (job: JobPosting) => {
+        const values = { jobPosting: job }
+        const data = { ...formData, ...values };
+        setFormData(data);
         await supabase.from('job_posting')
         .update({
             title: job.title,
@@ -41,6 +54,9 @@ const ProfileCard = ({ profileId, profile }: { profileId: number, profile: FormD
     }
 
     const setExperienceArray = async (exp: Experience[])  => {
+        const values = { experiences: exp }
+        const data = { ...formData, ...values };
+        setFormData(data);
         await Promise.all(exp.map(async e => await setExperience(e)))
         messageApi.success("Experiences saved!");
     }
@@ -58,8 +74,11 @@ const ProfileCard = ({ profileId, profile }: { profileId: number, profile: FormD
         }).eq("profile_id", profileId);
     }
 
-    const setEducationArray = async (exp: Education[])  => {
-        await Promise.all(exp.map(async e => await setEducation(e)))
+    const setEducationArray = async (ed: Education[])  => {
+        const values = { education: ed }
+        const data = { ...formData, ...values };
+        setFormData(data);
+        await Promise.all(ed.map(async e => await setEducation(e)))
         messageApi.success("Education saved!");
     }
 
@@ -75,6 +94,9 @@ const ProfileCard = ({ profileId, profile }: { profileId: number, profile: FormD
     }
 
     const setSkillset = async (sk: Skillset) => {
+        const values = { skillset: sk }
+        const data = { ...formData, ...values };
+        setFormData(data);
         await supabase.from('skillset')
         .update({
             skillsets: sk.skillsets
@@ -98,34 +120,34 @@ const ProfileCard = ({ profileId, profile }: { profileId: number, profile: FormD
         {   
             key: 'bio',
             label: 'Your Bio',
-            content: <BioForm message="Your Bio" value={profile.userBio} onSubmit={setUserBio} actions={saveButton}/>
+            content: <BioForm message="Your Bio" value={formData.userBio} onSubmit={setUserBio} actions={saveButton}/>
         },
         {
             key: 'job',
             label: 'Job Posting',
-            content: <JobPostingForm message="Job Posting" value={profile.jobPosting} onSubmit={setJobPosting} actions={saveButton} />
+            content: <JobPostingForm message="Job Posting" value={formData.jobPosting} onSubmit={setJobPosting} actions={saveButton} />
         },
         {
             key: 'experiences',
             label: 'Experiences',
             content: <ExperiencesForm 
                 message="Experiences" 
-                value={profile.experiences} 
+                value={formData.experiences} 
                 onSubmit={setExperienceArray} 
                 actions={saveButton} 
-                userBio={profile.userBio}
-                jobPosting={profile.jobPosting}
+                userBio={formData.userBio}
+                jobPosting={formData.jobPosting}
             />
         },
         {
             key: 'education',
             label: 'Education',
-            content: <EducationForm message="Education" value={profile.education} onSubmit={setEducationArray} actions={saveButton} />
+            content: <EducationForm message="Education" value={formData.education} onSubmit={setEducationArray} actions={saveButton} />
         },
         {
             key: 'skillsets',
             label: 'Skillsets',
-            content: <SkillsetForm message="Skillsets" value={profile.skillsets} onSubmit={setSkillset} actions={saveButton}  />
+            content: <SkillsetForm message="Skillsets" value={formData.skillsets} onSubmit={setSkillset} actions={saveButton}  />
         }
     ]
 

@@ -22,13 +22,13 @@ mutation generateCV($input: ProfileInput!) {
 
 const CvForm = ({ profileId }: { profileId: number }) => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
+    const [filename, setFilename] = useState("default.pdf");
     const [cvBlobUrl, setCvBlobUrl] = useState("");
     const { token } = theme.useToken();
     const supabase = createClientComponentClient<Database>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const [formData, setFormData] = useState<FormData>({
-        id: 1,
         userBio: {
             firstName: '',
             lastName: '',
@@ -44,7 +44,6 @@ const CvForm = ({ profileId }: { profileId: number }) => {
             addOn: ''
         },
         experiences: [{
-            id: 1,
             title: '',
             company: '',
             sector: '',
@@ -54,7 +53,6 @@ const CvForm = ({ profileId }: { profileId: number }) => {
             achievements: ''
         }],
         education: [{
-            id: 1,
             subject: '',
             institution: '',
             degree: '',
@@ -180,6 +178,13 @@ const CvForm = ({ profileId }: { profileId: number }) => {
     };
     
     const handleCompleteGenerate = async (filename: string) => {
+        await supabase
+            .from("cv_file")
+            .insert({
+                filename: filename,
+                profile_id: profileId
+            });
+        setFilename(filename)
         await fetchCV(filename);
     }
 
@@ -271,7 +276,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
         />
         {contextHolder}
         <div style={contentStyle}>{rawItems[activeStepIndex].content}</div>
-        {!loading ? <CvDownloadModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} blobUrl={cvBlobUrl} /> : null}
+        {!loading ? <CvDownloadModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} filename={filename} blobUrl={cvBlobUrl} /> : null}
         </>
     )
 }
