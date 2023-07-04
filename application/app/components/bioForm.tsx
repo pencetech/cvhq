@@ -9,60 +9,40 @@ import 'formik-antd/es/select/style';
 import { withFormikDevtools } from "formik-devtools-extension";
 import { Button, Row, Typography } from 'antd';
 import * as Yup from 'yup';
-import { useFormContext } from './cvForm';
+import { UserBio } from "@/models/cv";
+import { PhoneOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
 interface OtherProps {
     message: string;
-}
-
-interface UserBio {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string[];
-    address: string;
+    value: UserBio;
+    onSubmit: (value: UserBio) => Promise<void>;
+    actions: React.ReactNode;
 }
 
 const bioValidationSchema = Yup.object().shape({
-    userBio: Yup.object().shape({
-        firstName: Yup.string()
-            .min(2, 'Too short!')
-            .max(50, 'Too long!')
-            .required('Required'),
-        lastName: Yup.string()
-            .min(2, 'Too short!')
-            .max(50, 'Too long!')
-            .required('Required'),
-        email: Yup.string()
-            .email('Invalid email')
-            .required('Required'),
-        phone: Yup.array().of(Yup.string()
-            .required('Required'))
-            .min(2, "Need complete phone number."),
-        address: Yup.string()
-            .min(3, 'Too short!')
-            .required('Required')
-    })
+    firstName: Yup.string()
+        .min(2, 'Too short!')
+        .max(50, 'Too long!')
+        .required('Required'),
+    lastName: Yup.string()
+        .min(2, 'Too short!')
+        .max(50, 'Too long!')
+        .required('Required'),
+    email: Yup.string()
+        .email('Invalid email')
+        .required('Required'),
+    phone: Yup.string()
+        .required('Required')
+        .min(2, "Need complete phone number."),
+    address: Yup.string()
+        .min(3, 'Too short!')
+        .required('Required')
 })
 
 const BioForm = (props: OtherProps) => {
-    const { message } = props;
-    const { activeStepIndex, setActiveStepIndex, formData, setFormData } = useFormContext();
-
-    const prefixSelector = (
-        <Form.Item name="userBio.phone[0]" noStyle>
-            <Select name="userBio.phone[0]" style={{ width: 70 }}>
-            <Option value="44">+44</Option>
-            <Option value="91">+91</Option>
-            <Option value="62">+62</Option>
-            <Option value="65">+65</Option>
-            <Option value="852">+852</Option>
-            <Option value="1">+1</Option>
-            </Select>
-        </Form.Item>
-    );
+    const { message, value, onSubmit, actions } = props;
 
     const formItemLayout = {
         labelCol: { span: 6 },
@@ -71,14 +51,10 @@ const BioForm = (props: OtherProps) => {
 
     return (
         <Formik
-            initialValues={{
-                userBio: formData.userBio
-            }}
+            initialValues={value}
             validationSchema={bioValidationSchema}
-            onSubmit={(values, actions) => {
-                const data = { ...formData, ...values };
-                setFormData(data);
-                setActiveStepIndex(activeStepIndex + 1);
+            onSubmit={async (values, actions) => {
+                await onSubmit(values);
             }}
         >
             { props => {
@@ -88,23 +64,23 @@ const BioForm = (props: OtherProps) => {
                             {...formItemLayout}
                         >   
                             <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
-                            <Form.Item required={true} name='userBio.firstName' label='First name'>
-                                <Input name='userBio.firstName' placeholder='Jane' suffix />
+                            <Form.Item required={true} name='firstName' label='First name'>
+                                <Input name='firstName' placeholder='Jane' suffix />
                             </Form.Item>
-                            <Form.Item required={true} name='userBio.lastName' label='Last name'>
-                                <Input name='userBio.lastName' placeholder='Doe' suffix />
+                            <Form.Item required={true} name='lastName' label='Last name'>
+                                <Input name='lastName' placeholder='Doe' suffix />
                             </Form.Item>
-                            <Form.Item required={true} name='userBio.email' label='Email address'>
-                                <Input name='userBio.email' placeholder='jane.doe@example.com' suffix />
+                            <Form.Item required={true} name='email' label='Email address'>
+                                <Input prefix="@" name='email' placeholder='jane.doe@example.com' suffix />
                             </Form.Item>
-                            <Form.Item required={true} label='Telephone no.' name='userBio.phone[1]'>
-                                <Input addonBefore={prefixSelector} name='userBio.phone[1]' suffix />
+                            <Form.Item required={true} label='Telephone no.' name='phone'>
+                                <Input prefix={<PhoneOutlined className="site-form-item-icon" />} name='phone' />
                             </Form.Item>
-                            <Form.Item required={true} label='Home address' name='userBio.address'>
-                                <Input.TextArea showCount maxLength={100} name='userBio.address' />
+                            <Form.Item required={true} label='Home address' name='address'>
+                                <Input.TextArea showCount maxLength={100} name='address' />
                             </Form.Item>
                             <Row justify='end'>
-                                <Button type='primary' htmlType='submit'>Save & Next</Button>
+                                {actions}
                             </Row>
                         </Form>
                 )

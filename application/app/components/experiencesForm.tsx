@@ -6,11 +6,19 @@ import { Button, Row, Space, Typography } from 'antd';
 import ExperienceCard from '@/app/components/experienceCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
-import { useFormContext } from "./cvForm";
 import * as Yup from 'yup';
+import { Experience, JobPosting, UserBio } from '@/models/cv';
 
+type ExperienceFormSchema = {
+    experiences: Experience[]
+}
 interface OtherProps {
     message: string;
+    value: Experience[];
+    userBio: UserBio;
+    jobPosting: JobPosting;
+    onSubmit: (value: Experience[]) => void;
+    actions: React.ReactNode;
 }
 
 const experienceValidationSchema = Yup.object().shape({
@@ -37,13 +45,7 @@ const experienceValidationSchema = Yup.object().shape({
 });
 
 const ExperiencesForm = (props: OtherProps) => {
-    const { message } = props;
-    const { activeStepIndex, setActiveStepIndex, formData, setFormData } = useFormContext();
-
-    const handleBack = (e: any) => {
-        e.preventDefault();
-        setActiveStepIndex(activeStepIndex - 1);
-    }
+    const { message, onSubmit, value, userBio, jobPosting, actions } = props;
 
     const formItemLayout = {
         labelCol: { span: 6 },
@@ -53,13 +55,11 @@ const ExperiencesForm = (props: OtherProps) => {
     return (
         <Formik
             initialValues={{
-                experiences: formData.experiences
+                experiences: value
             }}
             validationSchema={experienceValidationSchema}
             onSubmit={(values, actions) => {
-                const data = { ...formData, ...values };
-                setFormData(data);
-                setActiveStepIndex(activeStepIndex + 1);
+                onSubmit(values.experiences)
             }}
         >   
             { props => {
@@ -73,7 +73,14 @@ const ExperiencesForm = (props: OtherProps) => {
                                 <Space direction='vertical' className='w-full'>
                                     {props.values.experiences.map((experience, index) => (
                                         <React.Fragment key={index}>
-                                            <ExperienceCard props={props} index={index} onClick={() => arrayHelpers.remove(index)} />
+                                            <ExperienceCard 
+                                                formProps={props} 
+                                                index={index} 
+                                                onClick={() => arrayHelpers.remove(index)}
+                                                userBio={userBio}
+                                                jobPosting={jobPosting}
+                                                value={props.values.experiences[index]}
+                                            />
                                         </React.Fragment>
                                     ))}
                                         <Button 
@@ -89,10 +96,7 @@ const ExperiencesForm = (props: OtherProps) => {
                                             })}
                                         >+ Add experience</Button>
                                         <Row justify='end'>
-                                            <Space>
-                                                <Button onClick={e => handleBack(e)}>Back</Button>
-                                                <Button type='primary' htmlType='submit'>Save & Next</Button>
-                                            </Space>
+                                            {actions}
                                         </Row>
                                 </Space>
                             )}

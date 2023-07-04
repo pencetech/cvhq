@@ -5,23 +5,21 @@ import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Typography, Row } from 'antd';
-import { Skillset } from '@/models/cv';
+import { Typography, Row, Button } from 'antd';
+import { ProfileName } from '@/models/cv';
 import * as Yup from 'yup';
 
 interface OtherProps {
     message: string;
-    value: Skillset;
-    onSubmit: (value: Skillset) => Promise<void>;
-    actions: React.ReactNode;
+    onSubmit: (value: ProfileName) => Promise<void>;
 }
 
-const skillsetsValidationSchema = Yup.object().shape({
-    skillsets: Yup.string().required("Required")
+const profileNameValidationSchema = Yup.object().shape({
+    profileName: Yup.string().required("Required")
 })
 
-const SkillsetForm = (props: OtherProps) => {
-    const { message, onSubmit, value, actions } = props;
+const ProfileNameForm = (props: OtherProps) => {
+    const { message, onSubmit } = props;
 
     const formItemLayout = {
         labelCol: { span: 6 },
@@ -30,8 +28,10 @@ const SkillsetForm = (props: OtherProps) => {
 
     return (
         <Formik
-            initialValues={value}
-            validationSchema={skillsetsValidationSchema}
+            initialValues={{
+                profileName: ''
+            }}
+            validationSchema={profileNameValidationSchema}
             onSubmit={(values, actions) => {
                 onSubmit(values);
             }}
@@ -40,12 +40,14 @@ const SkillsetForm = (props: OtherProps) => {
                 withFormikDevtools(props);
                 return (
                     <Form {...formItemLayout}>
-                        <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
-                        <Form.Item required={true} name='skillsets' label='Skillsets'>
-                            <Input.TextArea name='skillsets' showCount autoSize={{ minRows: 3, maxRows: 15 }}/>
+                        <p style={{ margin: '0 0 12px 0' }}>{message}</p>
+                        <Form.Item required={true} name='profileName' label='Profile name'>
+                            <Input name='profileName' />
                         </Form.Item>
                         <Row justify='end'>
-                            {actions}
+                            <Button type='primary' htmlType='submit'>
+                                Create
+                            </Button>
                         </Row> 
                     </Form>
                 )
@@ -53,4 +55,4 @@ const SkillsetForm = (props: OtherProps) => {
         </Formik>);
 }
 
-export default SkillsetForm;
+export default ProfileNameForm;

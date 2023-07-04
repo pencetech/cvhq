@@ -6,11 +6,18 @@ import { Button, Typography, Space, Row } from 'antd';
 import EducationCard from '@/app/components/educationCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
-import { useFormContext } from "./cvForm";
 import * as Yup from 'yup';
+import { Education } from '@/models/cv';
 
+
+type EducationFormSchema = {
+    education: Education[]
+}
 interface OtherProps {
     message: string;
+    value: Education[];
+    onSubmit: (value: Education[]) => Promise<void>;
+    actions: React.ReactNode;
 }
 
 const educationValidationSchema = Yup.object().shape({
@@ -36,13 +43,7 @@ const educationValidationSchema = Yup.object().shape({
 })
 
 const EducationForm = (props: OtherProps) => {
-    const { message } = props;
-    const { activeStepIndex, setActiveStepIndex, formData, setFormData } = useFormContext();
-
-    const handleBack = (e: any) => {
-        e.preventDefault();
-        setActiveStepIndex(activeStepIndex - 1);
-    }
+    const { message, onSubmit, value, actions } = props;
 
     const formItemLayout = {
         labelCol: { span: 6 },
@@ -52,13 +53,11 @@ const EducationForm = (props: OtherProps) => {
     return (
         <Formik
             initialValues={{
-                education: formData.education
+                education: value
             }}
             validationSchema={educationValidationSchema}
-            onSubmit={(values, actions) => {
-                const data = { ...formData, ...values };
-                setFormData(data);
-                setActiveStepIndex(activeStepIndex + 1);
+            onSubmit={async (values, actions) => {
+                await onSubmit(values.education)
             }}
         >   
             { props => {
@@ -88,10 +87,7 @@ const EducationForm = (props: OtherProps) => {
                                             })}
                                         >+ Add education</Button>
                                         <Row justify='end'>
-                                            <Space>
-                                                <Button onClick={e => handleBack(e)}>Back</Button>
-                                                <Button type='primary' htmlType='submit'>Save & Next</Button>
-                                            </Space>
+                                            {actions}
                                         </Row>
                                 </Space>
                             )}
