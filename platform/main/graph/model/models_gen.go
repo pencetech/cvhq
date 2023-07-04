@@ -13,21 +13,21 @@ type Cv struct {
 }
 
 type Education struct {
-	ID          string `json:"id"`
-	Subject     string `json:"subject"`
-	Institution string `json:"institution"`
-	Degree      string `json:"degree"`
-	StartDate   string `json:"startDate"`
-	EndDate     string `json:"endDate"`
+	ID          *string `json:"id,omitempty"`
+	Subject     string  `json:"subject"`
+	Institution string  `json:"institution"`
+	Degree      string  `json:"degree"`
+	StartDate   string  `json:"startDate"`
+	EndDate     string  `json:"endDate"`
 }
 
 type EducationInput struct {
-	ID          string `json:"id"`
-	Subject     string `json:"subject"`
-	Institution string `json:"institution"`
-	Degree      string `json:"degree"`
-	StartDate   string `json:"startDate"`
-	EndDate     string `json:"endDate"`
+	ID          *string `json:"id,omitempty"`
+	Subject     string  `json:"subject"`
+	Institution string  `json:"institution"`
+	Degree      string  `json:"degree"`
+	StartDate   string  `json:"startDate"`
+	EndDate     string  `json:"endDate"`
 }
 
 type EnhancedAchievement struct {
@@ -36,7 +36,7 @@ type EnhancedAchievement struct {
 }
 
 type Experience struct {
-	ID           string  `json:"id"`
+	ID           *string `json:"id,omitempty"`
 	Title        string  `json:"title"`
 	Company      string  `json:"company"`
 	Sector       string  `json:"sector"`
@@ -47,7 +47,7 @@ type Experience struct {
 }
 
 type ExperienceInput struct {
-	ID           string  `json:"id"`
+	ID           *string `json:"id,omitempty"`
 	Title        string  `json:"title"`
 	Company      string  `json:"company"`
 	Sector       string  `json:"sector"`
@@ -79,7 +79,7 @@ type Match struct {
 }
 
 type Profile struct {
-	ID          string        `json:"id"`
+	ID          *string       `json:"id,omitempty"`
 	UserBio     *UserBio      `json:"userBio"`
 	Experiences []*Experience `json:"experiences"`
 	Education   []*Education  `json:"education"`
@@ -87,7 +87,7 @@ type Profile struct {
 }
 
 type ProfileInput struct {
-	ID          string             `json:"id"`
+	ID          *string            `json:"id,omitempty"`
 	UserBio     *UserBioInput      `json:"userBio"`
 	Experiences []*ExperienceInput `json:"experiences"`
 	Education   []*EducationInput  `json:"education"`
