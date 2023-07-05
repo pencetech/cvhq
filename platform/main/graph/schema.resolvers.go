@@ -47,13 +47,28 @@ func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.A
 // GenerateCv is the resolver for the generateCV field.
 func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileInput) (*model.Cv, error) {
 	var cv model.Cv
-	inputBytes, err := json.Marshal(input)
+
+	profWithoutPosting := &model.ProfileWithoutPostingInput{
+		UserBio: input.UserBio,
+		Experiences: input.Experiences,
+		Education: input.Education,
+		Skillsets: input.Skillsets,
+	}
+	jobPostingBytes, err := json.Marshal(input.JobPosting)
+
+	profWithoutPostingBytes, err := json.Marshal(profWithoutPosting)
+
+	summaryContent := fmt.Sprintf(CvSummaryPrompt, string(jobPostingBytes))
+
+	summStr, err := ChatCompletion(summaryContent)
 	if err != nil {
-		log.Println("ERROR: JSON marshaling failed -> ", err)
+		log.Println("ERROR: chat completion failed -> ", err)
+		return nil, err
 	}
 
-	content := fmt.Sprintf(GenerateCVPrompt, string(inputBytes))
-	objStr, err := ChatCompletion(content)
+	cvContent := fmt.Sprintf(GenerateCVPrompt, string(profWithoutPostingBytes), string(summStr))
+
+	objStr, err := ChatCompletion(cvContent)
 	if err != nil {
 		log.Println("ERROR: chat completion failed -> ", err)
 		return nil, err
