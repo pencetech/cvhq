@@ -34,7 +34,7 @@ export default function AuthPage() {
           theme="dark"
           showLinks={false}
           providers={[]}
-          redirectTo="http://localhost:3000/auth/callback"
+          redirectTo="https://cvhq.vercel.app/auth/callback"
         />
       </Card>
     </Space>
