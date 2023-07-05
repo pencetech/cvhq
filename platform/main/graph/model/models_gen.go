@@ -81,12 +81,30 @@ type Match struct {
 type Profile struct {
 	ID          *string       `json:"id,omitempty"`
 	UserBio     *UserBio      `json:"userBio"`
+	JobPosting  *JobPosting   `json:"jobPosting"`
 	Experiences []*Experience `json:"experiences"`
 	Education   []*Education  `json:"education"`
 	Skillsets   *Skillset     `json:"skillsets,omitempty"`
 }
 
 type ProfileInput struct {
+	ID          *string            `json:"id,omitempty"`
+	UserBio     *UserBioInput      `json:"userBio"`
+	JobPosting  *JobPostingInput   `json:"jobPosting"`
+	Experiences []*ExperienceInput `json:"experiences"`
+	Education   []*EducationInput  `json:"education"`
+	Skillsets   *SkillsetInput     `json:"skillsets,omitempty"`
+}
+
+type ProfileWithoutPosting struct {
+	ID          *string       `json:"id,omitempty"`
+	UserBio     *UserBio      `json:"userBio"`
+	Experiences []*Experience `json:"experiences"`
+	Education   []*Education  `json:"education"`
+	Skillsets   *Skillset     `json:"skillsets,omitempty"`
+}
+
+type ProfileWithoutPostingInput struct {
 	ID          *string            `json:"id,omitempty"`
 	UserBio     *UserBioInput      `json:"userBio"`
 	Experiences []*ExperienceInput `json:"experiences"`
