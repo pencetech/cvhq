@@ -7,6 +7,7 @@ import { gql, useMutation } from "@apollo/client";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 
 const GENERATE_CV = gql`
@@ -16,21 +17,29 @@ mutation generateCV($input: ProfileInput!) {
     }
   }
 `
-const ProfilePageComponent = ({ id, profiles, files }: {
+const ProfilePageComponent = ({ id, profile, files }: {
     id: number,
-    profiles: FormData,
+    profile: FormData,
     files: CvFile[]
 }) => {
     const router = useRouter();
     const supabase = createClientComponentClient<Database>();
+    const [formData, setFormData] = useState<FormData>({
+        userBio: profile.userBio,
+        jobPosting: profile.jobPosting,
+        experiences: profile.experiences,
+        education: profile.education,
+        skillsets: profile.skillsets
+    });
     const [generateCV, { data, loading, error }] = useMutation(GENERATE_CV, {
         variables: {
             input: {
                 id: 1,
-                userBio: profiles.userBio,
-                experiences: profiles.experiences,
-                education: profiles.education,
-                skillsets: profiles.skillsets
+                userBio: profile.userBio,
+                jobPosting: profile.jobPosting,
+                experiences: profile.experiences,
+                education: profile.education,
+                skillsets: profile.skillsets
             }
         },
         onCompleted: async (data: any) => await handleCompleteGenerate(data.generateCV.filename)
@@ -61,7 +70,7 @@ const ProfilePageComponent = ({ id, profiles, files }: {
     return (
         <Row gutter={16}>
             <Col flex={2}>
-                {profiles ? <ProfileCard profileId={id} profile={profiles} /> : "profile empty"}  
+                {profile ? <ProfileCard profileId={id} profile={formData} onUpdate={setFormData}/> : "profile empty"}  
             </Col>
             <Col flex={3}>
                 {files ? <FileListComponent 

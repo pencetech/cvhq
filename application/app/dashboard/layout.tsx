@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { RightOutlined, FileTextOutlined, LoadingOutlined, HomeOutlined } from '@ant-design/icons';
+import { FileTextOutlined, LoadingOutlined, HomeOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Logo from '@/public/CVHQ.png';
 import Breadcrumbs from '../components/breadcrumbs';
