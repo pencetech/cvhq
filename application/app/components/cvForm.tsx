@@ -68,6 +68,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
             input: {
                 id: 1,
                 userBio: formData.userBio,
+                jobPosting: formData.jobPosting,
                 experiences: formData.experiences,
                 education: formData.education,
                 skillsets: formData.skillsets
