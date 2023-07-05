@@ -147,7 +147,7 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            { profile && files ? <ProfilePageComponent id={params.id} profiles={profile} files={files} /> : "empty data"}
+            { profile && files ? <ProfilePageComponent id={params.id} profile={profile} files={files} /> : "empty data"}
         </div>
     )
 }
