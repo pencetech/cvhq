@@ -49,7 +49,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
             sector: '',
             isCurrent: false,
             startDate: '',
-            endDate: null,
+            endDate: '',
             achievements: ''
         }],
         education: [{
@@ -118,7 +118,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
                 sector: exp.sector,
                 is_current: exp.isCurrent,
                 start_date: exp.startDate,
-                end_date: exp.endDate,
+                end_date: exp.isCurrent ? null : exp.endDate,
                 achievements: exp.achievements
             })
         ))
