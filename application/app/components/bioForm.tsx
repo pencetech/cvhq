@@ -7,7 +7,7 @@ import 'formik-antd/es/form/style';
 import Select from 'formik-antd/es/select';
 import 'formik-antd/es/select/style';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Row, Typography } from 'antd';
+import { Row, Typography } from 'antd';
 import * as Yup from 'yup';
 import { UserBio } from "@/models/cv";
 import { PhoneOutlined } from "@ant-design/icons";

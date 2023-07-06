@@ -6,6 +6,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
 import { Card, Space } from 'antd'
+import Login from './newAuthPage';
 
 export default function AuthPage() {
   const supabase = createClientComponentClient<Database>()
@@ -27,15 +28,16 @@ export default function AuthPage() {
             priority 
         />
       <Card title="Sign in">
-        <Auth
+        {/* <Auth
           supabaseClient={supabase}
           view="magic_link"
           appearance={{ theme: ThemeSupa }}
           theme="dark"
           showLinks={false}
           providers={[]}
-          redirectTo="http://cvhq-birudeghi.vercel.app/auth/callback"
-        />
+          redirectTo="http://localhost:3000/auth/callback"
+        /> */}
+        <Login />
       </Card>
     </Space>
     </div>

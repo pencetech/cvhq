@@ -109,6 +109,11 @@ const DashboardLayout = ({
     router.push(completePath);
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.refresh();
+  }
+
   const selectedKeys = () => {
     const asPathNoQuery = pathname.split("?")[0];
     const asPathNestedRoutes = asPathNoQuery
@@ -141,9 +146,7 @@ const DashboardLayout = ({
                         fill={false}
                         priority 
                     />
-                    <Link href='/auth/signout'>
-                      <Button type="text" style={{ color: "#FFFFFF" }}>Sign out</Button>
-                    </Link>
+                      <Button type="text" style={{ color: "#FFFFFF" }} onClick={handleSignOut}>Sign out</Button>
                 </div>
       </Header>
       <Layout hasSider>
