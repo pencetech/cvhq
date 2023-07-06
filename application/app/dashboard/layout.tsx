@@ -9,6 +9,7 @@ import { Layout, Menu, Button, theme, Spin } from 'antd';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -109,10 +110,8 @@ const DashboardLayout = ({
   };
 
   const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
-    }
+    await supabase.auth.signOut();
+    router.refresh();
   }
 
   const selectedKeys = () => {
@@ -147,7 +146,7 @@ const DashboardLayout = ({
                         fill={false}
                         priority 
                     />
-                    <Button type="text" style={{ color: "#FFFFFF" }} onClick={handleSignOut}>Sign out</Button>
+                      <Button type="text" style={{ color: "#FFFFFF" }} onClick={handleSignOut}>Sign out</Button>
                 </div>
       </Header>
       <Layout hasSider>
