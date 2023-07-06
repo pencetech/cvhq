@@ -62,7 +62,7 @@ const ProfileCard = ({ profileId, profile, onUpdate }: { profileId: number, prof
             sector: exp.sector,
             is_current: exp.isCurrent,
             start_date: exp.startDate,
-            end_date: exp.endDate,
+            end_date: exp.isCurrent ? null : exp.endDate,
             achievements: exp.achievements
         }).eq("profile_id", profileId);
     }

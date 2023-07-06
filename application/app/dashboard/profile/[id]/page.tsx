@@ -120,7 +120,7 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
                             sector: ex.exp_sector,
                             isCurrent: ex.exp_is_current,
                             startDate: ex.exp_start_date,
-                            endDate: ex.exp_end_date,
+                            endDate: ex.exp_is_current ? '' : ex.exp_end_date,
                             achievements: ex.exp_achievements
                         })),
                         education: ed.map(e => ({

@@ -31,9 +31,7 @@ const educationValidationSchema = Yup.object().shape({
                 .min(3, 'Too short!')
                 .max(50, 'Too long!')
                 .required('Required'),
-            degree: Yup.string()
-                .min(5, 'Too short!')
-                .required('Required'),
+            degree: Yup.string().required('Required'),
             startDate: Yup.string().required('Required'),
             endDate: Yup.string().required('Required'),
         })
@@ -81,8 +79,8 @@ const EducationForm = (props: OtherProps) => {
                                                 id: props.values.education.length + 1,
                                                 title: '',
                                                 isCurrent: false,
-                                                startDate: new Date(),
-                                                endDate: new Date(),
+                                                startDate: '',
+                                                endDate: '',
                                                 achievements: ''
                                             })}
                                         >+ Add education</Button>

@@ -41,7 +41,7 @@ const EducationCard: FC<EducationCardProps> = ({
             <Form.Item required={true} name={`education[${index}].startDate`} label='Start date'>
                 <DatePicker name={`education[${index}].startDate`} picker='month' />
             </Form.Item>
-            <Form.Item name={`education[${index}].endDate`} label='End date'>
+            <Form.Item required={true} name={`education[${index}].endDate`} label='End date'>
                 <DatePicker 
                     name={`education[${index}].endDate`} 
                     picker='month'
