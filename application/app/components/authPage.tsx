@@ -34,7 +34,7 @@ export default function AuthPage() {
           theme="dark"
           showLinks={false}
           providers={[]}
-          redirectTo="https://app.cvhq.io/auth/callback"
+          redirectTo="http://localhost:3000/auth/callback"
         />
       </Card>
     </Space>

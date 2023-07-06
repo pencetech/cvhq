@@ -1,8 +1,8 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
-import { NextResponse } from 'next/server'
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
+import { NextResponse } from 'next/server';
 
-import type { NextRequest } from 'next/server'
-import type { Database } from '@/types/supabase'
+import type { NextRequest } from 'next/server';
+import type { Database } from '@/types/supabase';
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
@@ -14,15 +14,12 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getUser()
 
   // if user is signed in and the current path is / redirect the user to /dashboard
-  if (user) {
-    if (req.nextUrl.pathname === '/' || req.nextUrl.pathname === '/dashboard' ) {
-      return NextResponse.redirect(new URL('/dashboard/home', req.url))
-    }
+  if (user && req.nextUrl.pathname === '/') {
+    return NextResponse.redirect(new URL('/dashboard/home', req.url))
   }
-    
 
   // if user is not signed in and the current path is not / redirect the user to /login
-  if (!user) {
+  if (!user && req.nextUrl.pathname !== '/') {
     
     return NextResponse.redirect(new URL('/login', req.url))
   }
