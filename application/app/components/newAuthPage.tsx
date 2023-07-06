@@ -40,7 +40,7 @@ export default function Login() {
     let { error } = await supabase.auth.verifyOtp(verifyOpts);
     if (error) messageApi.error("error authenticating.")
     setLoading(false);
-    router.push("dashboard/home")
+    router.push("/dashboard/home")
   }
 
   return (
