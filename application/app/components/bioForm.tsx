@@ -7,15 +7,17 @@ import 'formik-antd/es/form/style';
 import Select from 'formik-antd/es/select';
 import 'formik-antd/es/select/style';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Row, Typography } from 'antd';
+import { Col, Row, Space, Typography } from 'antd';
 import * as Yup from 'yup';
 import { UserBio } from "@/models/cv";
-import { PhoneOutlined } from "@ant-design/icons";
+import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
 interface OtherProps {
-    message: string;
+    title: string;
+    description?: string;
+    isIntro: boolean;
     value: UserBio;
     onSubmit: (value: UserBio) => Promise<void>;
     actions: React.ReactNode;
@@ -42,11 +44,11 @@ const bioValidationSchema = Yup.object().shape({
 })
 
 const BioForm = (props: OtherProps) => {
-    const { message, value, onSubmit, actions } = props;
+    const { title, description, isIntro, value, onSubmit, actions } = props;
 
     const formItemLayout = {
-        labelCol: { span: 6 },
-        wrapperCol: { span: 14 },
+        labelCol: { span: 24 },
+        wrapperCol: { span: 24 },
     };
 
     return (
@@ -62,26 +64,48 @@ const BioForm = (props: OtherProps) => {
                 return (
                         <Form
                             {...formItemLayout}
+                            layout="vertical"
                         >   
-                            <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
-                            <Form.Item required={true} name='firstName' label='First name'>
-                                <Input name='firstName' placeholder='Jane' suffix />
-                            </Form.Item>
-                            <Form.Item required={true} name='lastName' label='Last name'>
-                                <Input name='lastName' placeholder='Doe' suffix />
-                            </Form.Item>
-                            <Form.Item required={true} name='email' label='Email address'>
-                                <Input prefix="@" name='email' placeholder='jane.doe@example.com' suffix />
-                            </Form.Item>
-                            <Form.Item required={true} label='Telephone no.' name='phone'>
-                                <Input prefix={<PhoneOutlined className="site-form-item-icon" />} name='phone' />
-                            </Form.Item>
-                            <Form.Item required={true} label='Home address' name='address'>
-                                <Input.TextArea showCount maxLength={100} name='address' />
-                            </Form.Item>
-                            <Row justify='end'>
-                                {actions}
-                            </Row>
+                        <Row gutter={24}>
+                            <Col span={isIntro ? 12 : 24}>
+                                    <div style={{ marginBottom: "12px"}}>
+                                        <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>
+                                        <Typography.Title level={5} style={{ margin: '0 0 12px 0', color: '#a1a1a1' }}>{description}</Typography.Title>
+                                    </div>
+                                    <Row style={{ marginTop: 16 }} gutter={24} justify="start">
+                                        <Col span={12} key={1}>
+                                            <Form.Item required={true} name='firstName' label='First name'>
+                                                <Input name='firstName' placeholder='Jane' suffix />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={12} key={2}>
+                                            <Form.Item required={true} name='lastName' label='Last name'>
+                                                <Input name='lastName' placeholder='Doe' suffix />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={12} key={3}>
+                                            <Form.Item required={true} name='email' label='Email address'>
+                                                <Input prefix={<MailOutlined className="site-form-item-icon" />} name='email' placeholder='jane.doe@example.com' suffix />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={12} key={4}>
+                                            <Form.Item required={true} label='Telephone no.' name='phone'>
+                                                <Input prefix={<PhoneOutlined className="site-form-item-icon" />} name='phone' />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={12} key={5}>
+                                            <Form.Item required={true} label='Home address' name='address'>
+                                                <Input.TextArea showCount maxLength={100} name='address' />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
+                                <Row justify='end'>
+                                    {actions}
+                                </Row>
+                            </Col>
+                            {isIntro ? <Col span={12}>
+                            </Col> : null}
+                        </Row>
                         </Form>
                 )
             }}

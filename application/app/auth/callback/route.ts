@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const code = searchParams.get('code')
-  console.log(code)
+  
   if (code) {
     const supabase = createRouteHandlerClient({ cookies })
     await supabase.auth.exchangeCodeForSession(code)

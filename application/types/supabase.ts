@@ -263,8 +263,8 @@ export interface Database {
           inserted_at: string
           last_name: string
           phone: string
-          profile_id: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           address: string
@@ -274,8 +274,8 @@ export interface Database {
           inserted_at?: string
           last_name: string
           phone: string
-          profile_id: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           address?: string
@@ -285,14 +285,14 @@ export interface Database {
           inserted_at?: string
           last_name?: string
           phone?: string
-          profile_id?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "fk_user_bio_profile"
-            columns: ["profile_id"]
-            referencedRelation: "cv_profile"
+            foreignKeyName: "user_bio_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
         ]
@@ -365,8 +365,6 @@ export interface Database {
         Returns: {
           profile_id: number
           profile_name: string
-          job_title: string
-          job_company: string
           inserted_at: string
         }[]
       }
@@ -430,6 +428,14 @@ export interface Database {
         Args: {
           user_id_input: string
           skillsets_input: string
+        }
+        Returns: undefined
+      }
+      migrate_new_profile_data: {
+        Args: {
+          user_id_input: string
+          prev_profile_id_input: number
+          curr_profile_id_input: number
         }
         Returns: undefined
       }

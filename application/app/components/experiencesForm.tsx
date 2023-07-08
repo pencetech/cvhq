@@ -2,18 +2,17 @@
 import React from 'react';
 import { Formik, FieldArray } from "formik";
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Row, Space, Typography } from 'antd';
+import { Button, Row, Col, Space, Typography } from 'antd';
 import ExperienceCard from '@/app/components/experienceCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import * as Yup from 'yup';
 import { Experience, JobPosting, UserBio } from '@/models/cv';
 
-type ExperienceFormSchema = {
-    experiences: Experience[]
-}
 interface OtherProps {
-    message: string;
+    title: string;
+    description?: string;
+    isIntro: boolean;
     value: Experience[];
     userBio: UserBio;
     jobPosting: JobPosting;
@@ -45,11 +44,11 @@ const experienceValidationSchema = Yup.object().shape({
 });
 
 const ExperiencesForm = (props: OtherProps) => {
-    const { message, onSubmit, value, userBio, jobPosting, actions } = props;
+    const { title, description, isIntro, onSubmit, value, userBio, jobPosting, actions } = props;
 
     const formItemLayout = {
-        labelCol: { span: 6 },
-        wrapperCol: { span: 14 },
+        labelCol: { span: 24 },
+        wrapperCol: { span: 24 },
     };
 
     return (
@@ -65,8 +64,19 @@ const ExperiencesForm = (props: OtherProps) => {
             { props => {
                 withFormikDevtools(props);
                 return (
-                    <Form {...formItemLayout}>
-                        <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
+                    <Form {...formItemLayout} layout="vertical">
+                         <Row gutter={24}>
+                            <Col span={isIntro ? 12 : 24}>
+                            <div style={{ marginBottom: "12px"}}>
+                                <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>    
+                                {description ? <div style={{ marginLeft: "12px" }}>
+                                    <Typography.Title level={5} style={{ margin: '0 0 12px 0', color: '#a1a1a1' }}>{description}</Typography.Title>
+                                     <Space direction="vertical">
+                                        <Typography.Text style={{ color: '#a1a1a1' }}>Employers scan your resume to see if you&apos;re a match.</Typography.Text>
+                                        <Typography.Text style={{ color: '#a1a1a1' }}>We&apos;ll suggest bullet points that make a great impression.</Typography.Text>
+                                    </Space>
+                                </div> : null}
+                            </div>
                         <FieldArray
                             name='experiences'
                             render={(arrayHelpers: any) => (
@@ -98,9 +108,15 @@ const ExperiencesForm = (props: OtherProps) => {
                                         <Row justify='end'>
                                             {actions}
                                         </Row>
+                                        
                                 </Space>
+                                
                             )}
                         />
+                        </Col>
+                        {isIntro ? <Col span={12}>
+                            </Col> : null}
+                        </Row>
                     </Form>
                 )
             }}
