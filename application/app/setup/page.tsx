@@ -59,10 +59,10 @@ const SetupPage = () => {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '12px' }}>
       {contextHolder}
-      <Typography.Title level={2}>Create new CV</Typography.Title>
-      {profileId ? <CvForm profileId={profileId} /> : null}
+      <Typography.Title level={2}>Get started</Typography.Title>
+      <CvForm profileId={profileId} />
       <Modal 
         title="Create new profile"
         closable={false}

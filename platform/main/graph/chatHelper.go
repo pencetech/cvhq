@@ -61,7 +61,7 @@ var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }}
 	Where "match" is the overall match of {{ .UserBio.FirstName }}'s achievements to the job requireemnts as stated in step 1, 
 	and "achievements" is the improved version of {{ .UserBio.FirstName }}'s achievements as stated in step 2.
 `
-
+// TODO: Comment
 var GenerateCVPrompt = `Generate a CV in a markdown format using the following PROFILE: "%s", following these exact and crucial steps, treating them as each of their own CV section,
 (1)
 Copy the following summary into the summary section of the CV: "%s".

@@ -1,18 +1,18 @@
 "use client";
 import { useState, useEffect, FC } from 'react';
+import dayjs from 'dayjs';
 import { gql, useMutation } from '@apollo/client';
 import { FormikProps, useFormikContext } from 'formik';
 import { Experience, JobPosting, UserBio } from '@/models/cv';
-import { Row, Button, Card, Space, Statistic, Drawer, Spin, Typography, Modal, theme, Popover } from 'antd';
-import { FireFilled, InfoCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
+import { Row, DatePicker, Button, Card, Space, Statistic, Drawer, Spin, Typography, Modal, theme, Popover, Col, Cascader } from 'antd';
+import { FireFilled, InfoCircleOutlined, InfoCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import Checkbox from 'formik-antd/es/checkbox';
 import 'formik-antd/es/checkbox/style';
-import DatePicker from 'formik-antd/es/date-picker';
-import 'formik-antd/es/date-picker/style';
+import { sectors } from '@/models/sector';
 
 const { Text } = Typography;
 
@@ -97,7 +97,8 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
         position: 'relative',
         overflow: 'hidden',
         padding: 36,
-        background: token.colorFillAlter,
+        marginTop: 16,
+        backgroundColor: "#f5f5f5",
         border: `1px solid ${token.colorBorderSecondary}`,
         borderRadius: token.borderRadiusLG,
     };
@@ -132,6 +133,13 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
         )
     };
 
+    const experiencePopoverContent = (
+        <div>
+            Write in your current/past achievements for this specific role from your existing CV.<br/>
+            This will help CVHQ edit your real-world achievements to better match the job posting requirements.
+        </div>
+    );
+
     const popoverContent = (
         <div>
             We suggest content based on your job experience and the job posting.
@@ -142,30 +150,67 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
 
     return (
         <div style={containerStyle}>
-            <Form.Item required={true} name={`experiences[${index}].title`} label='Job title'>
-                <Input name={`experiences[${index}].title`} suffix />
-            </Form.Item>
-            <Form.Item required={true} name={`experiences[${index}].company`} label='Company'>
-                <Input name={`experiences[${index}].company`} suffix />
-            </Form.Item>
-            <Form.Item required={true} name={`experiences[${index}].sector`} label='Company sector'>
-                <Input name={`experiences[${index}].sector`} suffix />
-            </Form.Item>
-            <Form.Item name={`experiences[${index}].isCurrent`} label='My current job'>
-                <Checkbox name={`experiences[${index}].isCurrent`} />
-            </Form.Item>
-            <Form.Item required={true} name={`experiences[${index}].startDate`} label='Start date'>
-                <DatePicker 
-                    name={`experiences[${index}].startDate`} 
-                    picker='month' />
-            </Form.Item>
-            <Form.Item name={`experiences[${index}].endDate`} label='End date'>
-                <DatePicker
-                    picker="month"
-                    name={`experiences[${index}].endDate`} 
-                    disabled={formProps.values.experiences[index].isCurrent ? true : false} />
-            </Form.Item>
-            <Form.Item required={true} name={`experiences[${index}].achievements`} label='Achievements'>
+            <Row gutter={24} justify="start">
+                <Col span={12} key={1}>
+                    <Form.Item required={true} name={`experiences[${index}].title`} label='Job title'>
+                        <Input name={`experiences[${index}].title`} suffix />
+                    </Form.Item>
+                </Col>
+                <Col span={12} key={1}>
+                    <Form.Item required={true} name={`experiences[${index}].company`} label='Company'>
+                        <Input name={`experiences[${index}].company`} suffix />
+                    </Form.Item>
+                </Col>
+                <Col span={12} key={1}>
+                <Form.Item required={true} name={`experiences[${index}].sector`} label='Company sector'>
+                    <Cascader 
+                        value={formProps.values.experiences[index].sector ? 
+                            formProps.values.experiences[index].sector.split("/") : ['']}
+                        options={sectors}
+                        onChange={(value, options) => {
+                            formProps.setFieldValue(`experiences[${index}].sector`, value ? value.join("/") : "")
+                            formProps.setFieldTouched(`experiences[${index}].sector`, true, false)
+                    }} />
+                </Form.Item>
+                </Col>
+                <Col span={12} key={4}>
+                    <Form.Item name={`experiences[${index}].isCurrent`} label='My current job'>
+                        <Checkbox name={`experiences[${index}].isCurrent`} />
+                    </Form.Item>
+                </Col>
+                <Col span={6} key={1}>
+                    <Form.Item required={true} name={`experiences[${index}].startDate`} label='Start date'>
+                        <DatePicker 
+                            name={`experiences[${index}].startDate`} 
+                            value={values.experiences[index].startDate ? 
+                                dayjs(values.experiences[index].startDate) : undefined}
+                            picker='month'
+                            onChange={(date, dateStr) => {
+                                formProps.setFieldValue(`experiences[${index}].startDate`, date ? date.toISOString() : null)
+                                formProps.setFieldTouched(`experiences[${index}].startDate`, true, false)
+                            }} />
+                    </Form.Item>
+                </Col>
+                <Col span={6} key={1}>
+                    <Form.Item name={`experiences[${index}].endDate`} label='End date'>
+                        <DatePicker
+                            name={`experiences[${index}].endDate`} 
+                            value={values.experiences[index].endDate ? 
+                                dayjs(values.experiences[index].endDate) : undefined}
+                            picker='month'
+                            onChange={(date, dateStr) => {
+                                formProps.setFieldValue(`experiences[${index}].endDate`, date ? date.toISOString() : null)
+                                formProps.setFieldTouched(`experiences[${index}].endDate`, true, false)
+                            }} />
+                    </Form.Item>
+                </Col>
+            </Row>
+            <Form.Item required={true} name={`experiences[${index}].achievements`} label={<div style={{ display: 'flex', gap: '8px' }}>
+            Achievements
+            <Popover content={experiencePopoverContent}>
+                <InfoCircleOutlined />
+            </Popover>
+            </div>}>
                 <div style={{ display: "flex", gap: "12px" }}>
                     <Input.TextArea 
                         style={{ width: '100%' }} 
@@ -189,9 +234,9 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                     </div> 
                 }
                 placement="right"
-                width={720}
                 onClose={onClose}
                 open={open}
+                width={640}
                 getContainer={false}
                 bodyStyle={{ paddingBottom: 80 }}
                 extra={

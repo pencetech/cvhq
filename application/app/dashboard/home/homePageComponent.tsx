@@ -27,7 +27,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
         >
           <List.Item.Meta
             avatar={<ProfileTwoTone twoToneColor="#eb2f96" />}
-            title={<a href="https://ant.design">{item.description}</a>}
+            title={<Link href={`profile/${item.id}`}>{item.description}</Link>}
             description={`Created at ${item.createdAt}`}
           />
         </List.Item>

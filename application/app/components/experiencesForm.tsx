@@ -13,7 +13,8 @@ type ExperienceFormSchema = {
     experiences: Experience[]
 }
 interface OtherProps {
-    message: string;
+    title: string;
+    description: string;
     value: Experience[];
     userBio: UserBio;
     jobPosting: JobPosting;
@@ -45,11 +46,11 @@ const experienceValidationSchema = Yup.object().shape({
 });
 
 const ExperiencesForm = (props: OtherProps) => {
-    const { message, onSubmit, value, userBio, jobPosting, actions } = props;
+    const { title, description, onSubmit, value, userBio, jobPosting, actions } = props;
 
     const formItemLayout = {
-        labelCol: { span: 6 },
-        wrapperCol: { span: 14 },
+        labelCol: { span: 24 },
+        wrapperCol: { span: 24 },
     };
 
     return (
@@ -65,8 +66,18 @@ const ExperiencesForm = (props: OtherProps) => {
             { props => {
                 withFormikDevtools(props);
                 return (
-                    <Form {...formItemLayout}>
-                        <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
+                    <Form {...formItemLayout} layout="vertical">
+                         <div style={{ width: "50%" }}>
+                            <div style={{ marginBottom: "12px"}}>
+                                <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>    
+                                <div style={{ marginLeft: "12px" }}>
+                                    <Typography.Title level={5} style={{ margin: '0 0 12px 0', color: '#a1a1a1' }}>{description}</Typography.Title>
+                                    <Space direction="vertical">
+                                        <Typography.Text style={{ color: '#a1a1a1' }}>Employers scan your resume to see if you&apos;re a match.</Typography.Text>
+                                        <Typography.Text style={{ color: '#a1a1a1' }}>We&apos;ll suggest bullet points that make a great impression.</Typography.Text>
+                                    </Space>
+                                </div>
+                            </div>
                         <FieldArray
                             name='experiences'
                             render={(arrayHelpers: any) => (
@@ -98,9 +109,12 @@ const ExperiencesForm = (props: OtherProps) => {
                                         <Row justify='end'>
                                             {actions}
                                         </Row>
+                                        
                                 </Space>
+                                
                             )}
                         />
+                        </div>
                     </Form>
                 )
             }}

@@ -66,7 +66,6 @@ const DashboardLayout = ({
       } finally {
         setLoading(false)
       }
-      console.log("getProfile!");
     }
 
     getProfileList()
@@ -101,7 +100,6 @@ const DashboardLayout = ({
   ]
 
   const handleClick: MenuProps['onClick'] = (menu: any) => {
-    console.log(menu);
     const reversed = menu.keyPath.reverse();
     const basePath = "/dashboard/"
     const suffixPath = reversed.join('/');

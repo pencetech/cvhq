@@ -79,7 +79,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
 
     const insertUserBio = async (user: UserBio) => {
         await supabase.from('user_bio')
-        .insert({
+        .upsert({
             profile_id: profileId,
             first_name: user.firstName,
             last_name: user.lastName,
@@ -87,7 +87,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
             phone: user.phone,
             address: user.address
         })
-        messageApi.success("User bio created!");
+        messageApi.success("User bio saved!");
         handleProgress({
             userBio: user
         });
@@ -95,7 +95,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
 
     const insertJobPosting = async (job: JobPosting) => {
         await supabase.from('job_posting')
-        .insert({
+        .upsert({
             profile_id: profileId,
             title: job.title,
             company: job.company,
@@ -103,7 +103,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
             requirements: job.requirements,
             add_on: job.addOn
         })
-        messageApi.success("Job posting created!");
+        messageApi.success("Job posting saved!");
         handleProgress({
             jobPosting: job
         });
@@ -111,7 +111,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
 
     const insertExperience = async (experiences: Experience[]) => {
         await supabase.from('experience')
-            .insert(experiences.map(exp => ({
+            .upsert(experiences.map(exp => ({
                 profile_id: profileId,
                 title: exp.title,
                 company: exp.company,
@@ -122,7 +122,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
                 achievements: exp.achievements
             })
         ))
-        messageApi.success("Experience created!");
+        messageApi.success("Experience saved!");
         handleProgress({
             experiences: experiences
         });
@@ -130,7 +130,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
 
     const insertEducation = async (education: Education[]) => {
         await supabase.from('education')
-            .insert(education.map(ed => ({
+            .upsert(education.map(ed => ({
                 profile_id: profileId,
                 subject: ed.subject,
                 institution: ed.institution,
@@ -139,7 +139,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
                 end_date: ed.endDate,
             })
         )).eq("profile_id", profileId);
-        messageApi.success("Education created!");
+        messageApi.success("Education saved!");
         handleProgress({
             education: education
         });
@@ -147,11 +147,11 @@ const CvForm = ({ profileId }: { profileId: number }) => {
 
     const insertSkillset = async (sk: Skillset) => {
         await supabase.from('skillset')
-        .insert({
+        .upsert({
             profile_id: profileId,
             skillsets: sk.skillsets
         })
-        messageApi.success("Skillset created!");
+        messageApi.success("Skillset saved!");
         handleSubmit(sk);
     }
 
@@ -229,17 +229,17 @@ const CvForm = ({ profileId }: { profileId: number }) => {
         {   
             key: 'bio',
             label: 'Your Bio',
-            content: <BioForm message="Your Bio" value={formData.userBio} onSubmit={insertUserBio} actions={startNextAction} />
+            content: <BioForm title="How best can employers contact you?" description="Email and phone number recommended." value={formData.userBio} onSubmit={insertUserBio} actions={startNextAction} />
         },
         {
             key: 'job',
             label: 'Job Posting',
-            content: <JobPostingForm message="Job Posting" value={formData.jobPosting} onSubmit={insertJobPosting} actions={midNextActions} />
+            content: <JobPostingForm title="Where are you applying to?" description="We'll use this to create a CV specific to this job." value={formData.jobPosting} onSubmit={insertJobPosting} actions={midNextActions} />
         },
         {
             key: 'experiences',
             label: 'Experiences',
-            content: <ExperiencesForm message="Experiences" userBio={formData.userBio} jobPosting={formData.jobPosting} value={formData.experiences} onSubmit={insertExperience} actions={midNextActions} />
+            content: <ExperiencesForm title="Let's fill out your work history" description="Things to note:" userBio={formData.userBio} jobPosting={formData.jobPosting} value={formData.experiences} onSubmit={insertExperience} actions={midNextActions} />
         },
         {
             key: 'education',
@@ -261,10 +261,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
     const contentStyle = {
         lineHeight: '260px',
         color: token.colorTextTertiary,
-        padding: 36,
-        backgroundColor: token.colorFillAlter,
-        borderRadius: token.borderRadiusLG,
-        border: `1px ${token.colorBorder}`,
+        padding: "0 0 0 36px",
         marginTop: 16,
     };
 
@@ -273,6 +270,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
         <Steps
             items={items}
             current={activeStepIndex}
+            size="small"
             style={{ margin: '16px 0', minHeight: '100%' }}
         />
         {contextHolder}

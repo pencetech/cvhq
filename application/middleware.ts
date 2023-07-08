@@ -7,7 +7,6 @@ import type { Database } from '@/types/supabase';
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
   const supabase = createMiddlewareClient<Database>({ req, res })
-  console.log("middleware running")
 
   const {
     data: { user },

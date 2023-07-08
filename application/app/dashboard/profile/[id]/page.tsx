@@ -83,7 +83,6 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
                 filename: file.filename,
                 createdAt: file.inserted_at
             }))
-            console.log(files)
             return files;
         }
     }
@@ -138,7 +137,7 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
                 }
             }
         } catch (error) {
-            alert('Error loading profile data!')
+            console.log(error)
         }
     }
 
