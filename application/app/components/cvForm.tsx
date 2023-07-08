@@ -20,7 +20,7 @@ mutation generateCV($input: ProfileInput!) {
   }
 `
 
-const CvForm = ({ profileId }: { profileId: number }) => {
+const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
     const [filename, setFilename] = useState("default.pdf");
     const [cvBlobUrl, setCvBlobUrl] = useState("");
@@ -28,6 +28,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
     const supabase = createClientComponentClient<Database>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
+
     const [formData, setFormData] = useState<FormData>({
         userBio: {
             firstName: '',
@@ -80,7 +81,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
     const insertUserBio = async (user: UserBio) => {
         await supabase.from('user_bio')
         .upsert({
-            profile_id: profileId,
+            user_id: userId,
             first_name: user.firstName,
             last_name: user.lastName,
             email: user.email,
@@ -171,7 +172,7 @@ const CvForm = ({ profileId }: { profileId: number }) => {
       };
     
     const handleOk = () => {
-        setIsModalOpen(false);
+       
     };
 
     const handleCancel = () => {
@@ -229,27 +230,27 @@ const CvForm = ({ profileId }: { profileId: number }) => {
         {   
             key: 'bio',
             label: 'Your Bio',
-            content: <BioForm title="How best can employers contact you?" description="Email and phone number recommended." value={formData.userBio} onSubmit={insertUserBio} actions={startNextAction} />
+            content: <BioForm isIntro title="How best can employers contact you?" description="Email and phone number recommended." value={formData.userBio} onSubmit={insertUserBio} actions={startNextAction} />
         },
         {
             key: 'job',
             label: 'Job Posting',
-            content: <JobPostingForm title="Where are you applying to?" description="We'll use this to create a CV specific to this job." value={formData.jobPosting} onSubmit={insertJobPosting} actions={midNextActions} />
+            content: <JobPostingForm isIntro title="Where are you applying to?" description="We'll use this to create a CV specific to this job." value={formData.jobPosting} onSubmit={insertJobPosting} actions={midNextActions} />
         },
         {
             key: 'experiences',
             label: 'Experiences',
-            content: <ExperiencesForm title="Let's fill out your work history" description="Things to note:" userBio={formData.userBio} jobPosting={formData.jobPosting} value={formData.experiences} onSubmit={insertExperience} actions={midNextActions} />
+            content: <ExperiencesForm isIntro title="Let's fill out your work history" description="Things to note:" userBio={formData.userBio} jobPosting={formData.jobPosting} value={formData.experiences} onSubmit={insertExperience} actions={midNextActions} />
         },
         {
             key: 'education',
             label: 'Education',
-            content: <EducationForm message="Education" value={formData.education} onSubmit={insertEducation} actions={midNextActions} />
+            content: <EducationForm isIntro title="Showcase your academic qualifications" description="Things to note:" value={formData.education} onSubmit={insertEducation} actions={midNextActions} />
         },
         {
             key: 'skillsets',
             label: 'Skillsets',
-            content: <SkillsetForm message="Skillsets" value={formData.skillsets} onSubmit={insertSkillset} actions={endActions} />
+            content: <SkillsetForm isIntro title="Time to show your skills" description="Add unique skills that make you stand out." value={formData.skillsets} onSubmit={insertSkillset} actions={endActions} />
         }
     ]
 

@@ -32,8 +32,8 @@ const ProfileNameForm = (props: OtherProps) => {
                 profileName: ''
             }}
             validationSchema={profileNameValidationSchema}
-            onSubmit={(values, actions) => {
-                onSubmit(values);
+            onSubmit={async (values, actions) => {
+                await onSubmit(values);
             }}
         >
             { props => {
@@ -42,7 +42,7 @@ const ProfileNameForm = (props: OtherProps) => {
                     <Form {...formItemLayout}>
                         <p style={{ margin: '0 0 12px 0' }}>{message}</p>
                         <Form.Item required={true} name='profileName' label='Profile name'>
-                            <Input name='profileName' />
+                            <Input name='profileName' suffix />
                         </Form.Item>
                         <Row justify='end'>
                             <Button type='primary' htmlType='submit'>

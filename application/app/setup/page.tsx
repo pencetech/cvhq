@@ -62,14 +62,14 @@ const SetupPage = () => {
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '12px' }}>
       {contextHolder}
       <Typography.Title level={2}>Get started</Typography.Title>
-      <CvForm profileId={profileId} />
+      <CvForm profileId={profileId} userId={user} />
       <Modal 
-        title="Create new profile"
+        title="Get started"
         closable={false}
         open={isOpen}
         footer={null}
       >
-        <ProfileNameForm message="To get started, let's name our profile." onSubmit={handleCreate}/>
+        <ProfileNameForm message="To get started, let's pick a nickname for your job posting." onSubmit={handleCreate}/>
       </Modal>
     </div>
   )

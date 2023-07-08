@@ -13,6 +13,7 @@ import { sectors } from "@/models/sector";
 interface OtherProps {
     title: string;
     description?: string;
+    isIntro: boolean;
     value: JobPosting;
     onSubmit: (value: JobPosting) => Promise<void>;
     actions: React.ReactNode;
@@ -37,7 +38,7 @@ const jobPostingValidationSchema = Yup.object().shape({
 })
 
 const JobPostingForm = (props: OtherProps) => {
-    const { title, description, onSubmit, value, actions } = props;
+    const { title, description, isIntro, onSubmit, value, actions } = props;
 
     const formItemLayout = {
         labelCol: { span: 24 },
@@ -57,24 +58,25 @@ const JobPostingForm = (props: OtherProps) => {
                 return (
                     
                     <Form {...formItemLayout} layout="vertical">
-                         <div style={{ width: "50%" }}>
+                        <Row gutter={24}>
+                            <Col span={isIntro ? 12 : 24}>
                             <div style={{ marginBottom: "12px"}}>
                                 <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>
                                 <Typography.Title level={5} style={{ margin: '0 0 12px 0', color: '#a1a1a1' }}>{description}</Typography.Title>
                             </div>
-                            <Row gutter={24}>
+                            <Row style={{ marginTop: 16 }} gutter={24}>
                                 <Col span={12} key={1}>
                                     <Form.Item required={true} name='title' label='Job title'>
                                         <Input name='title' suffix />
                                     </Form.Item>
                                 </Col>
-                                <Col span={12} key={1}>
+                                <Col span={12} key={2}>
                                     <Form.Item required={true} name='company' label='Company name'>
                                         <Input name='company' suffix />
                                     </Form.Item>
                                 </Col>
-                                <Col span={12} key={1}>
-                                    <Form.Item required={true} name='sector' label='Company sector'>
+                                <Col span={12} key={3}>
+                                    <Form.Item required={true} name='sector' label='Company sector / role type'>
                                         <Cascader 
                                             value={props.values.sector ? 
                                                props.values.sector.split("/") : ['']}
@@ -95,7 +97,11 @@ const JobPostingForm = (props: OtherProps) => {
                             <Row justify='end'>
                                 {actions}
                             </Row>
-                        </div>
+                            
+                        </Col>
+                        {isIntro ? <Col span={12}>
+                            </Col> : null}
+                    </Row>
                     </Form>
                 )
             }}

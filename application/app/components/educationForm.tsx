@@ -2,7 +2,7 @@
 import React from 'react';
 import { Formik, FieldArray } from "formik";
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Typography, Space, Row } from 'antd';
+import { Button, Typography, Space, Row, Col } from 'antd';
 import EducationCard from '@/app/components/educationCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
@@ -14,7 +14,9 @@ type EducationFormSchema = {
     education: Education[]
 }
 interface OtherProps {
-    message: string;
+    title: string;
+    description?: string;
+    isIntro: boolean;
     value: Education[];
     onSubmit: (value: Education[]) => Promise<void>;
     actions: React.ReactNode;
@@ -41,11 +43,11 @@ const educationValidationSchema = Yup.object().shape({
 })
 
 const EducationForm = (props: OtherProps) => {
-    const { message, onSubmit, value, actions } = props;
+    const { title, description, isIntro, onSubmit, value, actions } = props;
 
     const formItemLayout = {
-        labelCol: { span: 6 },
-        wrapperCol: { span: 14 },
+        labelCol: { span: 24 },
+        wrapperCol: { span: 24 },
     };
 
     return (
@@ -61,15 +63,26 @@ const EducationForm = (props: OtherProps) => {
             { props => {
                 withFormikDevtools(props);
                 return (
-                    <Form {...formItemLayout}>
-                        <Typography.Title level={5} style={{ margin: '0 0 12px 0' }}>{message}</Typography.Title>
+                    <Form {...formItemLayout} layout="vertical">
+                        <Row gutter={24}>
+                            <Col span={isIntro ? 12 : 24}>
+                        <div style={{ marginBottom: "12px"}}>
+                                <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>   
+                                {description ? <div style={{ marginLeft: "12px" }}>
+                                    <Typography.Title level={5} style={{ margin: '0 0 12px 0', color: '#a1a1a1' }}>{description}</Typography.Title>
+                                    <Space direction="vertical">
+                                        <Typography.Text style={{ color: '#a1a1a1' }}>Include formal education, sorted from the most recent one. </Typography.Text>
+                                        <Typography.Text style={{ color: '#a1a1a1' }}>If you&apos;ve taken at least a GED or a Bachelor, we recommend not adding your high school diploma details.</Typography.Text>
+                                    </Space>
+                                </div> : null} 
+                            </div>
                         <FieldArray
                             name='education'
                             render={(arrayHelpers: any) => (
                                 <Space direction='vertical' className='w-full'>
                                     {props.values.education.map((ed, index) => (
                                         <React.Fragment key={index}>
-                                            <EducationCard index={index} onClick={() => arrayHelpers.remove(index)} />
+                                            <EducationCard formProps={props} index={index} onClick={() => arrayHelpers.remove(index)} />
                                         </React.Fragment>
                                     ))}
                                        <Button 
@@ -90,6 +103,10 @@ const EducationForm = (props: OtherProps) => {
                                 </Space>
                             )}
                         />
+                        </Col>
+                        {isIntro ? <Col span={12}>
+                            </Col> : null}
+                        </Row>
                     </Form>
                 )
             }}

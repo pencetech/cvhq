@@ -1,20 +1,25 @@
 "use client";
 import { FC } from 'react';
-import { Row, Button, theme } from 'antd';
+import dayjs from 'dayjs';
+import { Row, Button, Col, DatePicker, theme } from 'antd';
+import { FormikProps } from 'formik';
+import { Education } from '@/models/cv';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
-import DatePicker from 'formik-antd/es/date-picker';
-import 'formik-antd/es/date-picker/style';
 
+interface EducationCard {
+    education: Education[]
+}
 interface EducationCardProps {
+    formProps: FormikProps<EducationCard>, 
     index: number,
     onClick: () => {}
 }
 
 const EducationCard: FC<EducationCardProps> = ({
-    index, onClick
+    formProps, index, onClick
 }: EducationCardProps) => {
     const { token } = theme.useToken();
 
@@ -22,31 +27,59 @@ const EducationCard: FC<EducationCardProps> = ({
         position: 'relative',
         overflow: 'hidden',
         padding: 36,
-        background: token.colorFillAlter,
+        marginTop: 16,
+        backgroundColor: "#f5f5f5",
         border: `1px solid ${token.colorBorderSecondary}`,
         borderRadius: token.borderRadiusLG,
       };
 
     return (
         <div style={containerStyle}>
-            <Form.Item required={true} name={`education[${index}].subject`} label='Subject'>
-                <Input name={`education[${index}].subject`} suffix />
-            </Form.Item>
-            <Form.Item required={true} name={`education[${index}].institution`} label='Institution'>
-                <Input name={`education[${index}].institution`} suffix />
-            </Form.Item>
-            <Form.Item required={true} name={`education[${index}].degree`} label='Degree'>
-                <Input name={`education[${index}].degree`} suffix />
-            </Form.Item>
-            <Form.Item required={true} name={`education[${index}].startDate`} label='Start date'>
-                <DatePicker name={`education[${index}].startDate`} picker='month' />
-            </Form.Item>
-            <Form.Item required={true} name={`education[${index}].endDate`} label='End date'>
-                <DatePicker 
-                    name={`education[${index}].endDate`} 
-                    picker='month'
-                />
-            </Form.Item>
+            <Row gutter={24} justify="start">
+                <Col span={12} key={1}>
+                    <Form.Item required={true} name={`education[${index}].subject`} label='Subject'>
+                        <Input name={`education[${index}].subject`} suffix placeholder='Business administration, Computer Science, Sports Science, etc.'/>
+                    </Form.Item>
+                </Col>
+                <Col span={12} key={2}>
+                    <Form.Item required={true} name={`education[${index}].institution`} label='Institution'>
+                        <Input name={`education[${index}].institution`} suffix placeholder='University of Oxford, ACBD Police Academy, St Peter High School, etc.' />
+                    </Form.Item>
+                </Col>
+                <Col span={8} key={3}>
+                    <Form.Item required={true} name={`education[${index}].degree`} label='Degree'>
+                        <Input name={`education[${index}].degree`} suffix placeholder='GED, High School Diploma, Bachelor, Doctorate, O-level, etc.' />
+                    </Form.Item>
+                </Col>
+                <Col span={6} key={4}>
+                    <Form.Item required={true} name={`education[${index}].startDate`} label='Start date'>
+                        <DatePicker 
+                            name={`education[${index}].startDate`} 
+                            value={formProps.values.education[index].startDate ? 
+                                dayjs(formProps.values.education[index].startDate) : undefined}
+                            picker='month'
+                            onChange={(date, dateStr) => {
+                                formProps.setFieldValue(`education[${index}].startDate`, date ? date.toISOString() : null)
+                                formProps.setFieldTouched(`education[${index}].startDate`, true, false)
+                            }} 
+                        />
+                    </Form.Item>
+                </Col>
+                <Col span={6} key={5}>
+                    <Form.Item required={true} name={`education[${index}].endDate`} label='End date'>
+                        <DatePicker 
+                            name={`education[${index}].endDate`} 
+                            value={formProps.values.education[index].endDate ? 
+                                dayjs(formProps.values.education[index].endDate) : undefined}
+                            picker='month'
+                            onChange={(date, dateStr) => {
+                                formProps.setFieldValue(`education[${index}].endDate`, date ? date.toISOString() : null)
+                                formProps.setFieldTouched(`education[${index}].endDate`, true, false)
+                            }} 
+                        />
+                    </Form.Item>
+                </Col>
+            </Row>
             <Row justify='end'>
                 <Button onClick={onClick}>Remove</Button>
             </Row>

@@ -94,7 +94,7 @@ const DashboardLayout = ({
 
   const items: MenuItem[] = [
       getItem("Home", "home", <HomeOutlined />), 
-      getItem("Profiles", "profile", loadingProfileIcon, profiles.map(p => {
+      getItem("Job postings", "job", loadingProfileIcon, profiles.map(p => {
         return getItem(p.description, p.id)
       }))
   ]
@@ -148,7 +148,7 @@ const DashboardLayout = ({
                 </div>
       </Header>
       <Layout hasSider>
-        <Sider width={200} style={{ background: colorBgContainer }}>
+        <Sider width={256} style={{ background: colorBgContainer }}>
           <Menu
             onClick={handleClick}
             mode="inline"

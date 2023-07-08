@@ -1,6 +1,6 @@
 "use client";
-import { useState } from 'react';
-import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useState, useEffect } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Education, Experience, FormData, JobPosting, UserBio, Skillset } from '@/models/cv';
 import { Button, Card, message, theme } from 'antd';
 import BioForm from './bioForm';
@@ -10,24 +10,37 @@ import EducationForm from './educationForm';
 import SkillsetForm from './skillsetForm';
 import { Database } from '@/types/supabase';
 
-const ProfileCard = ({ profileId, profile, onUpdate }: { profileId: number, profile: FormData, onUpdate: any }) => {
-    const [activeTab, setActiveTab] = useState("bio");
+const ProfileCard = ({ title, profileId, profile, onUpdate }: { title: string, profileId: number, profile: FormData, onUpdate: any }) => {
+    const [activeTab, setActiveTab] = useState("job");
+    const [user, setUser] = useState<string>();
     const [messageApi, contextHolder] = message.useMessage();
     const { token } = theme.useToken();
     const supabase = createClientComponentClient<Database>();
+
+    useEffect(() => {
+        const getUser = async () => {
+            const {
+                data: { session },
+            } = await supabase.auth.getSession();
+
+            setUser(session?.user.id);
+        }
+
+        getUser();
+    }, [supabase.auth])
     
-    const setUserBio = async (user: UserBio) => {
-        const values = { userBio: user }
+    const setUserBio = async (userBio: UserBio) => {
+        const values = { userBio: userBio }
         const data = { ...profile, ...values };
         onUpdate(data);
         await supabase.from('user_bio')
         .update({
-            first_name: user.firstName,
-            last_name: user.lastName,
-            email: user.email,
-            phone: user.phone,
-            address: user.address
-        }).eq("profile_id", profileId)
+            first_name: userBio.firstName,
+            last_name: userBio.lastName,
+            email: userBio.email,
+            phone: userBio.phone,
+            address: userBio.address
+        }).eq("user_id", user)
         messageApi.success("User bio saved!");
     }
 
@@ -113,18 +126,19 @@ const ProfileCard = ({ profileId, profile, onUpdate }: { profileId: number, prof
         {   
             key: 'bio',
             label: 'Your Bio',
-            content: <BioForm message="Your Bio" value={profile.userBio} onSubmit={setUserBio} actions={saveButton}/>
+            content: <BioForm isIntro={false} title="Your Bio" value={profile.userBio} onSubmit={setUserBio} actions={saveButton}/>
         },
         {
             key: 'job',
             label: 'Job Posting',
-            content: <JobPostingForm message="Job Posting" value={profile.jobPosting} onSubmit={setJobPosting} actions={saveButton} />
+            content: <JobPostingForm isIntro={false} title="Job Posting" value={profile.jobPosting} onSubmit={setJobPosting} actions={saveButton} />
         },
         {
             key: 'experiences',
             label: 'Experiences',
             content: <ExperiencesForm 
-                message="Experiences" 
+                isIntro={false}
+                title="Experiences" 
                 value={profile.experiences} 
                 onSubmit={setExperienceArray} 
                 actions={saveButton} 
@@ -135,35 +149,25 @@ const ProfileCard = ({ profileId, profile, onUpdate }: { profileId: number, prof
         {
             key: 'education',
             label: 'Education',
-            content: <EducationForm message="Education" value={profile.education} onSubmit={setEducationArray} actions={saveButton} />
+            content: <EducationForm isIntro={false} title="Education" value={profile.education} onSubmit={setEducationArray} actions={saveButton} />
         },
         {
             key: 'skillsets',
             label: 'Skillsets',
-            content: <SkillsetForm message="Skillsets" value={profile.skillsets} onSubmit={setSkillset} actions={saveButton}  />
+            content: <SkillsetForm isIntro={false} title="Skillsets" value={profile.skillsets} onSubmit={setSkillset} actions={saveButton}  />
         }
     ]
 
-    const contentStyle = {
-        lineHeight: '260px',
-        color: token.colorTextTertiary,
-        padding: 36,
-        backgroundColor: token.colorFillAlter,
-        borderRadius: token.borderRadiusLG,
-        border: `1px ${token.colorBorder}`,
-        marginTop: 16,
-    };
-
     return (
         <Card 
-            title="Profile info" 
+            title={title}
             style={{ width: '100%' }}
             tabList={rawItems}
             activeTabKey={activeTab}
             onTabChange={handleTabChange}
         >
             {contextHolder}
-            <div style={contentStyle}>{getTabContent(activeTab)?.content}</div>
+            <div>{getTabContent(activeTab)?.content}</div>
         </Card>
     )
 }

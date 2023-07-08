@@ -10,13 +10,14 @@ import { withFormikDevtools } from "formik-devtools-extension";
 import { Col, Row, Space, Typography } from 'antd';
 import * as Yup from 'yup';
 import { UserBio } from "@/models/cv";
-import { PhoneOutlined } from "@ant-design/icons";
+import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
 interface OtherProps {
     title: string;
     description?: string;
+    isIntro: boolean;
     value: UserBio;
     onSubmit: (value: UserBio) => Promise<void>;
     actions: React.ReactNode;
@@ -43,7 +44,7 @@ const bioValidationSchema = Yup.object().shape({
 })
 
 const BioForm = (props: OtherProps) => {
-    const { title, description, value, onSubmit, actions } = props;
+    const { title, description, isIntro, value, onSubmit, actions } = props;
 
     const formItemLayout = {
         labelCol: { span: 24 },
@@ -65,12 +66,13 @@ const BioForm = (props: OtherProps) => {
                             {...formItemLayout}
                             layout="vertical"
                         >   
-                            <div style={{ width: "50%" }}>
+                        <Row gutter={24}>
+                            <Col span={isIntro ? 12 : 24}>
                                     <div style={{ marginBottom: "12px"}}>
                                         <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>
                                         <Typography.Title level={5} style={{ margin: '0 0 12px 0', color: '#a1a1a1' }}>{description}</Typography.Title>
                                     </div>
-                                    <Row gutter={24} justify="start">
+                                    <Row style={{ marginTop: 16 }} gutter={24} justify="start">
                                         <Col span={12} key={1}>
                                             <Form.Item required={true} name='firstName' label='First name'>
                                                 <Input name='firstName' placeholder='Jane' suffix />
@@ -83,7 +85,7 @@ const BioForm = (props: OtherProps) => {
                                         </Col>
                                         <Col span={12} key={3}>
                                             <Form.Item required={true} name='email' label='Email address'>
-                                                <Input prefix="@" name='email' placeholder='jane.doe@example.com' suffix />
+                                                <Input prefix={<MailOutlined className="site-form-item-icon" />} name='email' placeholder='jane.doe@example.com' suffix />
                                             </Form.Item>
                                         </Col>
                                         <Col span={12} key={4}>
@@ -100,7 +102,10 @@ const BioForm = (props: OtherProps) => {
                                 <Row justify='end'>
                                     {actions}
                                 </Row>
-                            </div>
+                            </Col>
+                            {isIntro ? <Col span={12}>
+                            </Col> : null}
+                        </Row>
                         </Form>
                 )
             }}

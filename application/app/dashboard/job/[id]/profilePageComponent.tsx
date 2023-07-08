@@ -17,10 +17,11 @@ mutation generateCV($input: ProfileInput!) {
     }
   }
 `
-const ProfilePageComponent = ({ id, profile, files }: {
+const ProfilePageComponent = ({ id, profile, files, profileName }: {
     id: number,
     profile: FormData,
-    files: CvFile[]
+    files: CvFile[],
+    profileName: string
 }) => {
     const router = useRouter();
     const supabase = createClientComponentClient<Database>();
@@ -69,10 +70,10 @@ const ProfilePageComponent = ({ id, profile, files }: {
 
     return (
         <Row gutter={16}>
-            <Col flex={2}>
-                {profile ? <ProfileCard profileId={id} profile={formData} onUpdate={setFormData}/> : "profile empty"}  
+            <Col span={14}>
+                {profile ? <ProfileCard title={profileName} profileId={id} profile={formData} onUpdate={setFormData}/> : "profile empty"}  
             </Col>
-            <Col flex={3}>
+            <Col span={10}>
                 {files ? <FileListComponent 
                     loading={loading} 
                     files={files} 
