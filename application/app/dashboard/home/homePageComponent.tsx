@@ -38,7 +38,8 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
 
   const handleCreate = async (value: ProfileName) => {
     const prevId = await getPrevProfile();
-    const currId = await setProfile(value);
+    await setProfile(value);
+    const currId = await getCurrProfile(value);
     console.log("prevId: ", prevId);
     console.log("currId: ", currId);
     if (prevId && currId) {
@@ -52,11 +53,11 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
 
   const setProfile = async (value: ProfileName) => {
     if (user) {
-      const { data, error } = await supabase.from('cv_profile')
+      const { error } = await supabase.from('cv_profile')
       .insert({
           user_id: user,
           name: value.profileName
-      }).select()
+      })
 
       if (error) {
         if (error.code === "23505") {
@@ -65,15 +66,11 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
           messageApi.error("An error occured.");
         }
       }
-      if (data && data.length > 0) {
-        return data[0].id;
-      }
     }
     
   }
 
   const getPrevProfile = async () => {
-    if (user) {
       const { data, error } = await supabase.from('cv_profile')
       .select('id').eq('user_id', user).order('inserted_at', { ascending: true })
 
@@ -83,6 +80,18 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
       if (data) {
         return data[0].id;
       }
+    messageApi.error('An error occured.')
+  }
+
+  const getCurrProfile = async (profileName: ProfileName) => {
+    const { data, error } = await supabase.from('cv_profile')
+    .select('id').eq('user_id', user).eq('name', profileName.profileName)
+
+    if (error) {
+      messageApi.error('An error occured.')
+    }
+    if (data) {
+      return data[0].id;
     }
     messageApi.error('An error occured.')
   }
