@@ -32,6 +32,12 @@ const SetupPage = () => {
 
   const handleCreate = async (value: ProfileName) => {
     const error = await setProfile(value);
+    const currId = await getCurrProfile(value);
+
+    if (currId) {
+      setProfileId(currId);
+    }
+
     if (!error) {
       setIsOpen(false);
     }
@@ -42,7 +48,7 @@ const SetupPage = () => {
     .insert({
         user_id: user,
         name: value.profileName
-    }).select()
+    })
 
     if (error) {
       if (error.code === "23505") {
@@ -53,9 +59,20 @@ const SetupPage = () => {
       
       return true;
     }
-
-    setProfileId(data[0].id);
     return false;
+  }
+
+  const getCurrProfile = async (profileName: ProfileName) => {
+    const { data, error } = await supabase.from('cv_profile')
+    .select('id').eq('user_id', user).eq('name', profileName.profileName)
+
+    if (error) {
+      messageApi.error('An error occured.')
+    }
+    if (data) {
+      return data[0].id;
+    }
+    messageApi.error('An error occured.')
   }
 
   return (
