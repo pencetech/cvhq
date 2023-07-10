@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, FC } from 'react';
+import { useState, useEffect,useRef, FC } from 'react';
 import dayjs from 'dayjs';
 import { gql, useMutation } from '@apollo/client';
 import { FormikProps } from 'formik';
@@ -13,6 +13,7 @@ import 'formik-antd/es/form/style';
 import Checkbox from 'formik-antd/es/checkbox';
 import 'formik-antd/es/checkbox/style';
 import { sectors } from '@/models/sector';
+import { TextAreaRef } from 'antd/es/input/TextArea';
 
 const { Text } = Typography;
 
@@ -57,6 +58,10 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
     const { token } = theme.useToken();
     const [open, setOpen] = useState(false);
     const [newAchievements, setNewAchievements] = useState("");
+    const inputRef = useRef<TextAreaRef>(null);
+    const toggleEditing = () => {
+        inputRef.current?.focus();
+    };
 
     useEffect(() => {
         if (data && data.enhanceAchievement) {
@@ -118,16 +123,18 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
                 <p>{data.enhanceAchievement.match.reason}</p>
             </Card>
             <Card size="small" title="Enhanced achievements" style={{ width: '100%' }}>
-                <Typography.Title editable={{ 
-                    onChange: s => setNewAchievements(s),
-                    text: newAchievements
-                }} level={5} style={{ margin: 0 }}>
-                    {newAchievements}
-                </Typography.Title>
+                <Input.TextArea 
+                name="okay"
+                value={newAchievements}
+                style={{ width: '100%' }} 
+                autoSize={{ minRows: 3, maxRows: 15 }}
+                onChange={e => setNewAchievements(e.target.value)}
+                bordered={false}
+                ref={inputRef} />
             </Card>
             <Row justify='end'>
                 <Space direction="horizontal">
-                    <Button onClick={() => setNewAchievements('')}>Clear edit</Button>
+                    <Button onClick={() => toggleEditing()}>Edit</Button>
                     <Button onClick={generateAchievements}>Retry</Button>
                 </Space>
             </Row>
