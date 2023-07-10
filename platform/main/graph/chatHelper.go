@@ -12,7 +12,7 @@ import (
 )
 
 var CvSummaryPrompt = `You are a professional CV and resume coach.
-
+  
 Write a biographical resume summary section between 350 and 400 characters with the following profile: "%s",
 
 
@@ -22,9 +22,9 @@ Make sure to follow these rules and constraints:
 3. Do not blindly write the output directly from the potential job details, it will produce untruthful result,
 3. do not exceed 400 characters,
 4. if there are missing experience or skillset, do not mention it at all. Omit this information from the summary,
-5. Do not mention the profile name, first name, last name, or make it into a third-person summary.
+5.  Do not mention the profile name, first name, last name, or make it into a third-person summary.
 6. Do not mention if this person is seeking a position anywhere
-7. Follow this summary format and order:
+7. Follow this summary format and order: 
 what roles are this person excels at, their impact in their past roles and experience (proven track record), their skills, their positive characteristics,
 8. do not exceed 400 characters.
 
@@ -63,15 +63,19 @@ var EnhanceAchievementPrompt = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }}
 `
 // TODO: Comment
 var GenerateCVPrompt = `Generate a CV in a markdown format using the following PROFILE: "%s", following these exact and crucial steps, treating them as each of their own CV section,
+  
 (1)
-Copy the following summary into the summary section of the CV: "%s".
-
-(2)
 "userBio" is the profile you'll put in as the header section. Only this section should be visually centered using div tags. DO NOT leave out the opening and the closing of the div tags for this section. Make sure to include the name, email, phone and address inside the div tags. 
 
+(2)
+As a start, open this section with "---" as a line separator in the markdown format. Put the heading as "Professional Summary" above the line separator.
+  "summary" will be the second section. 
+
+	Finally, close this section with "---" as a line separator in the markdown format
+
 (3)
-As a start, open this section with "---" as a line separator in the markdown format. Put the heading as "Experiences" above the line separator.
-  "achievements" will be the main body of the CV as the second section. Make sure to list the start and end date of each achievements. However, ONLY list the dates alongside the job role and its company, instead of listing it in each bullet point.
+open this section with "---" as a line separator in the markdown format. Put the heading as "Experiences" above the line separator.
+  "achievements" will be the main body of the CV as the third section. Make sure to list the start and end date of each achievements. However, ONLY list the dates alongside the job role and its company, instead of listing it in each bullet point.
   Write the dates in the format of: "From (Starting Date) to (end Date)", in a subscript format, alongside the job role and company line. See this example: 
   (- **Software Engineer** at Starling Bank _(June 2023 - Present)_)
   Only write the role and the company in the format of: (Job Role) at (Company)

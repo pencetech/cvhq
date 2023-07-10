@@ -49,6 +49,14 @@ type ComplexityRoot struct {
 		Filename func(childComplexity int) int
 	}
 
+	CVContent struct {
+		Education   func(childComplexity int) int
+		Experiences func(childComplexity int) int
+		Skillsets   func(childComplexity int) int
+		Summary     func(childComplexity int) int
+		UserBio     func(childComplexity int) int
+	}
+
 	Education struct {
 		Degree      func(childComplexity int) int
 		EndDate     func(childComplexity int) int
@@ -157,6 +165,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CV.Filename(childComplexity), true
+
+	case "CVContent.education":
+		if e.complexity.CVContent.Education == nil {
+			break
+		}
+
+		return e.complexity.CVContent.Education(childComplexity), true
+
+	case "CVContent.experiences":
+		if e.complexity.CVContent.Experiences == nil {
+			break
+		}
+
+		return e.complexity.CVContent.Experiences(childComplexity), true
+
+	case "CVContent.skillsets":
+		if e.complexity.CVContent.Skillsets == nil {
+			break
+		}
+
+		return e.complexity.CVContent.Skillsets(childComplexity), true
+
+	case "CVContent.summary":
+		if e.complexity.CVContent.Summary == nil {
+			break
+		}
+
+		return e.complexity.CVContent.Summary(childComplexity), true
+
+	case "CVContent.userBio":
+		if e.complexity.CVContent.UserBio == nil {
+			break
+		}
+
+		return e.complexity.CVContent.UserBio(childComplexity), true
 
 	case "Education.degree":
 		if e.complexity.Education.Degree == nil {
@@ -490,6 +533,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAchievementInput,
+		ec.unmarshalInputCVContentInput,
 		ec.unmarshalInputEducationInput,
 		ec.unmarshalInputExperienceInput,
 		ec.unmarshalInputJobPostingInput,
@@ -750,6 +794,271 @@ func (ec *executionContext) fieldContext_CV_filename(ctx context.Context, field 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CVContent_userBio(ctx context.Context, field graphql.CollectedField, obj *model.CVContent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CVContent_userBio(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserBio, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserBio)
+	fc.Result = res
+	return ec.marshalNUserBio2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐUserBio(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CVContent_userBio(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CVContent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "firstName":
+				return ec.fieldContext_UserBio_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_UserBio_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_UserBio_email(ctx, field)
+			case "phone":
+				return ec.fieldContext_UserBio_phone(ctx, field)
+			case "address":
+				return ec.fieldContext_UserBio_address(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserBio", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CVContent_summary(ctx context.Context, field graphql.CollectedField, obj *model.CVContent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CVContent_summary(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Summary, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CVContent_summary(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CVContent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CVContent_experiences(ctx context.Context, field graphql.CollectedField, obj *model.CVContent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CVContent_experiences(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Experiences, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Experience)
+	fc.Result = res
+	return ec.marshalNExperience2ᚕᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐExperienceᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CVContent_experiences(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CVContent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Experience_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Experience_title(ctx, field)
+			case "company":
+				return ec.fieldContext_Experience_company(ctx, field)
+			case "sector":
+				return ec.fieldContext_Experience_sector(ctx, field)
+			case "isCurrent":
+				return ec.fieldContext_Experience_isCurrent(ctx, field)
+			case "startDate":
+				return ec.fieldContext_Experience_startDate(ctx, field)
+			case "endDate":
+				return ec.fieldContext_Experience_endDate(ctx, field)
+			case "achievements":
+				return ec.fieldContext_Experience_achievements(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Experience", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CVContent_education(ctx context.Context, field graphql.CollectedField, obj *model.CVContent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CVContent_education(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Education, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Education)
+	fc.Result = res
+	return ec.marshalNEducation2ᚕᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐEducationᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CVContent_education(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CVContent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Education_id(ctx, field)
+			case "subject":
+				return ec.fieldContext_Education_subject(ctx, field)
+			case "institution":
+				return ec.fieldContext_Education_institution(ctx, field)
+			case "degree":
+				return ec.fieldContext_Education_degree(ctx, field)
+			case "startDate":
+				return ec.fieldContext_Education_startDate(ctx, field)
+			case "endDate":
+				return ec.fieldContext_Education_endDate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Education", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CVContent_skillsets(ctx context.Context, field graphql.CollectedField, obj *model.CVContent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CVContent_skillsets(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Skillsets, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Skillset)
+	fc.Result = res
+	return ec.marshalOSkillset2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSkillset(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CVContent_skillsets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CVContent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "skillsets":
+				return ec.fieldContext_Skillset_skillsets(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Skillset", field.Name)
 		},
 	}
 	return fc, nil
@@ -4798,6 +5107,71 @@ func (ec *executionContext) unmarshalInputAchievementInput(ctx context.Context, 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCVContentInput(ctx context.Context, obj interface{}) (model.CVContentInput, error) {
+	var it model.CVContentInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"userBio", "summary", "experiences", "education", "skillsets"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "userBio":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userBio"))
+			data, err := ec.unmarshalNUserBioInput2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐUserBioInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserBio = data
+		case "summary":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Summary = data
+		case "experiences":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("experiences"))
+			data, err := ec.unmarshalNExperienceInput2ᚕᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐExperienceInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Experiences = data
+		case "education":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("education"))
+			data, err := ec.unmarshalNEducationInput2ᚕᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐEducationInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Education = data
+		case "skillsets":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("skillsets"))
+			data, err := ec.unmarshalOSkillsetInput2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSkillsetInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Skillsets = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEducationInput(ctx context.Context, obj interface{}) (model.EducationInput, error) {
 	var it model.EducationInput
 	asMap := map[string]interface{}{}
@@ -5286,6 +5660,62 @@ func (ec *executionContext) _CV(ctx context.Context, sel ast.SelectionSet, obj *
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var cVContentImplementors = []string{"CVContent"}
+
+func (ec *executionContext) _CVContent(ctx context.Context, sel ast.SelectionSet, obj *model.CVContent) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, cVContentImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CVContent")
+		case "userBio":
+			out.Values[i] = ec._CVContent_userBio(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "summary":
+			out.Values[i] = ec._CVContent_summary(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "experiences":
+			out.Values[i] = ec._CVContent_experiences(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "education":
+			out.Values[i] = ec._CVContent_education(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "skillsets":
+			out.Values[i] = ec._CVContent_skillsets(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
