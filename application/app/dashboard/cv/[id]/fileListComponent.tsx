@@ -28,8 +28,8 @@ const FileListComponent = ({ files, onFileClick, onGenerateClick, loading }: {
   return (
   <Card>
     <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Typography.Title level={4} style={{ margin: 0 }}>CVs</Typography.Title>
-      <Button type='primary' loading={loading} onClick={() => onGenerateClick()}>Generate CV</Button>
+      <Typography.Title level={4} style={{ margin: 0 }}>Versions</Typography.Title>
+      <Button type='primary' loading={loading} onClick={() => onGenerateClick()}>Generate new version</Button>
     </div> 
     <Divider />
     <List

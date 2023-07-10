@@ -86,7 +86,7 @@ const SetupPage = () => {
         open={isOpen}
         footer={null}
       >
-        <ProfileNameForm message="To get started, let's pick a nickname for your job posting." onSubmit={handleCreate}/>
+        <ProfileNameForm message="To get started, let's create a nickname for your new CV." onSubmit={handleCreate}/>
       </Modal>
     </div>
   )

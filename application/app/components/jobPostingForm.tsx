@@ -1,5 +1,6 @@
 "use client";
 import { Formik } from "formik";
+import Image from 'next/image';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
@@ -100,6 +101,12 @@ const JobPostingForm = (props: OtherProps) => {
                             
                         </Col>
                         {isIntro ? <Col span={12}>
+                            <Image
+                            width={768}
+                            height={432}
+                            src='/job_posting.gif'
+                            alt='animation of copying job requirements from Indeed or LinkedIn onto our page.'
+                            />
                             </Col> : null}
                     </Row>
                     </Form>

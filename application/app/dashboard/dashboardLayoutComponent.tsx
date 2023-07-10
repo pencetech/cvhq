@@ -54,7 +54,7 @@ const DashboardLayoutComponent = ({
 
   const items: MenuItem[] = [
       getItem("Home", "home", <HomeOutlined />), 
-      getItem("Job postings", "job", loadingProfileIcon, profiles.map(p => {
+      getItem("CVs", "cv", loadingProfileIcon, profiles.map(p => {
         return getItem(p.description, p.id)
       }))
   ]

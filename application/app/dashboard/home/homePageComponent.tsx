@@ -47,7 +47,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
     }
     if (currId) {
 
-      router.push(`/dashboard/job/${currId}`);
+      router.push(`/dashboard/cv/${currId}`);
     }
   }
 
@@ -128,7 +128,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
     {contextHolder}
     <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography.Title level={3} style={{ margin: 0 }}>Home</Typography.Title>
-        <Button type='primary' icon={<PlusCircleOutlined />} onClick={handleAddPosting}>Add Job Posting</Button>
+        <Button type='primary' icon={<PlusCircleOutlined />} onClick={handleAddPosting}>Create new CV</Button>
     </div>
     <Divider />
     <List
@@ -137,14 +137,14 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
       renderItem={(item, _) => (
         <List.Item
           actions={[
-          <Link key="profile" href={`/dashboard/job/${item.id}`}>
+          <Link key="profile" href={`/dashboard/cv/${item.id}`}>
             <Button type="primary" icon={<EditFilled />} />
         </Link>
         ]}
         >
           <List.Item.Meta
             avatar={<ProfileTwoTone twoToneColor="#eb2f96" />}
-            title={<Link href={`/dashboard/job/${item.id}`}>{item.description}</Link>}
+            title={<Link href={`/dashboard/cv/${item.id}`}>{item.description}</Link>}
             description={`Created at ${renderTime(item.createdAt)}`}
           />
         </List.Item>
@@ -157,7 +157,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
         onCancel={e => setIsOpen(false)}
         closable
       >
-        <ProfileNameForm message="To get started, let's add a nickname to your job posting." onSubmit={handleCreate}/>
+        <ProfileNameForm message="To get started, let's create a nickname for you new CV." onSubmit={handleCreate}/>
       </Modal>
   </div>
   );
