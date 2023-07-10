@@ -60,7 +60,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
 
       if (error) {
         if (error.code === "23505") {
-          messageApi.error("Profile name exists.");
+          messageApi.error("Job posting nickname exists. Please use another nickname.");
         } else {
           messageApi.error("An error occured.");
         }
@@ -148,7 +148,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
         onCancel={e => setIsOpen(false)}
         closable
       >
-        <ProfileNameForm message="To get started, let's add a nickname to our job posting." onSubmit={handleCreate}/>
+        <ProfileNameForm message="To get started, let's add a nickname to your job posting." onSubmit={handleCreate}/>
       </Modal>
   </div>
   );

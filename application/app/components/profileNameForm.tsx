@@ -8,6 +8,7 @@ import { withFormikDevtools } from "formik-devtools-extension";
 import { Typography, Row, Button } from 'antd';
 import { ProfileName } from '@/models/cv';
 import * as Yup from 'yup';
+import { useState } from "react";
 
 interface OtherProps {
     message: string;
@@ -20,6 +21,7 @@ const profileNameValidationSchema = Yup.object().shape({
 
 const ProfileNameForm = (props: OtherProps) => {
     const { message, onSubmit } = props;
+    const [loading, setLoading] = useState(false);
 
     const formItemLayout = {
         labelCol: { span: 6 },
@@ -33,7 +35,9 @@ const ProfileNameForm = (props: OtherProps) => {
             }}
             validationSchema={profileNameValidationSchema}
             onSubmit={async (values, actions) => {
+                setLoading(true);
                 await onSubmit(values);
+                setLoading(false);
             }}
         >
             { props => {
@@ -45,8 +49,8 @@ const ProfileNameForm = (props: OtherProps) => {
                             <Input name='profileName' suffix />
                         </Form.Item>
                         <Row justify='end'>
-                            <Button type='primary' htmlType='submit'>
-                                Create
+                            <Button loading={loading} type='primary' htmlType='submit'>
+                                {loading ? "Creating" : "Create"}
                             </Button>
                         </Row> 
                     </Form>
