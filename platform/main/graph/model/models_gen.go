@@ -12,6 +12,22 @@ type Cv struct {
 	Filename string `json:"filename"`
 }
 
+type CVContent struct {
+	UserBio     *UserBio      `json:"userBio"`
+	Summary     string        `json:"summary"`
+	Experiences []*Experience `json:"experiences"`
+	Education   []*Education  `json:"education"`
+	Skillsets   *Skillset     `json:"skillsets,omitempty"`
+}
+
+type CVContentInput struct {
+	UserBio     *UserBioInput      `json:"userBio"`
+	Summary     string             `json:"summary"`
+	Experiences []*ExperienceInput `json:"experiences"`
+	Education   []*EducationInput  `json:"education"`
+	Skillsets   *SkillsetInput     `json:"skillsets,omitempty"`
+}
+
 type Education struct {
 	ID          *string `json:"id,omitempty"`
 	Subject     string  `json:"subject"`

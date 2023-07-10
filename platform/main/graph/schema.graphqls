@@ -38,6 +38,22 @@ type Education {
   endDate: String!
 }
 
+type CVContent {
+  userBio: UserBio!
+  summary: String!
+  experiences: [Experience!]!
+  education: [Education!]!
+  skillsets: Skillset
+}
+
+input CVContentInput {
+  userBio: UserBioInput!
+  summary: String!
+  experiences: [ExperienceInput!]!
+  education: [EducationInput!]!
+  skillsets: SkillsetInput
+}
+
 type Skillset {
   skillsets: String!
 }
