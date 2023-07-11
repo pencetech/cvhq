@@ -6,7 +6,7 @@ import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Typography, Row, Col, Cascader } from 'antd';
+import { Typography, Row, Col, Cascader, Card } from 'antd';
 import * as Yup from 'yup';
 import { JobPosting } from "@/models/cv";
 import { sectors } from "@/models/sector";
@@ -101,12 +101,14 @@ const JobPostingForm = (props: OtherProps) => {
                             
                         </Col>
                         {isIntro ? <Col span={12}>
-                            <Image
-                            width={768}
-                            height={432}
-                            src='/job_posting.gif'
-                            alt='animation of copying job requirements from Indeed or LinkedIn onto our page.'
-                            />
+                        <div style={{width: '100%', height: '100%', position: 'relative'}}>
+                                <Image
+                                fill 
+                                style={{ objectFit: "contain", borderRadius: '15px', border: '1px solid #d9d9d9', }}
+                                src='/job_posting.gif'
+                                alt='animation of copying job requirements from Indeed or LinkedIn onto our page.'
+                                />
+                                </div>
                             </Col> : null}
                     </Row>
                     </Form>

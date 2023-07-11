@@ -11,7 +11,7 @@ import * as Yup from 'yup';
 import { useState } from "react";
 
 interface OtherProps {
-    message: string;
+    message: React.ReactNode;
     onSubmit: (value: ProfileName) => Promise<void>;
 }
 
@@ -44,9 +44,9 @@ const ProfileNameForm = (props: OtherProps) => {
                 withFormikDevtools(props);
                 return (
                     <Form {...formItemLayout}>
-                        <p style={{ margin: '0 0 12px 0' }}>{message}</p>
+                        {message}
                         <Form.Item required={true} name='profileName' label='Profile name'>
-                            <Input name='profileName' suffix />
+                            <Input name='profileName' suffix placeholder="Software Engineer, TikTok"/>
                         </Form.Item>
                         <Row justify='end'>
                             <Button loading={loading} type='primary' htmlType='submit'>

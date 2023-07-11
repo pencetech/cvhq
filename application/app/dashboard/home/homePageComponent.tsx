@@ -157,7 +157,10 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
         onCancel={e => setIsOpen(false)}
         closable
       >
-        <ProfileNameForm message="To get started, let's create a nickname for you new CV." onSubmit={handleCreate}/>
+        <ProfileNameForm message={
+          <p style={{ margin: '0 0 12px 0' }}>
+            To get started, let's create a unique name for this CV. It's best to use your target Job Role and Company for this.
+          </p>} onSubmit={handleCreate}/>
       </Modal>
   </div>
   );

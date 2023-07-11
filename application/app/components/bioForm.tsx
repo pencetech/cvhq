@@ -6,8 +6,9 @@ import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import Select from 'formik-antd/es/select';
 import 'formik-antd/es/select/style';
+import Image from 'next/image';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Col, Row, Space, Typography } from 'antd';
+import { Col, Row, Typography } from 'antd';
 import * as Yup from 'yup';
 import { UserBio } from "@/models/cv";
 import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
@@ -104,6 +105,14 @@ const BioForm = (props: OtherProps) => {
                                 </Row>
                             </Col>
                             {isIntro ? <Col span={12}>
+                            <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                                <Image
+                                fill 
+                                style={{ objectFit: "contain", borderRadius: '15px', border: '1px solid #d9d9d9' }}
+                                src='/your_bio.gif'
+                                alt='animation of highlighting bio on CV.'
+                                />
+                            </div>
                             </Col> : null}
                         </Row>
                         </Form>
