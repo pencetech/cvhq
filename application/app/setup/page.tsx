@@ -86,7 +86,10 @@ const SetupPage = () => {
         open={isOpen}
         footer={null}
       >
-        <ProfileNameForm message="To get started, let's pick a nickname for your job posting." onSubmit={handleCreate}/>
+        <ProfileNameForm message={
+          <p style={{ margin: '0 0 12px 0' }}>
+            To get started, let&apos;s create a unique name for this CV. It&apos;s best to use your target Job Role and Company for this.
+          </p>} onSubmit={handleCreate}/>
       </Modal>
     </div>
   )
