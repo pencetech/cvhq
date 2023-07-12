@@ -1,8 +1,9 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import Logo from '@/public/CVHQ.png';
-import { Layout, Button, MenuProps } from 'antd';
+import { Layout, Button, Space, Tag } from 'antd';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
@@ -29,13 +30,19 @@ const SetupLayout = ({
                 backgroundColor: '#111111'
             }}>
                 <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Image 
-                        src={Logo}
-                        alt="CVHQ logo"
-                        height={18}
-                        fill={false}
-                        priority 
-                    />
+                    <Space align="center">
+                      <Image 
+                          src={Logo}
+                          alt="CVHQ logo"
+                          height={18}
+                          fill={false}
+                          priority 
+                      />
+                      <Tag color="#2db7f5" style={{ color: "#111111", fontSize: "12px" }}>BETA</Tag>
+                    </Space>
+                    <Link href="https://tally.so/r/3NDNxO" target="_blank">
+                        <Button type="text" style={{ color: '#FFFFFF' }}>Feedback</Button>
+                    </Link>
                     <Button type="text" style={{ color: "#FFFFFF" }} onClick={handleSignOut}>Sign out</Button>
                 </div>
             </Header>
