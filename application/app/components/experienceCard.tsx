@@ -93,6 +93,17 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
               });
             return;
         }
+
+        if (!jobPosting.title ||
+            !jobPosting.company ||
+            !jobPosting.sector ||
+            !jobPosting.requirements) {
+            Modal.error({
+                title: 'Job posting incomplete',
+                content: 'Please complete your job posting, as it will be used to enhance your achievements.',
+              });
+            return;
+        }
         generateAchievements();
         showDrawer();
     }

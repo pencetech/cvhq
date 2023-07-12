@@ -1,11 +1,11 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { FileTextOutlined, LoadingOutlined, HomeOutlined } from '@ant-design/icons';
+import { FileTextOutlined, HomeOutlined } from '@ant-design/icons';
 import Image from 'next/image';
+import Link from 'next/link';
 import Logo from '@/public/CVHQ.png';
 import Breadcrumbs from '../components/breadcrumbs';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, Button, theme, Spin } from 'antd';
+import { Layout, Menu, Button, theme, Tag, Space, Alert } from 'antd';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { usePathname, useRouter } from 'next/navigation';
@@ -18,10 +18,12 @@ type ProfileData = {
   description: string
 }
 
+const DISCLAIMER_TEXT = "CVHQ is currently in beta. If you experience any usability issues, please leave some feedback. Thanks for visiting!";
+
 export const revalidate = 0;
 
 const DashboardLayoutComponent = ({
-    user, profiles, children
+    profiles, children
   }: {
     user: string,
     profiles: ProfileData[],
@@ -95,16 +97,29 @@ const DashboardLayoutComponent = ({
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
+      <Alert message={DISCLAIMER_TEXT} banner action={
+        <Link href="https://tally.so/r/3NDNxO" target="_blank">
+          <Button type="text">Give feedback</Button>
+        </Link>
+      }/>
       <Header style={{ display: 'flex', alignItems: 'center' }}>
       <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Image 
-                        src={Logo}
-                        alt="CVHQ logo"
-                        height={18}
-                        fill={false}
-                        priority 
-                    />
+                    <Space align="center">
+                      <Image 
+                          src={Logo}
+                          alt="CVHQ logo"
+                          height={18}
+                          fill={false}
+                          priority 
+                      />
+                      <Tag color="#2db7f5" style={{ color: "#111111", fontSize: "12px" }}>BETA</Tag>
+                    </Space>
+                    <Space>
+                      <Link href="https://tally.so/r/3NDNxO" target="_blank">
+                        <Button type="text" style={{ color: '#FFFFFF' }}>Feedback</Button>
+                      </Link>
                       <Button type="text" style={{ color: "#FFFFFF" }} onClick={handleSignOut}>Sign out</Button>
+                    </Space>
                 </div>
       </Header>
       <Layout hasSider>
