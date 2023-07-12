@@ -15,7 +15,7 @@ interface EducationCard {
 interface EducationCardProps {
     formProps: FormikProps<EducationCard>, 
     index: number,
-    onClick: () => {}
+    onClick: () => Promise<void>
 }
 
 const EducationCard: FC<EducationCardProps> = ({

@@ -53,8 +53,7 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: { title: string, p
             title: job.title,
             company: job.company,
             sector: job.sector,
-            requirements: job.requirements,
-            add_on: job.addOn
+            requirements: job.requirements
         }).eq("profile_id", profileId)
         messageApi.success("Job posting saved!");
     }
@@ -62,41 +61,81 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: { title: string, p
     const setExperienceArray = async (exp: Experience[])  => {
         const values = { experiences: exp }
         const data = { ...profile, ...values };
+        const oldLength = profile.experiences.length;
+        if (oldLength > exp.length) {
+            const diffCount = oldLength - exp.length;
+
+            for (let step = 0; step < diffCount; step++) {
+                await deleteExperience(oldLength - step)
+            }
+        }
         onUpdate(data);
-        await Promise.all(exp.map(async e => await setExperience(e)))
+        await setExperience(exp);
         messageApi.success("Experiences saved!");
     }
 
-    const setExperience = async (exp: Experience) => {
+    const setExperience = async (experience: Experience[]) => {
         await supabase.from('experience')
-        .update({
+        .upsert(experience.map(exp => ({
             title: exp.title,
             company: exp.company,
             sector: exp.sector,
             is_current: exp.isCurrent,
             start_date: exp.startDate,
             end_date: exp.isCurrent ? null : exp.endDate,
-            achievements: exp.achievements
-        }).eq("profile_id", profileId);
+            achievements: exp.achievements,
+            profile_id: profileId,
+            seq_id: exp.id,
+            is_deleted: false
+        })), { onConflict: 'profile_id, seq_id' })
     }
 
     const setEducationArray = async (ed: Education[])  => {
         const values = { education: ed }
         const data = { ...profile, ...values };
+        const oldLength = profile.education.length;
+        if (oldLength > ed.length) {
+            const diffCount = oldLength - ed.length;
+
+            for (let step = 0; step < diffCount; step++) {
+                await deleteEducation(oldLength - step)
+            }
+        }
         onUpdate(data);
-        await Promise.all(ed.map(async e => await setEducation(e)))
+        await setEducation(ed);
         messageApi.success("Education saved!");
     }
 
-    const setEducation = async (ed: Education) => {
+    const setEducation = async (education: Education[]) => {
         await supabase.from('education')
-        .update({
+        .upsert(education.map(ed => ({
             subject: ed.subject,
             institution: ed.institution,
             degree: ed.degree,
             start_date: ed.startDate,
             end_date: ed.endDate,
-        }).eq("profile_id", profileId);
+            profile_id: profileId,
+            seq_id: ed.id,
+            is_deleted: false
+        })), { onConflict: 'profile_id, seq_id' });
+    }
+
+    const deleteExperience = async (index: number) => {
+        await supabase.from('experience')
+            .update({
+                is_deleted: true,
+            })
+            .eq('profile_id', profileId)
+            .eq('seq_id', index)
+    }
+
+    const deleteEducation = async (index: number) => {
+        await supabase.from('education')
+            .update({
+                is_deleted: true,
+            })
+            .eq('profile_id', profileId)
+            .eq('seq_id', index)
     }
 
     const setSkillset = async (sk: Skillset) => {
@@ -149,7 +188,12 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: { title: string, p
         {
             key: 'education',
             label: 'Education',
-            content: <EducationForm isIntro={false} title="Education" value={profile.education} onSubmit={setEducationArray} actions={saveButton} />
+            content: <EducationForm 
+                isIntro={false} 
+                title="Education" 
+                value={profile.education} 
+                onSubmit={setEducationArray} 
+                actions={saveButton} />
         },
         {
             key: 'skillsets',

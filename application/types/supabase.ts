@@ -61,7 +61,9 @@ export interface Database {
           id: number
           inserted_at: string
           institution: string
+          is_deleted: boolean
           profile_id: number
+          seq_id: number
           start_date: string
           subject: string
           updated_at: string
@@ -72,7 +74,9 @@ export interface Database {
           id?: number
           inserted_at?: string
           institution: string
+          is_deleted?: boolean
           profile_id: number
+          seq_id: number
           start_date: string
           subject: string
           updated_at?: string
@@ -83,7 +87,9 @@ export interface Database {
           id?: number
           inserted_at?: string
           institution?: string
+          is_deleted?: boolean
           profile_id?: number
+          seq_id?: number
           start_date?: string
           subject?: string
           updated_at?: string
@@ -105,8 +111,10 @@ export interface Database {
           id: number
           inserted_at: string
           is_current: boolean
+          is_deleted: boolean
           profile_id: number
           sector: string
+          seq_id: number
           start_date: string
           title: string
           updated_at: string
@@ -118,8 +126,10 @@ export interface Database {
           id?: number
           inserted_at?: string
           is_current: boolean
+          is_deleted?: boolean
           profile_id: number
           sector: string
+          seq_id: number
           start_date: string
           title: string
           updated_at?: string
@@ -131,8 +141,10 @@ export interface Database {
           id?: number
           inserted_at?: string
           is_current?: boolean
+          is_deleted?: boolean
           profile_id?: number
           sector?: string
+          seq_id?: number
           start_date?: string
           title?: string
           updated_at?: string

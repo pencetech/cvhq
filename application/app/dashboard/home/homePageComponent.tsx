@@ -159,7 +159,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
       >
         <ProfileNameForm message={
           <p style={{ margin: '0 0 12px 0' }}>
-            To get started, let&apos;s create a unique name for this CV. It&apos;s best to use your target Job Role and Company for this.
+            Let&apos;s create a unique name for this CV. It&apos;s best to use your target Job Role and Company for this.
           </p>} onSubmit={handleCreate}/>
       </Modal>
   </div>
