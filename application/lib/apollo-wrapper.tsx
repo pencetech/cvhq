@@ -66,6 +66,7 @@ const emptyFormData: FormData = {
       addOn: ''
   },
   experiences: [{
+      id: 1,
       title: '',
       company: '',
       sector: '',
@@ -75,6 +76,7 @@ const emptyFormData: FormData = {
       achievements: ''
   }],
   education: [{
+      id: 1,
       subject: '',
       institution: '',
       degree: '',

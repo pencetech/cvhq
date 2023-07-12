@@ -41,10 +41,10 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             title: '',
             company: '',
             sector: '',
-            requirements: '',
-            addOn: ''
+            requirements: ''
         },
         experiences: [{
+            id: 1,
             title: '',
             company: '',
             sector: '',
@@ -54,6 +54,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             achievements: ''
         }],
         education: [{
+            id: 1,
             subject: '',
             institution: '',
             degree: '',
@@ -111,6 +112,14 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     }
 
     const insertExperience = async (experiences: Experience[]) => {
+        const oldLength = formData.experiences.length;
+        if (oldLength > experiences.length) {
+            const diffCount = oldLength - experiences.length;
+
+            for (let step = 0; step < diffCount; step++) {
+                await deleteExperience(oldLength - step)
+            }
+        }
         await supabase.from('experience')
             .upsert(experiences.map(exp => ({
                 profile_id: profileId,
@@ -120,9 +129,11 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 is_current: exp.isCurrent,
                 start_date: exp.startDate,
                 end_date: exp.isCurrent ? null : exp.endDate,
-                achievements: exp.achievements
+                achievements: exp.achievements,
+                seq_id: exp.id,
+                is_deleted: false
             })
-        ))
+        ), { onConflict: 'profile_id, seq_id' })
         messageApi.success("Experience saved!");
         handleProgress({
             experiences: experiences
@@ -130,6 +141,14 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     }
 
     const insertEducation = async (education: Education[]) => {
+        const oldLength = formData.education.length;
+        if (oldLength > education.length) {
+            const diffCount = oldLength - education.length;
+
+            for (let step = 0; step < diffCount; step++) {
+                await deleteEducation(oldLength - step)
+            }
+        }
         await supabase.from('education')
             .upsert(education.map(ed => ({
                 profile_id: profileId,
@@ -138,12 +157,32 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 degree: ed.degree,
                 start_date: ed.startDate,
                 end_date: ed.endDate,
+                seq_id: ed.id,
+                is_deleted: false
             })
-        )).eq("profile_id", profileId);
+        ), { onConflict: 'profile_id, seq_id' })
         messageApi.success("Education saved!");
         handleProgress({
             education: education
         });
+    }
+
+    const deleteExperience = async (index: number) => {
+        await supabase.from('experience')
+            .update({
+                is_deleted: true,
+            })
+            .eq('profile_id', profileId)
+            .eq('seq_id', index)
+    }
+
+    const deleteEducation = async (index: number) => {
+        await supabase.from('education')
+            .update({
+                is_deleted: true,
+            })
+            .eq('profile_id', profileId)
+            .eq('seq_id', index)
     }
 
     const insertSkillset = async (sk: Skillset) => {
@@ -240,12 +279,28 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         {
             key: 'experiences',
             label: 'Experiences',
-            content: <ExperiencesForm isIntro title="Let's fill out your work history" description="Things to note:" userBio={formData.userBio} jobPosting={formData.jobPosting} value={formData.experiences} onSubmit={insertExperience} actions={midNextActions} />
+            content: <ExperiencesForm 
+                isIntro 
+                title="Let's fill out your work history" 
+                description="Things to note:" 
+                userBio={formData.userBio} 
+                jobPosting={formData.jobPosting} 
+                value={formData.experiences} 
+                onSubmit={insertExperience} 
+                actions={midNextActions} 
+            />
         },
         {
             key: 'education',
             label: 'Education',
-            content: <EducationForm isIntro title="Showcase your academic qualifications" description="Things to note:" value={formData.education} onSubmit={insertEducation} actions={midNextActions} />
+            content: <EducationForm 
+                isIntro 
+                title="Showcase your academic qualifications" 
+                description="Things to note:" 
+                value={formData.education} 
+                onSubmit={insertEducation} 
+                actions={midNextActions} 
+                />
         },
         {
             key: 'skillsets',

@@ -16,7 +16,7 @@ interface OtherProps {
     value: Experience[];
     userBio: UserBio;
     jobPosting: JobPosting;
-    onSubmit: (value: Experience[]) => void;
+    onSubmit: (value: Experience[]) => Promise<void>;
     actions: React.ReactNode;
 }
 
@@ -86,7 +86,7 @@ const ExperiencesForm = (props: OtherProps) => {
                                             <ExperienceCard 
                                                 formProps={props} 
                                                 index={index} 
-                                                onClick={() => arrayHelpers.remove(index)}
+                                                onClick={async () => arrayHelpers.remove(index)}
                                                 userBio={userBio}
                                                 jobPosting={jobPosting}
                                                 value={props.values.experiences[index]}

@@ -27,7 +27,7 @@ interface ExperienceCardProps {
     userBio: UserBio,
     jobPosting: JobPosting,
     index: number,
-    onClick: () => {}
+    onClick: () => Promise<void>
 }
 
 const GENERATE_ACHIEVEMENTS = gql`

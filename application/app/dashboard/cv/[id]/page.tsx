@@ -71,28 +71,31 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
 
     const getExperience = async (user: string) => {
         let { data, error, status } = await supabase
-            .rpc('get_experience', {
-                user_id_input: user,
-                profile_id_input: params.id
-            })
+            .from('experience')
+            .select('title, company, sector, is_current, start_date, end_date, achievements')
+            .eq('profile_id', params.id)
+            .eq('is_deleted', false)
     
         if (error && status !== 406) {
             throw error
         }
 
         if (data && data.length > 0) {
-            return data.map(ex => ({
-                title: ex.exp_title,
-                company: ex.exp_company,
-                sector: ex.exp_sector,
-                isCurrent: ex.exp_is_current,
-                startDate: ex.exp_start_date,
-                endDate: ex.exp_is_current ? '' : ex.exp_end_date,
-                achievements: ex.exp_achievements
+            return data
+            .map((ex, i) => ({
+                id: i + 1,
+                title: ex.title,
+                company: ex.company,
+                sector: ex.sector,
+                isCurrent: ex.is_current,
+                startDate: ex.start_date,
+                endDate: ex.is_current ? '' : ex.end_date,
+                achievements: ex.achievements
             }));
         }
 
         return [{
+            id: 1,
             title: '',
             company: '',
             sector: '',
@@ -105,22 +108,23 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
 
     const getEducation = async (user: string) => {
         let { data, error, status } = await supabase
-            .rpc('get_education', {
-                user_id_input: user,
-                profile_id_input: params.id
-            })
+            .from('education')
+            .select('subject, institution, degree, start_date, end_date')
+            .eq('profile_id', params.id)
+            .eq('is_deleted', false)
     
         if (error && status !== 406) {
             throw error
         }
 
         if (data && data.length > 0) {
-            return data.map(e => ({
-                subject: e.ed_subject,
-                institution: e.ed_institution,
-                degree: e.ed_degree,
-                startDate: e.ed_start_date,
-                endDate: e.ed_end_date
+            return data.map((e, i) => ({
+                id: i + 1,
+                subject: e.subject,
+                institution: e.institution,
+                degree: e.degree,
+                startDate: e.start_date,
+                endDate: e.end_date
             }))
         }
 
