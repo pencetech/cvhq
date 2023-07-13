@@ -176,6 +176,7 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: { title: string, p
             key: 'experiences',
             label: 'Experiences',
             content: <ExperiencesForm 
+                profileId={profileId}
                 isIntro={false}
                 title="Experiences" 
                 value={profile.experiences} 

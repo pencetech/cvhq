@@ -4,15 +4,36 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { FilePdfTwoTone, DownloadOutlined } from '@ant-design/icons';
-import { List, Button, Row, Divider, Card, Typography } from 'antd';
+import { List, Button, Divider, Card, Typography } from 'antd';
 import { CvFile } from '@/models/cv';
+import { usePathname } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Database } from '@/types/supabase';
+import { useState, useEffect } from 'react';
 
-const FileListComponent = ({ files, onFileClick, onGenerateClick, loading }: { 
+const FileListComponent = ({ files, onFileClick, profileId, onGenerateClick, loading }: { 
   files: CvFile[], 
   onFileClick: (name: string) => Promise<void>,
+  profileId: number,
   onGenerateClick: any
   loading: boolean
 }) => {
+  const pathName = usePathname();
+  const [user, setUser] = useState('');
+  const supabase = createClientComponentClient<Database>();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        setUser(user?.id)
+      }
+    }
+
+    getUser();
+  }, [])
 
   const renderTime = (date: string) => {
     dayjs.extend(utc)
@@ -24,6 +45,20 @@ const FileListComponent = ({ files, onFileClick, onGenerateClick, loading }: {
     .tz(date, timeZone)
     .format('MMMM D, YYYY h:mm A')
   } 
+
+  const handleMetricClick = () => {
+    const currPathNoQuery = pathName.split("?")[0];
+        const currPath = currPathNoQuery
+            .split("/")
+            .filter(v => v.length > 0);
+        const currPage = currPath[currPath.length-1];
+        window.analytics?.track("Applied enhancement", {
+            title: `Applied enhancement in ${currPage}`,
+            userId: user,
+            profileId: profileId,
+            current_path: currPath
+        })
+  }
   
   return (
   <Card>
@@ -47,7 +82,7 @@ const FileListComponent = ({ files, onFileClick, onGenerateClick, loading }: {
         >
           <List.Item.Meta
             avatar={<FilePdfTwoTone twoToneColor="#eb2f96" />}
-            title={<a download={item.filename} href={`https://cvhq-platform-production.fly.dev/cv/${item.filename}`}>{item.filename}</a>}
+            title={<a onClick={() => handleMetricClick()} download={item.filename} href={`https://cvhq-platform-production.fly.dev/cv/${item.filename}`}>{item.filename}</a>}
             description={`Created at ${renderTime(item.createdAt)}`}
           />
         </List.Item>

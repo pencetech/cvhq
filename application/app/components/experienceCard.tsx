@@ -14,6 +14,9 @@ import Checkbox from 'formik-antd/es/checkbox';
 import 'formik-antd/es/checkbox/style';
 import { sectors } from '@/models/sector';
 import { TextAreaRef } from 'antd/es/input/TextArea';
+import { usePathname } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Database } from '@/types/supabase';
 
 const { Text } = Typography;
 
@@ -26,6 +29,7 @@ interface ExperienceCardProps {
     value: Experience,
     userBio: UserBio,
     jobPosting: JobPosting,
+    profileId?: number,
     index: number,
     onClick: () => Promise<void>
 }
@@ -43,7 +47,7 @@ mutation enhanceAchievement($input: AchievementInput!) {
 `
 
 const ExperienceCard: FC<ExperienceCardProps> = ({
-    formProps, value, userBio, jobPosting, index, onClick
+    formProps, value, userBio, jobPosting, profileId, index, onClick
 }: ExperienceCardProps) => {
     const [generateAchievements, { data, loading, error }] = useMutation(GENERATE_ACHIEVEMENTS, {
         variables: {
@@ -55,21 +59,47 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
             }
         }
     );
+    const pathName = usePathname();
     const { token } = theme.useToken();
     const [open, setOpen] = useState(false);
+    const [user, setUser] = useState('');
     const [newAchievements, setNewAchievements] = useState("");
     const inputRef = useRef<TextAreaRef>(null);
+    const supabase = createClientComponentClient<Database>();
     const toggleEditing = () => {
         inputRef.current?.focus();
     };
 
     useEffect(() => {
+
+        const getUser = async () => {
+            const {
+                data: { user },
+              } = await supabase.auth.getUser();
+            
+              if (user) {
+                setUser(user?.id);
+            }
+        }
         if (data && data.enhanceAchievement) {
             setNewAchievements(data.enhanceAchievement.achievements);
         }
+
+        getUser();
       }, [data])
 
     const showDrawer = () => {
+        const currPathNoQuery = pathName.split("?")[0];
+        const currPath = currPathNoQuery
+            .split("/")
+            .filter(v => v.length > 0);
+        const currPage = currPath[currPath.length-1];
+        window.analytics?.track("Drawer opened", {
+            title: `Opened drawer in ${currPage}`,
+            userId: user,
+            profileId: profileId,
+            current_path: currPath
+        })
         setOpen(true);
     };
 
@@ -78,6 +108,17 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
     };
 
     const applyNewAchievements = () => {
+        const currPathNoQuery = pathName.split("?")[0];
+        const currPath = currPathNoQuery
+            .split("/")
+            .filter(v => v.length > 0);
+        const currPage = currPath[currPath.length-1];
+        window.analytics?.track("Applied enhancement", {
+            title: `Applied enhancement in ${currPage}`,
+            userId: user,
+            profileId: profileId,
+            current_path: currPath
+        })
         formProps.setFieldValue(`experiences[${index}].achievements`, newAchievements);
         onClose();
     }

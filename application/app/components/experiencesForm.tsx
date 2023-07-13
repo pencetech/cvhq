@@ -17,6 +17,7 @@ interface OtherProps {
     userBio: UserBio;
     jobPosting: JobPosting;
     onSubmit: (value: Experience[]) => Promise<void>;
+    profileId: number;
     actions: React.ReactNode;
 }
 
@@ -44,7 +45,7 @@ const experienceValidationSchema = Yup.object().shape({
 });
 
 const ExperiencesForm = (props: OtherProps) => {
-    const { title, description, isIntro, onSubmit, value, userBio, jobPosting, actions } = props;
+    const { title, description, isIntro, onSubmit, profileId, value, userBio, jobPosting, actions } = props;
 
     const formItemLayout = {
         labelCol: { span: 24 },
@@ -85,6 +86,7 @@ const ExperiencesForm = (props: OtherProps) => {
                                         <React.Fragment key={index}>
                                             <ExperienceCard 
                                                 formProps={props} 
+                                                profileId={profileId}
                                                 index={index} 
                                                 onClick={async () => arrayHelpers.remove(index)}
                                                 userBio={userBio}
