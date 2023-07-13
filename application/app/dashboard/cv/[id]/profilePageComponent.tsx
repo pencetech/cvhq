@@ -6,8 +6,8 @@ import { CvFile, FormData } from "@/models/cv"
 import { gql, useMutation } from "@apollo/client";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 
 const GENERATE_CV = gql`
@@ -24,7 +24,9 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
     profileName: string
 }) => {
     const router = useRouter();
+    const pathName = usePathname();
     const supabase = createClientComponentClient<Database>();
+    const [user, setUser] = useState('');
     const [formData, setFormData] = useState<FormData>({
         userBio: profile.userBio,
         jobPosting: profile.jobPosting,
@@ -46,6 +48,19 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         onCompleted: async (data: any) => await handleCompleteGenerate(data.generateCV.filename)
     })
 
+    useEffect(() => {
+        const getUser = async () => {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser()
+          if (user) {
+            setUser(user?.id)
+          }
+        }
+    
+        getUser();
+      }, [])
+
     const handleCompleteGenerate = async (filename: string) => {
         await supabase
             .from("cv_file")
@@ -58,6 +73,17 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
     }
 
     const fetchAndDownloadCV = async (filename: string) => {
+        const currPathNoQuery = pathName.split("?")[0];
+        const currPath = currPathNoQuery
+            .split("/")
+            .filter(v => v.length > 0);
+        const currPage = currPath[currPath.length-1];
+        window.analytics?.track("Applied enhancement", {
+            title: `Applied enhancement in ${currPage}`,
+            userId: user,
+            profileId: id,
+            current_path: currPath
+        })
         const res = await fetch(`https://cvhq-platform-production.fly.dev/cv/${filename}`)
         if (!res.ok) {
             // This will activate the closest `error.js` Error Boundary
@@ -76,6 +102,7 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
             <Col span={10}>
                 {files ? <FileListComponent 
                     loading={loading} 
+                    profileId={id}
                     files={files} 
                     onFileClick={fetchAndDownloadCV}
                     onGenerateClick={generateCV}

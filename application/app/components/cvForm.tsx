@@ -11,6 +11,7 @@ import EducationForm from './educationForm';
 import SkillsetForm from './skillsetForm';
 import { Database } from '@/types/supabase';
 import CvDownloadModal from './cvDownloadModal';
+import { usePathname } from 'next/navigation';
 
 const GENERATE_CV = gql`
 mutation generateCV($input: ProfileInput!) {
@@ -25,6 +26,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const [filename, setFilename] = useState("default.pdf");
     const [cvBlobUrl, setCvBlobUrl] = useState("");
     const { token } = theme.useToken();
+    const pathName = usePathname();
     const supabase = createClientComponentClient<Database>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
@@ -211,7 +213,17 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
       };
     
     const handleOk = () => {
-       
+        const currPathNoQuery = pathName.split("?")[0];
+        const currPath = currPathNoQuery
+            .split("/")
+            .filter(v => v.length > 0);
+        const currPage = currPath[currPath.length-1];
+        window.analytics?.track("Download CV", "setup", {
+            title: `Downloaded CV in ${currPage}`,
+            userId: userId,
+            profileId: profileId,
+            current_path: currPath
+        })
     };
 
     const handleCancel = () => {
@@ -281,7 +293,8 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             label: 'Experiences',
             content: <ExperiencesForm 
                 isIntro 
-                title="Let's fill out your work history" 
+                title="Let's fill out your work history"
+                profileId={profileId} 
                 description="Things to note:" 
                 userBio={formData.userBio} 
                 jobPosting={formData.jobPosting} 
