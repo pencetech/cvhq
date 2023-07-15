@@ -72,7 +72,7 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
     const getExperience = async (user: string) => {
         let { data, error, status } = await supabase
             .from('experience')
-            .select('title, company, sector, is_current, start_date, end_date, achievements')
+            .select('seq_id, title, company, sector, is_current, start_date, end_date, achievements')
             .eq('profile_id', params.id)
             .eq('is_deleted', false)
     
@@ -83,7 +83,7 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
         if (data && data.length > 0) {
             return data
             .map((ex, i) => ({
-                id: i + 1,
+                id: ex.seq_id,
                 title: ex.title,
                 company: ex.company,
                 sector: ex.sector,
@@ -109,7 +109,7 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
     const getEducation = async (user: string) => {
         let { data, error, status } = await supabase
             .from('education')
-            .select('subject, institution, degree, start_date, end_date')
+            .select('seq_id, subject, institution, degree, start_date, end_date')
             .eq('profile_id', params.id)
             .eq('is_deleted', false)
     
@@ -118,8 +118,8 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
         }
 
         if (data && data.length > 0) {
-            return data.map((e, i) => ({
-                id: i + 1,
+            return data.map((e) => ({
+                id: e.seq_id,
                 subject: e.subject,
                 institution: e.institution,
                 degree: e.degree,
@@ -187,21 +187,17 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
                 const ed = await getEducation(session.user?.id);
                 const skill = await getSkillset(session.user?.id);
             
-                if (
-                    bio && post && exp && ed && skill
-                ) {
-                    const data = {
-                        userBio: bio,
-                        jobPosting: post,
-                        experiences: exp,
-                        education: ed,
-                        skillset: skill
-                    } as FormData
-                    return data;
+                const data = {
+                    userBio: bio,
+                    jobPosting: post,
+                    experiences: exp,
+                    education: ed,
+                    skillset: skill
+                } as FormData
+                return data;
                 }
-            }
-        } catch (error) {
-            console.log(error)
+            } catch (error) {
+            console.log(error);
         }
     }
 
