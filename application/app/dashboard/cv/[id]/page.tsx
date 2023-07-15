@@ -129,6 +129,7 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
         }
 
         return [{
+            id: 1,
             subject: '',
                 institution: '',
                 degree: '',
