@@ -82,7 +82,7 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
 
         if (data && data.length > 0) {
             return data
-            .map((ex, i) => ({
+            .map((ex) => ({
                 id: ex.seq_id,
                 title: ex.title,
                 company: ex.company,
