@@ -83,7 +83,7 @@ const emptyFormData: FormData = {
       startDate: '',
       endDate: '',
   }],
-  skillsets: {
+  skillset: {
       skillsets: '',
   }
 }
