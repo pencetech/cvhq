@@ -1,6 +1,6 @@
 "use client";
 import ProfileCard from "@/app/components/profileCard"
-import { Col, Row } from "antd"
+import { Col, Modal, Row } from "antd"
 import FileListComponent from "./fileListComponent"
 import { CvFile, FormData } from "@/models/cv"
 import { gql, useMutation } from "@apollo/client";
@@ -61,6 +61,70 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         getUser();
       }, [])
 
+    const handleGenerateClick = () => {
+        const isValidationPassed = isAllFieldsFilled();
+        if (isValidationPassed) {
+            generateCV();
+        }
+    }
+
+    const isAllFieldsFilled = () => {
+        const userBioNotFilled = !formData.userBio.firstName ||
+            !formData.userBio.lastName ||
+            !formData.userBio.email ||
+            !formData.userBio.phone ||
+            !formData.userBio.address;
+
+        const jobPostingNotFilled = !formData.jobPosting.title ||
+            !formData.jobPosting.company ||
+            !formData.jobPosting.sector ||
+            !formData.jobPosting.requirements;
+
+        const experiencesNotExist = !(formData.experiences.length > 0);
+
+        const experiencesNotFilled = formData.experiences.map(exp => {
+            return !exp.title ||
+                !exp.company ||
+                !exp.sector ||
+                !exp.startDate ||
+                !exp.achievements;
+        });
+
+        const educationNotExist = !(formData.education.length > 0);
+
+        const educationNotFilled = formData.education.map(ed => {
+            return !ed.subject ||
+                !ed.institution ||
+                !ed.degree ||
+                !ed.startDate ||
+                !ed.endDate;
+        })
+        const skillsetNotFilled = !formData.skillset.skillsets
+
+        const validationSchema = {
+            userBio: userBioNotFilled,
+            jobPosting: jobPostingNotFilled,
+            experiences: experiencesNotExist || experiencesNotFilled.includes(true),
+            education: educationNotExist || educationNotFilled.includes(true),
+            skillset: skillsetNotFilled
+        }
+
+        console.log("validation: ", validationSchema)
+
+        const failedFields = Object.entries(validationSchema).filter((elem => elem[1] === true ))
+
+        if (failedFields.length > 0) {
+            Modal.error({
+                title: 'Fields incomplete',
+                content: `Please complete the following fields: ${failedFields.map(elem => elem[0]).join(", ")}`,
+              });
+
+            return false;
+        }
+
+        return true;
+    }
+
     const handleCompleteGenerate = async (filename: string) => {
         await supabase
             .from("cv_file")
@@ -105,7 +169,7 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
                     profileId={id}
                     files={files} 
                     onFileClick={fetchAndDownloadCV}
-                    onGenerateClick={generateCV}
+                    onGenerateClick={handleGenerateClick}
                      /> : "no file"}
             </Col>
         </Row>
