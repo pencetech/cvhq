@@ -34,8 +34,9 @@ const SkillsetForm = (props: OtherProps) => {
         <Formik
             initialValues={value}
             validationSchema={skillsetsValidationSchema}
-            onSubmit={(values, actions) => {
-                onSubmit(values);
+            onSubmit={async (values, actions) => {
+                console.log("skillset values: ", values)
+                await onSubmit(values);
             }}
         >
             { props => {
