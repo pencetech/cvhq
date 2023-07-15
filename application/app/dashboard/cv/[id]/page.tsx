@@ -1,4 +1,4 @@
-import { Education, FormData, Skillset } from '@/models/cv';
+import { FormData, Skillset } from '@/models/cv';
 import { Database } from '@/types/supabase';
 import { cookies } from 'next/headers';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
