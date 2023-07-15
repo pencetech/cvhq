@@ -10,7 +10,12 @@ import EducationForm from './educationForm';
 import SkillsetForm from './skillsetForm';
 import { Database } from '@/types/supabase';
 
-const ProfileCard = ({ title, profileId, profile, onUpdate }: { title: string, profileId: number, profile: FormData, onUpdate: any }) => {
+const ProfileCard = ({ title, profileId, profile, onUpdate }: { 
+    title: string, 
+    profileId: number,
+    profile: FormData, 
+    onUpdate: (values: FormData) => void 
+}) => {
     const [activeTab, setActiveTab] = useState("job");
     const [user, setUser] = useState<string>();
     const [messageApi, contextHolder] = message.useMessage();
@@ -49,12 +54,13 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: { title: string, p
         const data = { ...profile, ...values };
         onUpdate(data);
         await supabase.from('job_posting')
-        .update({
+        .upsert({
             title: job.title,
             company: job.company,
             sector: job.sector,
-            requirements: job.requirements
-        }).eq("profile_id", profileId)
+            requirements: job.requirements,
+            profile_id: profileId
+        }, { onConflict: 'profile_id' });
         messageApi.success("Job posting saved!");
     }
 
@@ -143,9 +149,10 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: { title: string, p
         const data = { ...profile, ...values };
         onUpdate(data);
         await supabase.from('skillset')
-        .update({
-            skillsets: sk.skillsets
-        }).eq("profile_id", profileId)
+        .upsert({
+            skillsets: sk.skillsets,
+            profile_id: profileId
+        }, { onConflict: 'profile_id'});
         messageApi.success("Skillset saved!");
     }
     
@@ -199,7 +206,7 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: { title: string, p
         {
             key: 'skillsets',
             label: 'Skillsets',
-            content: <SkillsetForm isIntro={false} title="Skillsets" value={profile.skillsets} onSubmit={setSkillset} actions={saveButton}  />
+            content: <SkillsetForm isIntro={false} title="Skillsets" value={profile.skillset} onSubmit={setSkillset} actions={saveButton}  />
         }
     ]
 

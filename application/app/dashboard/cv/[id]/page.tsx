@@ -195,7 +195,7 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
                         jobPosting: post,
                         experiences: exp,
                         education: ed,
-                        skillsets: skill
+                        skillset: skill
                     } as FormData
                     return data;
                 }

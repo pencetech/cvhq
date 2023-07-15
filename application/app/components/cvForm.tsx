@@ -63,21 +63,11 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             startDate: '',
             endDate: '',
         }],
-        skillsets: {
+        skillset: {
             skillsets: '',
         }
     });
     const [generateCV, { data, loading, error }] = useMutation(GENERATE_CV, {
-        variables: {
-            input: {
-                id: 1,
-                userBio: formData.userBio,
-                jobPosting: formData.jobPosting,
-                experiences: formData.experiences,
-                education: formData.education,
-                skillsets: formData.skillsets
-            }
-        },
         onCompleted: async (data: any) => await handleCompleteGenerate(data.generateCV.filename)
     })
 
@@ -90,7 +80,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             email: user.email,
             phone: user.phone,
             address: user.address
-        })
+        }, { onConflict: 'user_id' })
         messageApi.success("User bio saved!");
         handleProgress({
             userBio: user
@@ -106,7 +96,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             sector: job.sector,
             requirements: job.requirements,
             add_on: job.addOn
-        })
+        }, { onConflict: 'profile_id' })
         messageApi.success("Job posting saved!");
         handleProgress({
             jobPosting: job
@@ -192,7 +182,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         .upsert({
             profile_id: profileId,
             skillsets: sk.skillsets
-        })
+        }, { onConflict: 'profile_id' })
         messageApi.success("Skillset saved!");
         handleSubmit(sk);
     }
@@ -242,9 +232,22 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     }
 
     const handleSubmit = (values: Skillset) => {
-        const data = { ...formData, values };
+        const mergingValue = { skillset: values }
+        const data = { ...formData, ...mergingValue };
         setFormData(data);
-        generateCV();
+        console.log("data before generating: ", data);
+        generateCV({
+            variables: {
+                input: {
+                    id: 1,
+                    userBio: data.userBio,
+                    jobPosting: data.jobPosting,
+                    experiences: data.experiences,
+                    education: data.education,
+                    skillsets: data.skillset
+                }
+            },
+        });
         showModal();
     }
 
@@ -318,7 +321,14 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         {
             key: 'skillsets',
             label: 'Skillsets',
-            content: <SkillsetForm isIntro title="Time to show your skills" description="Add unique skills that make you stand out." value={formData.skillsets} onSubmit={insertSkillset} actions={endActions} />
+            content: <SkillsetForm 
+                isIntro 
+                title="Time to show your skills" 
+                description="Add unique skills that make you stand out." 
+                value={formData.skillset} 
+                onSubmit={insertSkillset} 
+                actions={endActions} 
+            />
         }
     ]
 

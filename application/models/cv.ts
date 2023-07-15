@@ -51,7 +51,7 @@ export interface FormData {
     jobPosting: JobPosting,
     experiences: Experience[],
     education: Education[],
-    skillsets: Skillset
+    skillset: Skillset
 };
 
 export interface ProfileMeta {

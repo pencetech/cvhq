@@ -32,17 +32,17 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         jobPosting: profile.jobPosting,
         experiences: profile.experiences,
         education: profile.education,
-        skillsets: profile.skillsets
+        skillset: profile.skillset
     });
     const [generateCV, { data, loading, error }] = useMutation(GENERATE_CV, {
         variables: {
             input: {
                 id: 1,
-                userBio: profile.userBio,
-                jobPosting: profile.jobPosting,
-                experiences: profile.experiences,
-                education: profile.education,
-                skillsets: profile.skillsets
+                userBio: formData.userBio,
+                jobPosting: formData.jobPosting,
+                experiences: formData.experiences,
+                education: formData.education,
+                skillsets: formData.skillset
             }
         },
         onCompleted: async (data: any) => await handleCompleteGenerate(data.generateCV.filename)
@@ -97,7 +97,7 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
     return (
         <Row gutter={16}>
             <Col span={14}>
-                {profile ? <ProfileCard title={profileName} profileId={id} profile={formData} onUpdate={setFormData}/> : "profile empty"}  
+                {profile ? <ProfileCard title={profileName} profileId={id} profile={formData} onUpdate={(value) => setFormData(value)}/> : "profile empty"}  
             </Col>
             <Col span={10}>
                 {files ? <FileListComponent 
