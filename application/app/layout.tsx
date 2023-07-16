@@ -24,12 +24,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
   analytics.page();
   }}();`}
         </Script>
-        <link
-          rel="icon"
-          href="/icon.png"
-          type="image/png"
-          sizes="128"
-        />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body>
         <ApolloWrapper>
