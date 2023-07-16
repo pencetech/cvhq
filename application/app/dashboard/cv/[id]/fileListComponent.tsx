@@ -66,7 +66,7 @@ const FileListComponent = ({ files, onFileClick, profileId, onGenerateClick, loa
       <Typography.Title level={4} style={{ margin: 0 }}>Versions</Typography.Title>
       <Button type='primary' loading={loading} onClick={() => onGenerateClick()}>Generate new version</Button>
     </div> 
-    <Typography.Paragraph style={{ marginTop: "8px" }}>Make sure you&apos;ve saved all tabs before generating new CV versions.</Typography.Paragraph>
+    <Typography.Paragraph style={{ marginTop: "12px" }}>Make sure you&apos;ve saved all tabs before generating new CV versions.</Typography.Paragraph>
     <Divider />
     <List
       itemLayout="horizontal"
