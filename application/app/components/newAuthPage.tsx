@@ -61,6 +61,7 @@ export default function Login() {
         messageApi.error("error authenticating.");
         setLoading(false);
     }
+
     const isNoProfile = await checkNoProfile();
 
     isNoProfile ? router.push("/setup") : router.push("/dashboard/home")

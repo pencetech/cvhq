@@ -26,7 +26,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 
     return (
         <DashboardLayoutComponent 
-            user={session?.user.id ? session?.user.id : ''} 
+            user={session?.user ? session?.user : null} 
             profiles={parsedData ? parsedData : []} 
         >
             {children}
