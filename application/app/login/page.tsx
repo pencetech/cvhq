@@ -63,7 +63,7 @@ const LoginPage = () => {
                             }}
                             >
                                 <Space>
-                                    <CheckCircleTwoTone twoToneColor="#52c41a" /> Puts all content into nice formatted sections
+                                    <CheckCircleTwoTone twoToneColor="#52c41a" /> Puts all content into nicely formatted sections
                                 </Space>
                             </Typography.Paragraph>
                         </div>
