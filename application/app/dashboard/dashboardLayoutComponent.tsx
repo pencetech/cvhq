@@ -6,9 +6,10 @@ import Logo from '@/public/CVHQ.png';
 import Breadcrumbs from '../components/breadcrumbs';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Button, theme, Tag, Space, Alert } from 'antd';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { usePathname, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const { Header, Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -23,9 +24,9 @@ const DISCLAIMER_TEXT = "CVHQ is currently in beta. If you experience any usabil
 export const revalidate = 0;
 
 const DashboardLayoutComponent = ({
-    profiles, children
+    user, profiles, children
   }: {
-    user: string,
+    user: User | null
     profiles: ProfileData[],
     children: React.ReactNode
   }) => {
@@ -35,6 +36,15 @@ const DashboardLayoutComponent = ({
   } = theme.useToken();
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      console.log("user: ", user)
+      window.analytics?.identify(user?.id, {
+        email: user?.email
+      });
+    }
+  }, [user])
 
   function getItem(
     label: React.ReactNode,

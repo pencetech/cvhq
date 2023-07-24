@@ -59,7 +59,7 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         }
     
         getUser();
-      }, [])
+      }, [supabase.auth])
 
     const handleGenerateClick = () => {
         const isValidationPassed = isAllFieldsFilled();

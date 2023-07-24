@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Logo from '@/public/CVHQ.png';
@@ -21,6 +21,22 @@ const SetupLayout = ({
         await supabase.auth.signOut();
         router.refresh();
     }
+
+    const getUser = useCallback(async () => {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (session) { 
+            window.analytics?.identify(session.user?.id, {
+                email: session.user?.email
+              });
+        }
+      }, [supabase])
+
+    useEffect(() => {
+        getUser()
+        .catch(console.error)
+    })
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
