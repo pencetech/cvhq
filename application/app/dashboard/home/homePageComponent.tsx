@@ -40,8 +40,6 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
     const prevId = await getPrevProfile();
     await setProfile(value);
     const currId = await getCurrProfile(value);
-    console.log("prevId: ", prevId);
-    console.log("currId: ", currId);
     if (prevId && currId) {
       await buildNewProfile(prevId, currId);
     }

@@ -35,7 +35,6 @@ const SkillsetForm = (props: OtherProps) => {
             initialValues={value}
             validationSchema={skillsetsValidationSchema}
             onSubmit={async (values, actions) => {
-                console.log("skillset values: ", values)
                 await onSubmit(values);
             }}
         >

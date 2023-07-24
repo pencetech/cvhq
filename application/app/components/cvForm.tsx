@@ -235,7 +235,6 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         const mergingValue = { skillset: values }
         const data = { ...formData, ...mergingValue };
         setFormData(data);
-        console.log("data before generating: ", data);
         generateCV({
             variables: {
                 input: {

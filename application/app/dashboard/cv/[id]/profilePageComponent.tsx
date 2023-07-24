@@ -109,8 +109,6 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
             skillset: skillsetNotFilled
         }
 
-        console.log("validation: ", validationSchema)
-
         const failedFields = Object.entries(validationSchema).filter((elem => elem[1] === true ))
 
         if (failedFields.length > 0) {

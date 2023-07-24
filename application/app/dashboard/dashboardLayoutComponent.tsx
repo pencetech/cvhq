@@ -39,7 +39,6 @@ const DashboardLayoutComponent = ({
 
   useEffect(() => {
     if (user) {
-      console.log("user: ", user)
       window.analytics?.identify(user?.id, {
         email: user?.email
       });
