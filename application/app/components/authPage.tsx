@@ -16,8 +16,7 @@ export default function AuthPage() {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      width: '100vw',
-      height: '100vh',
+      width: '100%'
     }}>
     <Space size="large" direction="vertical" align="center">
       <Image 
