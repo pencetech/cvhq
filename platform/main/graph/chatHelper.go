@@ -3,6 +3,7 @@ package graph
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"regexp"
 	"strings"
@@ -107,7 +108,7 @@ func InjectPrompt(prompt string, data any) (string, error) {
 }
 
 func ChatCompletion(content string) (string, error) {
-	client := openai.NewClient("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")
+	client := openai.NewClient(os.Getenv("OPENAI_KEY"))
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{

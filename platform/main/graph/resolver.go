@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -32,8 +33,8 @@ type Resolver struct{
 }
 
 func GetCV(filename string) ([]byte, error) {
-	accessKey := "AKIA5ZWKIYYRCSZBQEGP"
-	secretKey := "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"
+	accessKey := os.Getenv("AWS_ACCESS_KEY")
+	secretKey := os.Getenv("AWS_SECRET_KEY")
 	options := s3.Options{
 		Region:      "eu-west-2",
 		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
@@ -64,42 +65,56 @@ func ConstructCV(input model.CVContentInput) (string, error) {
 	}
 
 	markdown := `
-	<div align="center">
+<div style="font-family: sans-serif">
+<div align="center">
 	
-	# {{ .UserBio.FirstName }} {{ .UserBio.LastName }}
-	<b>Email:</b> {{ .UserBio.Email }} | <b>Phone:</b> {{ .UserBio.Phone }}
-	<b>Address:</b> {{ .UserBio.Address }}
+# {{ .UserBio.FirstName }} {{ .UserBio.LastName }}
 	
-	</div>
+<b>Email:</b> {{ .UserBio.Email }} | <b>Phone:</b> {{ .UserBio.Phone }}
 	
-	---
-	### Summary
-	{{ .Summary }}
+<b>Address:</b> {{ .UserBio.Address }}
 	
-	---
-	## Experiences
-	{{ range .Experiences }}
-	- **{{ .Title }}** at {{ .Company }} _({{ .StartDate }} - {{ if .IsCurrent }} Present {{ else }} {{ .EndDate }} {{ end }})_
-	  {{ .Achievements }}
-	{{ end }}
+</div>
 	
-	---
-	## Education
-	{{ range .Education }}
-	- **{{ .Degree }}** in {{ .Subject }} at {{ .Institution }} _({{ .StartDate }} - {{ .EndDate }})_
-	{{ end }}
-	
-	---
-	## Skillsets
-	{{ .Skillsets.Skillsets }}
-	`
+---
 
+### Summary
+
+{{ .Summary }}
+	
+---
+
+## Experiences
+{{ range .Experiences }}
+
+**{{ .Title }}** at {{ .Company }} _({{ .StartDate }} - {{ if .IsCurrent }} Present{{ else }} {{ .EndDate }}{{ end }})_
+	  
+{{ .Achievements }}
+
+{{ end }}
+	
+---
+
+## Education
+{{ range .Education }}
+
+**{{ .Degree }}** in {{ .Subject }} at {{ .Institution }} _({{ .StartDate }} - {{ .EndDate }})_
+	
+{{ end }}
+	
+---
+
+## Skillsets
+	
+{{ .Skillsets.Skillsets }}
+</div>`
+	
 	t := template.Must(template.New("cv").Parse(markdown))
 	builder := &strings.Builder{}
 	if err := t.Execute(builder, input); err != nil {
 		return "", err
 	}
-
+	fmt.Print(builder.String())
 	return builder.String(), nil
 }
 
@@ -111,7 +126,7 @@ func ParseTimeCV(input *model.CVContentInput) error {
 			log.Println("[ERROR] Parse time error -> ", err)
 			return err
 		}
-		startMonthYear := startParsed.Format("Jan 2023")
+		startMonthYear := startParsed.Format("Jan 2006")
 
 		var endMonthYear string
 		if exp.EndDate != nil {
@@ -121,7 +136,7 @@ func ParseTimeCV(input *model.CVContentInput) error {
 				return err
 			}
 
-			endMonthYear = endParsed.Format("Jan 2023")
+			endMonthYear = endParsed.Format("Jan 2006")
 		}
 
 		input.Experiences[i].StartDate = startMonthYear
@@ -134,7 +149,7 @@ func ParseTimeCV(input *model.CVContentInput) error {
 			log.Println("[ERROR] Parse time error -> ", err)
 			return err
 		}
-		startEdMonthYear := startEdParsed.Format("Jan 2023")
+		startEdMonthYear := startEdParsed.Format("Jan 2006")
 
 		endEdParsed, err := time.Parse(time.RFC3339, ed.EndDate)
 		if err != nil {
@@ -142,7 +157,7 @@ func ParseTimeCV(input *model.CVContentInput) error {
 			return err
 		}
 
-		endEdMonthYear := endEdParsed.Format("Jan 2023")
+		endEdMonthYear := endEdParsed.Format("Jan 2006")
 
 		input.Education[i].StartDate = startEdMonthYear
 		input.Education[i].EndDate = endEdMonthYear
@@ -152,8 +167,8 @@ func ParseTimeCV(input *model.CVContentInput) error {
 }
 
 func PutCV(md string, filename string) error {
-	accessKey := "AKIA5ZWKIYYRCSZBQEGP"
-	secretKey := "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"
+	accessKey := os.Getenv("AWS_ACCESS_KEY")
+	secretKey := os.Getenv("AWS_SECRET_KEY")
 	html := MdToHtml([]byte(md))
 	pdf := HtmlToPdf(html)
 
@@ -218,6 +233,7 @@ func HtmlToPdf(source []byte) []byte {
 	pdfg.PageSize.Set(pdf.PageSizeA4)
 
 	page := pdf.NewPageReader(bytes.NewReader(source))
+	page.Encoding.Set("utf-8")
 	
 	page.Allow.Set(".")
 	page.EnableLocalFileAccess.Set(true)

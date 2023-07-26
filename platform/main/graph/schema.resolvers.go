@@ -52,7 +52,7 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileIn
 	if err != nil {
 		log.Println("ERROR: JSON marshaling failed -> ", err)
 		return nil, err
-	} 
+	}
 
 	summaryContent := fmt.Sprintf(CvSummaryPrompt, string(jobPostingBytes))
 
@@ -63,8 +63,8 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileIn
 	}
 
 	cvContentObj := &model.CVContentInput{
-		UserBio: input.UserBio,
-		Summary: summStr,
+		UserBio:     input.UserBio,
+		Summary:     summStr,
 		Experiences: input.Experiences,
 		Education:   input.Education,
 		Skillsets:   input.Skillsets,
