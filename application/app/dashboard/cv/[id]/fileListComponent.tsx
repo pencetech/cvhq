@@ -83,7 +83,7 @@ const FileListComponent = ({ files, onFileClick, profileId, onGenerateClick, loa
         >
           <List.Item.Meta
             avatar={<FilePdfTwoTone twoToneColor="#eb2f96" />}
-            title={<a onClick={() => handleMetricClick()} download={item.filename} href={`https://cvhq-platform-production.fly.dev/cv/${item.filename}`}>{item.filename}</a>}
+            title={<a onClick={() => handleMetricClick()} download={item.filename} href={`${process.env.NEXT_PUBLIC_SERVER}/cv/${item.filename}`}>{item.filename}</a>}
             description={`Created at ${renderTime(item.createdAt)}`}
           />
         </List.Item>
