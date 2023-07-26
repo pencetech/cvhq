@@ -129,7 +129,7 @@ func ParseTimeCV(input *model.CVContentInput) error {
 		startMonthYear := startParsed.Format("Jan 2006")
 
 		var endMonthYear string
-		if exp.EndDate != nil {
+		if exp.EndDate != nil && len(*exp.EndDate) > 0 {
 			endParsed, err := time.Parse(time.RFC3339, *exp.EndDate)
 			if err != nil {
 				log.Println("[ERROR] Parse time error -> ", err)
