@@ -70,21 +70,13 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileIn
 		Skillsets:   input.Skillsets,
 	}
 
-	cvContentBytes, err := json.Marshal(cvContentObj)
+	resultStr, err := ConstructCV(*cvContentObj)
+
 	if err != nil {
-		log.Println("ERROR: JSON marshaling failed -> ", err)
+		log.Println("ERROR: CV construction failed -> ", err)
 		return nil, err
 	}
-
-	cvContentStr := fmt.Sprintf(GenerateCVPrompt, string(cvContentBytes))
-
-	objStr, err := ChatCompletion(cvContentStr)
-	if err != nil {
-		log.Println("ERROR: chat completion failed -> ", err)
-		return nil, err
-	}
-	fmt.Println("MD received")
-	lineEscapedObjStr := escapeNewline(&objStr)
+	lineEscapedObjStr := escapeNewline(&resultStr)
 	tabEscapedObjStr := escapeTabs(&lineEscapedObjStr)
 	filename := generateFileName(input.UserBio.FirstName, input.UserBio.LastName)
 	err = PutCV(tabEscapedObjStr, filename)
