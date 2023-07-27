@@ -17,7 +17,7 @@ import { FormData, Profiles, ProfilesData } from "@/models/cv";
 
 function makeClient() {
   const httpLink = new HttpLink({
-      uri: "https://cvhq-platform-production.fly.dev/query",
+      uri: process.env.NEXT_PUBLIC_SERVER + "/query",
   });
 
   return new ApolloClient({

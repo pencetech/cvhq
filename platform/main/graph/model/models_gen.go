@@ -137,17 +137,17 @@ type SkillsetInput struct {
 }
 
 type UserBio struct {
-	FirstName string   `json:"firstName"`
-	LastName  string   `json:"lastName"`
-	Email     string   `json:"email"`
-	Phone     []string `json:"phone"`
-	Address   string   `json:"address"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
+	Address   string `json:"address"`
 }
 
 type UserBioInput struct {
-	FirstName string   `json:"firstName"`
-	LastName  string   `json:"lastName"`
-	Email     string   `json:"email"`
-	Phone     []string `json:"phone"`
-	Address   string   `json:"address"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
+	Address   string `json:"address"`
 }

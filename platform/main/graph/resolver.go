@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"html/template"
 	"log"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -54,6 +57,115 @@ func GetCV(filename string) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+func ConstructCV(input model.CVContentInput) (string, error) {
+
+	err := ParseTimeCV(&input)
+	if err != nil {
+		log.Println("[ERROR] Parse time error -> ", err)
+	}
+
+	markdown := `
+<div style="font-family: sans-serif">
+<div align="center">
+	
+# {{ .UserBio.FirstName }} {{ .UserBio.LastName }}
+	
+<b>Email:</b> {{ .UserBio.Email }} | <b>Phone:</b> {{ .UserBio.Phone }}
+	
+<b>Address:</b> {{ .UserBio.Address }}
+	
+</div>
+	
+---
+
+### Summary
+
+{{ .Summary }}
+	
+---
+
+## Experiences
+{{ range .Experiences }}
+
+**{{ .Title }}** at {{ .Company }} _({{ .StartDate }} - {{ if .IsCurrent }} Present{{ else }} {{ .EndDate }}{{ end }})_
+	  
+{{ .Achievements }}
+
+{{ end }}
+	
+---
+
+## Education
+{{ range .Education }}
+
+**{{ .Degree }}** in {{ .Subject }} at {{ .Institution }} _({{ .StartDate }} - {{ .EndDate }})_
+	
+{{ end }}
+	
+---
+
+## Skillsets
+	
+{{ .Skillsets.Skillsets }}
+</div>`
+	
+	t := template.Must(template.New("cv").Parse(markdown))
+	builder := &strings.Builder{}
+	if err := t.Execute(builder, input); err != nil {
+		return "", err
+	}
+	fmt.Print(builder.String())
+	return builder.String(), nil
+}
+
+func ParseTimeCV(input *model.CVContentInput) error {
+
+	for i, exp := range input.Experiences {
+		startParsed, err := time.Parse(time.RFC3339, exp.StartDate)
+		if err != nil {
+			log.Println("[ERROR] Parse time error -> ", err)
+			return err
+		}
+		startMonthYear := startParsed.Format("Jan 2006")
+
+		var endMonthYear string
+		if exp.EndDate != nil && len(*exp.EndDate) > 0 {
+			endParsed, err := time.Parse(time.RFC3339, *exp.EndDate)
+			if err != nil {
+				log.Println("[ERROR] Parse time error -> ", err)
+				return err
+			}
+
+			endMonthYear = endParsed.Format("Jan 2006")
+		}
+
+		input.Experiences[i].StartDate = startMonthYear
+		input.Experiences[i].EndDate = &endMonthYear
+	}
+
+	for i, ed := range input.Education {
+		startEdParsed, err := time.Parse(time.RFC3339, ed.StartDate)
+		if err != nil {
+			log.Println("[ERROR] Parse time error -> ", err)
+			return err
+		}
+		startEdMonthYear := startEdParsed.Format("Jan 2006")
+
+		endEdParsed, err := time.Parse(time.RFC3339, ed.EndDate)
+		if err != nil {
+			log.Println("[ERROR] Parse time error -> ", err)
+			return err
+		}
+
+		endEdMonthYear := endEdParsed.Format("Jan 2006")
+
+		input.Education[i].StartDate = startEdMonthYear
+		input.Education[i].EndDate = endEdMonthYear
+	} 
+
+	return nil
+}
+
 func PutCV(md string, filename string) error {
 	accessKey := os.Getenv("AWS_ACCESS_KEY")
 	secretKey := os.Getenv("AWS_SECRET_KEY")
@@ -74,13 +186,11 @@ func PutCV(md string, filename string) error {
 		Body: body,
 	})
 
-	fmt.Println("S3 put object successful")
-
 	if err != nil {
 		log.Println("[ERROR] Put object error -> ", err)
 		return err
 	}
-
+	fmt.Println("S3 put object successful")
 	return nil
 }
 
@@ -123,6 +233,7 @@ func HtmlToPdf(source []byte) []byte {
 	pdfg.PageSize.Set(pdf.PageSizeA4)
 
 	page := pdf.NewPageReader(bytes.NewReader(source))
+	page.Encoding.Set("utf-8")
 	
 	page.Allow.Set(".")
 	page.EnableLocalFileAccess.Set(true)

@@ -6,7 +6,7 @@ type UserBio {
   firstName: String!
   lastName: String!
   email: String!
-  phone: [String!]!
+  phone: String!
   address: String!
 }
 
@@ -67,7 +67,7 @@ input UserBioInput {
   firstName: String!
   lastName: String!
   email: String!
-  phone: [String!]!
+  phone: String!
   address: String!
 }
 
