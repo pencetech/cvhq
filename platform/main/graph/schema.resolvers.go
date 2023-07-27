@@ -21,20 +21,20 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input model.Profil
 // EnhanceAchievement is the resolver for the enhanceAchievement field.
 func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.AchievementInput) (*model.EnhancedAchievement, error) {
 	var enhanced model.EnhancedAchievement
-	content, err := InjectPrompt(EnhanceAchievementPrompt, input)
+	content, err := r.ChatBridge.InjectPrompt(r.ChatBridge.getEnhancementPrompt(), input)
 	if err != nil {
 		log.Println("ERROR: prompt injection failed -> ", err)
 		return nil, err
 	}
 
-	objStr, err := ChatCompletion(content)
+	objStr, err := r.ChatBridge.ChatCompletion(content)
 	if err != nil {
 		log.Println("ERROR: chat completion failed -> ", err)
 		return nil, err
 	}
 
-	lineEscapedObjStr := escapeNewline(&objStr)
-	tabEscapedObjStr := escapeTabs(&lineEscapedObjStr)
+	lineEscapedObjStr := r.ChatBridge.escapeNewline(&objStr)
+	tabEscapedObjStr := r.ChatBridge.escapeTabs(&lineEscapedObjStr)
 	err = json.Unmarshal([]byte(tabEscapedObjStr), &enhanced)
 	if err != nil {
 		log.Println("ERROR: JSON unmarshaling failed -> ", err)
@@ -48,15 +48,21 @@ func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.A
 func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileInput) (*model.Cv, error) {
 	var cv model.Cv
 
+	profileBytes, err := json.Marshal(input)
+	if err != nil {
+		log.Println("ERROR: JSON marshaling failed -> ", err)
+		return nil, err
+	}
+
 	jobPostingBytes, err := json.Marshal(input.JobPosting)
 	if err != nil {
 		log.Println("ERROR: JSON marshaling failed -> ", err)
 		return nil, err
 	}
 
-	summaryContent := fmt.Sprintf(CvSummaryPrompt, string(jobPostingBytes))
+	summaryContent := fmt.Sprintf(r.ChatBridge.getSummaryPrompt(), string(profileBytes), string(jobPostingBytes))
 
-	summStr, err := ChatCompletion(summaryContent)
+	summStr, err := r.ChatBridge.ChatCompletion(summaryContent)
 	if err != nil {
 		log.Println("ERROR: chat completion failed -> ", err)
 		return nil, err
@@ -70,16 +76,16 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileIn
 		Skillsets:   input.Skillsets,
 	}
 
-	resultStr, err := ConstructCV(*cvContentObj)
+	resultStr, err := r.CVService.ConstructCV(*cvContentObj)
 
 	if err != nil {
 		log.Println("ERROR: CV construction failed -> ", err)
 		return nil, err
 	}
-	lineEscapedObjStr := escapeNewline(&resultStr)
-	tabEscapedObjStr := escapeTabs(&lineEscapedObjStr)
-	filename := generateFileName(input.UserBio.FirstName, input.UserBio.LastName)
-	err = PutCV(tabEscapedObjStr, filename)
+	lineEscapedObjStr := r.ChatBridge.escapeNewline(&resultStr)
+	tabEscapedObjStr := r.ChatBridge.escapeTabs(&lineEscapedObjStr)
+	filename := r.CVService.generateFileName(input.UserBio.FirstName, input.UserBio.LastName)
+	err = r.CVService.PutCV(tabEscapedObjStr, filename)
 
 	if err != nil {
 		log.Println("ERROR: put CV failed -> ", err)

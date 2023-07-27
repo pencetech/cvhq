@@ -1,25 +1,42 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"log"
 	"net/http"
-	"context"
-	"bytes"
 	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/pencetech/cvhq/graph"
 	"github.com/go-chi/chi"
+	"github.com/pencetech/cvhq/graph"
 	"github.com/rs/cors"
 )
 
-const defaultPort = "8080"
+type Server struct {
+	config *graph.Configuration
+	CVService *graph.CVService
+	resolver *graph.Resolver
+}
 
-func main() {
+func NewServer(
+	config *graph.Configuration, 
+	CVService *graph.CVService,
+	resolver *graph.Resolver,
+) *Server {
+	return &Server{
+		config: config,
+		CVService: CVService,
+		resolver: resolver,
+	}
+}
+// graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}})
+
+func (s *Server) Run() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = defaultPort
+		port = s.config.DefaultPort
 	}
 
 	router := chi.NewRouter()
@@ -32,17 +49,17 @@ func main() {
 		Debug:            true,
 	}).Handler)
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: s.resolver}))
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", srv)
 	router.Route("/cv", func(r chi.Router) {
 		r.Route("/{filename}", func(r chi.Router) {
-			r.Use(CvCtx)
-			r.Get("/", getCV)
+			r.Use(s.CvCtx)
+			r.Get("/", s.getCV)
 		})
 		r.Route("/create", func(r chi.Router) {
-			r.Put("/", createCV)
+			r.Put("/", s.createCV)
 		})
 	})
 
@@ -50,10 +67,10 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
-func CvCtx(next http.Handler) http.Handler {
+func (s *Server) CvCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	  filename := chi.URLParam(r, "filename")
-	  fileReader, err := graph.GetCV(filename)
+	  fileReader, err := s.CVService.GetCV(filename)
 	  if err != nil {
 		http.Error(w, http.StatusText(404), 404)
 		return
@@ -63,21 +80,21 @@ func CvCtx(next http.Handler) http.Handler {
 	})
 }
 
-func createCV(w http.ResponseWriter, r *http.Request) {
+func (s *Server) createCV(w http.ResponseWriter, r *http.Request) {
 	markdown := r.Body
 	defer r.Body.Close()
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(markdown)
 	markdownBytes := buf.Bytes()
-	htmlByte := graph.MdToHtml(markdownBytes)
-	pdfByte := graph.HtmlToPdf(htmlByte)
+	htmlByte := s.CVService.MdToHtml(markdownBytes)
+	pdfByte := s.CVService.HtmlToPdf(htmlByte)
 
 	header := w.Header()
 	header.Add("Content-Type", "application/pdf")
 	w.Write(pdfByte)
 }
 
-func getCV(w http.ResponseWriter, r *http.Request) {
+func (s *Server) getCV(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	file, ok := ctx.Value("file").([]byte)
 	if !ok {

@@ -1,0 +1,3 @@
+DefaultPort = "8080"
+EnhancementPrompt = 1
+SummaryPrompt = 1
