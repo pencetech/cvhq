@@ -48,13 +48,19 @@ func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.A
 func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileInput) (*model.Cv, error) {
 	var cv model.Cv
 
+	profileBytes, err := json.Marshal(input)
+	if err != nil {
+		log.Println("ERROR: JSON marshaling failed -> ", err)
+		return nil, err
+	}
+
 	jobPostingBytes, err := json.Marshal(input.JobPosting)
 	if err != nil {
 		log.Println("ERROR: JSON marshaling failed -> ", err)
 		return nil, err
 	}
 
-	summaryContent := fmt.Sprintf(r.ChatBridge.getSummaryPrompt(), string(jobPostingBytes))
+	summaryContent := fmt.Sprintf(r.ChatBridge.getSummaryPrompt(), string(profileBytes), string(jobPostingBytes))
 
 	summStr, err := r.ChatBridge.ChatCompletion(summaryContent)
 	if err != nil {
