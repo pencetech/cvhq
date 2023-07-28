@@ -43,36 +43,65 @@ what roles are this person excels at, their impact in their past roles and exper
 
 `
 
-var EnhanceAchievementPrompt1 = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }} is currently a {{ .Experience.Title }} at {{ .Experience.Company }}, 
-	and needs to write a CV for a {{ .JobPosting.Title }} role at {{ .JobPosting.Company }}, a {{ .JobPosting.Sector }} company. 
-	Your task is to help improve on {{ .UserBio.FirstName }}'s bullet points for each of his experiences. The content has to 
-	demonstrate that {{ .UserBio.FirstName }} meets most of the following job requirements and nice-to-haves: 
-	- requirements: "{{ .JobPosting.Requirements }}"
-	- nice-to-haves: "{{ .JobPosting.AddOn }}"
-	Now, to achieve the abovementioned objective, follow exactly the following: 
-	1. Before doing any improvements, state the match factor, an integer from 0-10 of the requirements to {{ .UserBio.FirstName }}'s original or given experience, 
-	stating which bullet points do not meet the requirements and the reasons why. 
-	2. Here is the list of {{ .UserBio.FirstName }}'s experience: "{{ .Experience.Achievements }}"
-	containing the bullet points you need to improve. Return the improved bullet points. Please do the 
-	following when you write your bullet points: 
-	1. Note that the bullet points should contain not only things being done but also the impact to the business. 
-	2. Please don't exceed 5 bullet points. 
-	3. Do not just duplicate words from {{ .JobPosting.Company }}'s job requirements, you'll end up making up things that are not true! 
-	Here are some examples of bullet points that you can produce for a random software engineer:
-	"- Automated treasury reconciliation system by transforming SWIFT messages into a concise report in an internal portal, saving 70%% time
-	- Developed alerting system for high-value foreign exchange (FX) transaction to better manage Starling's FX risk
-	- Optimised PostgreSQL database transactions to more correctly calculate ledger balances, leading to 50%% cut in data processing time
-	- Led collaboration with external partners to build better reporting capability inside Starling, saved months of potential backlog"\n 
-	3. Return steps 1 and 2 into the following JSON format:
-	{
-		match: {
-			matchFactor: number,
-			reason: string
-		},
-		achievements: string,
-	}
-	Where "match" is the overall match of {{ .UserBio.FirstName }}'s achievements to the job requireemnts as stated in step 1, 
-	and "achievements" is the improved version of {{ .UserBio.FirstName }}'s achievements as stated in step 2.
+var EnhanceAchievementPrompt1 = `You are a professional career coach, HR professional, and expert at CV and resume coaching.
+
+Owen is currently a 
+{{ .Experience.Title }}
+at a company operating in
+{{ .Experience.Sector }}
+ sector
+
+ , they need to write a CV for a 
+
+{{ .JobPosting.Title }}
+
+
+ role at a company operating in 
+
+{{ .JobPosting.Sector }}
+ sector.
+
+Task 1: Your task is to help Owen rewrite relevant bullet points experience for his current role at 
+{{ .Experience.Title }}
+in order to closely match the needed criteria of the new role they're applying for. 
+
+The content has to demonstrate that Owen meets most of the following job requirements: (begin list) " 
+{{ .JobPosting.Requirements }}
+ " (end of list).
+
+Now, to achieve the above-mentioned objective, follow exactly the following prompt and rules:  
+
+Rule 1: Return the result into the following JSON format: 
+
+ { match: { 
+
+matchFactor: number, reason: string}, 
+
+achievements: string,} 
+
+Where "match" is the overall match factor (0-10) of the job requirements to Owen's current experience as
+
+{{ .Experience.Title }}
+which operates in the sector of 
+{{ .Experience.Sector }}
+, 
+
+with this listed experience : (begin list)"
+
+{{ .Experience.Achievements }}
+ " (end of list).
+
+and "achievements" is the improved and rewritten version of Owen's experience from Task 1."
+
+Rule 2: "match" has to be a short summary (less than 400 characters) of which key job requirements are either a match or not a match to his current experience.
+
+Rule 3: "achievements" bullet points must contain the impact to the business and can be quantified in a numerical sense. An example of this is (begin list) " - Automated treasury  system saving 70% time year per year. - Optimised transactions , leading to 50% cut in data processing time. - Contributed to territory expansion leading to new 100 clients per quarter. - Drove 120% increased revenue in Finance sector clients." (end of list).
+
+Rule 4: "achievements" doesnt exceed 5 bullet points.
+
+Rule 5: "achievements" must not just duplicate words from the listed job requirements, you'll end up making up things that are not true! 
+
+Rule 6: "achievements" at least 2/3 of the bullet points must contain the impact to the business and can be quantified in a numerical sense. Always include a numeric,percentage, or KPI-specific information. An example of this is (begin list) " - Automated treasury  system saving 70% time year per year. - Optimised transactions , leading to 50% cut in data processing time. - Contributed to territory expansion leading to new 100 clients per quarter. - Drove 120% increased revenue in Finance sector clients." (end of list).
 `
 
 var EnhanceAchievementPrompt2 = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }} is currently a {{ .Experience.Title }} at {{ .Experience.Company }}, 
