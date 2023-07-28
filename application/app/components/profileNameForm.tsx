@@ -5,7 +5,7 @@ import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Typography, Row, Button } from 'antd';
+import { Row, Button } from 'antd';
 import { ProfileName } from '@/models/cv';
 import * as Yup from 'yup';
 import { useState } from "react";

@@ -6,7 +6,7 @@ import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Typography, Row, Col, Cascader, Card } from 'antd';
+import { Typography, Row, Col, Cascader } from 'antd';
 import * as Yup from 'yup';
 import { JobPosting } from "@/models/cv";
 import { sectors } from "@/models/sector";
