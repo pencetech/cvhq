@@ -32,7 +32,7 @@ CREATE EXTENSION IF NOT EXISTS "supabase_vault" WITH SCHEMA "vault";
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
 
-CREATE FUNCTION IF NOT EXISTS "extensions"."grant_pg_cron_access"() RETURNS "event_trigger"
+CREATE OR REPLACE FUNCTION "extensions"."grant_pg_cron_access"() RETURNS "event_trigger"
     LANGUAGE "plpgsql"
     AS $$
 DECLARE
@@ -69,7 +69,7 @@ $$;
 
 ALTER FUNCTION "extensions"."grant_pg_cron_access"() OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "extensions"."grant_pg_graphql_access"() RETURNS "event_trigger"
+CREATE OR REPLACE FUNCTION "extensions"."grant_pg_graphql_access"() RETURNS "event_trigger"
     LANGUAGE "plpgsql"
     AS $_$
 DECLARE
@@ -120,7 +120,7 @@ $_$;
 
 ALTER FUNCTION "extensions"."grant_pg_graphql_access"() OWNER TO "supabase_admin";
 
-CREATE FUNCTION IF NOT EXISTS "extensions"."grant_pg_net_access"() RETURNS "event_trigger"
+CREATE OR REPLACE FUNCTION "extensions"."grant_pg_net_access"() RETURNS "event_trigger"
     LANGUAGE "plpgsql"
     AS $$
 BEGIN
@@ -160,7 +160,7 @@ $$;
 
 ALTER FUNCTION "extensions"."grant_pg_net_access"() OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "extensions"."pgrst_ddl_watch"() RETURNS "event_trigger"
+CREATE OR REPLACE FUNCTION "extensions"."pgrst_ddl_watch"() RETURNS "event_trigger"
     LANGUAGE "plpgsql"
     AS $$
 DECLARE
@@ -174,7 +174,7 @@ BEGIN
     , 'CREATE FOREIGN TABLE', 'ALTER FOREIGN TABLE'
     , 'CREATE VIEW', 'ALTER VIEW'
     , 'CREATE MATERIALIZED VIEW', 'ALTER MATERIALIZED VIEW'
-    , 'CREATE FUNCTION IF NOT EXISTS', 'ALTER FUNCTION'
+    , 'CREATE OR REPLACE FUNCTION', 'ALTER FUNCTION'
     , 'CREATE TRIGGER'
     , 'CREATE TYPE', 'ALTER TYPE'
     , 'CREATE RULE'
@@ -190,7 +190,7 @@ END; $$;
 
 ALTER FUNCTION "extensions"."pgrst_ddl_watch"() OWNER TO "supabase_admin";
 
-CREATE FUNCTION IF NOT EXISTS "extensions"."pgrst_drop_watch"() RETURNS "event_trigger"
+CREATE OR REPLACE FUNCTION "extensions"."pgrst_drop_watch"() RETURNS "event_trigger"
     LANGUAGE "plpgsql"
     AS $$
 DECLARE
@@ -218,7 +218,7 @@ END; $$;
 
 ALTER FUNCTION "extensions"."pgrst_drop_watch"() OWNER TO "supabase_admin";
 
-CREATE FUNCTION IF NOT EXISTS "extensions"."set_graphql_placeholder"() RETURNS "event_trigger"
+CREATE OR REPLACE FUNCTION "extensions"."set_graphql_placeholder"() RETURNS "event_trigger"
     LANGUAGE "plpgsql"
     AS $_$
     DECLARE
@@ -272,7 +272,7 @@ $_$;
 
 ALTER FUNCTION "extensions"."set_graphql_placeholder"() OWNER TO "supabase_admin";
 
-CREATE FUNCTION IF NOT EXISTS "public"."get_bio_posting"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text")
+CREATE OR REPLACE FUNCTION "public"."get_bio_posting"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text")
     LANGUAGE "sql"
     AS $$
   SELECT
@@ -295,7 +295,7 @@ $$;
 
 ALTER FUNCTION "public"."get_bio_posting"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."get_education"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone)
+CREATE OR REPLACE FUNCTION "public"."get_education"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone)
     LANGUAGE "sql"
     AS $$
   SELECT
@@ -312,7 +312,7 @@ $$;
 
 ALTER FUNCTION "public"."get_education"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."get_experience"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_end_date" timestamp with time zone, "exp_achievements" "text")
+CREATE OR REPLACE FUNCTION "public"."get_experience"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_end_date" timestamp with time zone, "exp_achievements" "text")
     LANGUAGE "sql"
     AS $$
   SELECT
@@ -331,7 +331,7 @@ $$;
 
 ALTER FUNCTION "public"."get_experience"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."get_file_list_of_user"("user_id_input" "uuid") RETURNS TABLE("filename" "text", "job_title" "text", "job_company" "text")
+CREATE OR REPLACE FUNCTION "public"."get_file_list_of_user"("user_id_input" "uuid") RETURNS TABLE("filename" "text", "job_title" "text", "job_company" "text")
     LANGUAGE "sql"
     AS $$
   SELECT
@@ -346,7 +346,7 @@ $$;
 
 ALTER FUNCTION "public"."get_file_list_of_user"("user_id_input" "uuid") OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."get_profiles_of_user_time_name"("user_id_input" "uuid") RETURNS TABLE("profile_id" bigint, "profile_name" "text", "inserted_at" timestamp with time zone)
+CREATE OR REPLACE FUNCTION "public"."get_profiles_of_user_time_name"("user_id_input" "uuid") RETURNS TABLE("profile_id" bigint, "profile_name" "text", "inserted_at" timestamp with time zone)
     LANGUAGE "sql"
     AS $$
   SELECT
@@ -359,7 +359,7 @@ $$;
 
 ALTER FUNCTION "public"."get_profiles_of_user_time_name"("user_id_input" "uuid") OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."get_skillset"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("skillset" "text")
+CREATE OR REPLACE FUNCTION "public"."get_skillset"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("skillset" "text")
     LANGUAGE "sql"
     AS $$
   SELECT
@@ -372,7 +372,7 @@ $$;
 
 ALTER FUNCTION "public"."get_skillset"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."handle_new_user"() RETURNS "trigger"
+CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
 begin
@@ -384,7 +384,7 @@ $$;
 
 ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."insert_cv_file_of_profile"("user_id_input" "uuid", "filename_input" "text") RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."insert_cv_file_of_profile"("user_id_input" "uuid", "filename_input" "text") RETURNS "void"
     LANGUAGE "sql"
     AS $$INSERT INTO cv_file (
   profile_id,
@@ -396,7 +396,7 @@ CREATE FUNCTION IF NOT EXISTS "public"."insert_cv_file_of_profile"("user_id_inpu
 
 ALTER FUNCTION "public"."insert_cv_file_of_profile"("user_id_input" "uuid", "filename_input" "text") OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."insert_education_of_profile"("user_id_input" "uuid", "ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone) RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."insert_education_of_profile"("user_id_input" "uuid", "ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone) RETURNS "void"
     LANGUAGE "sql"
     AS $$INSERT INTO education (
   profile_id,
@@ -416,7 +416,7 @@ CREATE FUNCTION IF NOT EXISTS "public"."insert_education_of_profile"("user_id_in
 
 ALTER FUNCTION "public"."insert_education_of_profile"("user_id_input" "uuid", "ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone) OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."insert_experience_of_profile"("user_id_input" "uuid", "exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_achievements" "text", "exp_end_date" timestamp with time zone DEFAULT NULL::timestamp with time zone) RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."insert_experience_of_profile"("user_id_input" "uuid", "exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_achievements" "text", "exp_end_date" timestamp with time zone DEFAULT NULL::timestamp with time zone) RETURNS "void"
     LANGUAGE "sql"
     AS $$
   INSERT INTO experience (
@@ -442,7 +442,7 @@ $$;
 
 ALTER FUNCTION "public"."insert_experience_of_profile"("user_id_input" "uuid", "exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_achievements" "text", "exp_end_date" timestamp with time zone) OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."insert_new_user_profile_job_posting"("profile_user_id" "uuid", "user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text" DEFAULT NULL::"text") RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."insert_new_user_profile_job_posting"("profile_user_id" "uuid", "user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text" DEFAULT NULL::"text") RETURNS "void"
     LANGUAGE "sql"
     AS $$
 INSERT INTO cv_profile (user_id)
@@ -469,7 +469,7 @@ $$;
 
 ALTER FUNCTION "public"."insert_new_user_profile_job_posting"("profile_user_id" "uuid", "user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text") OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."insert_skillsets_of_profile"("user_id_input" "uuid", "skillsets_input" "text") RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."insert_skillsets_of_profile"("user_id_input" "uuid", "skillsets_input" "text") RETURNS "void"
     LANGUAGE "sql"
     AS $$INSERT INTO skillset (
   profile_id,
@@ -481,7 +481,7 @@ CREATE FUNCTION IF NOT EXISTS "public"."insert_skillsets_of_profile"("user_id_in
 
 ALTER FUNCTION "public"."insert_skillsets_of_profile"("user_id_input" "uuid", "skillsets_input" "text") OWNER TO "postgres";
 
-CREATE FUNCTION IF NOT EXISTS "public"."migrate_new_profile_data"("user_id_input" "uuid", "prev_profile_id_input" bigint, "curr_profile_id_input" bigint) RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."migrate_new_profile_data"("user_id_input" "uuid", "prev_profile_id_input" bigint, "curr_profile_id_input" bigint) RETURNS "void"
     LANGUAGE "sql"
     AS $$
 INSERT INTO education (
