@@ -10,13 +10,13 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-CREATE SCHEMA "extensions";
+CREATE SCHEMA IF NOT EXISTS "extensions";
 
 ALTER SCHEMA "extensions" OWNER TO "postgres";
 
 CREATE EXTENSION IF NOT EXISTS "pgsodium" WITH SCHEMA "pgsodium";
 
-CREATE SCHEMA "public";
+CREATE SCHEMA IF NOT EXISTS "public";
 
 ALTER SCHEMA "public" OWNER TO "pg_database_owner";
 
