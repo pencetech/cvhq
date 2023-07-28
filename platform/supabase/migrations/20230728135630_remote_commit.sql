@@ -1,279 +1,3 @@
-CREATE OR REPLACE FUNCTION "public"."get_bio_posting"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text")
-    LANGUAGE "sql"
-    AS $$
-  SELECT
-  user_bio.first_name,
-  user_bio.last_name,
-  user_bio.email,
-  user_bio.phone,
-  user_bio.address,
-  job_posting.title,
-  job_posting.company,
-  job_posting.sector,
-  job_posting.requirements,
-  job_posting.add_on
-  FROM user_bio
-  JOIN cv_profile ON cv_profile.id = user_bio.profile_id
-  JOIN job_posting ON job_posting.profile_id = cv_profile.id
-  WHERE cv_profile.user_id = user_id_input
-  AND cv_profile.id = profile_id_input
-$$;
-
-ALTER FUNCTION "public"."get_bio_posting"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."get_education"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone)
-    LANGUAGE "sql"
-    AS $$
-  SELECT
-    subject,
-    institution,
-    degree,
-    start_date,
-    end_date
-  FROM education
-  JOIN cv_profile ON cv_profile.id = education.profile_id
-  WHERE cv_profile.user_id = user_id_input
-  AND cv_profile.id = profile_id_input;
-$$;
-
-ALTER FUNCTION "public"."get_education"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."get_experience"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_end_date" timestamp with time zone, "exp_achievements" "text")
-    LANGUAGE "sql"
-    AS $$
-  SELECT
-  experience.title,
-  experience.company,
-  experience.sector,
-  experience.is_current,
-  experience.start_date,
-  experience.end_date,
-  experience.achievements
-  FROM experience
-  JOIN cv_profile ON cv_profile.id = experience.profile_id
-  WHERE cv_profile.user_id = user_id_input
-  AND cv_profile.id = profile_id_input;
-$$;
-
-ALTER FUNCTION "public"."get_experience"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."get_file_list_of_user"("user_id_input" "uuid") RETURNS TABLE("filename" "text", "job_title" "text", "job_company" "text")
-    LANGUAGE "sql"
-    AS $$
-  SELECT
-  cv_file.filename,
-  job_posting.title,
-  job_posting.company
-  FROM cv_file
-  JOIN cv_profile ON cv_profile.id = cv_file.profile_id
-  JOIN job_posting ON job_posting.profile_id = cv_profile.id
-  WHERE cv_profile.user_id = user_id_input;
-$$;
-
-ALTER FUNCTION "public"."get_file_list_of_user"("user_id_input" "uuid") OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."get_profiles_of_user_time_name"("user_id_input" "uuid") RETURNS TABLE("profile_id" bigint, "profile_name" "text", "inserted_at" timestamp with time zone)
-    LANGUAGE "sql"
-    AS $$
-  SELECT
-  cv_profile.id,
-  cv_profile.name,
-  cv_profile.inserted_at
-  FROM cv_profile
-  WHERE cv_profile.user_id = user_id_input;
-$$;
-
-ALTER FUNCTION "public"."get_profiles_of_user_time_name"("user_id_input" "uuid") OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."get_skillset"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("skillset" "text")
-    LANGUAGE "sql"
-    AS $$
-  SELECT
-  skillsets
-  FROM skillset
-  JOIN cv_profile ON cv_profile.id = skillset.profile_id
-  WHERE cv_profile.user_id = user_id_input
-  AND cv_profile.id = profile_id_input;
-$$;
-
-ALTER FUNCTION "public"."get_skillset"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    AS $$
-begin
-  insert into public.profiles (id, full_name, avatar_url)
-  values (new.id, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
-  return new;
-end;
-$$;
-
-ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."insert_cv_file_of_profile"("user_id_input" "uuid", "filename_input" "text") RETURNS "void"
-    LANGUAGE "sql"
-    AS $$INSERT INTO cv_file (
-  profile_id,
-  filename
-) VALUES (
-  (SELECT id from cv_profile where user_id = user_id_input),
-  filename_input
-)$$;
-
-ALTER FUNCTION "public"."insert_cv_file_of_profile"("user_id_input" "uuid", "filename_input" "text") OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."insert_education_of_profile"("user_id_input" "uuid", "ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone) RETURNS "void"
-    LANGUAGE "sql"
-    AS $$INSERT INTO education (
-  profile_id,
-  subject,
-  institution,
-  degree,
-  start_date,
-  end_date
-) values (
-  (SELECT id from cv_profile where user_id = user_id_input),
-  ed_subject,
-  ed_institution,
-  ed_degree,
-  ed_start_date,
-  ed_end_date
-);$$;
-
-ALTER FUNCTION "public"."insert_education_of_profile"("user_id_input" "uuid", "ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."insert_experience_of_profile"("user_id_input" "uuid", "exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_achievements" "text", "exp_end_date" timestamp with time zone DEFAULT NULL::timestamp with time zone) RETURNS "void"
-    LANGUAGE "sql"
-    AS $$
-  INSERT INTO experience (
-  profile_id,
-  title,
-  company,
-  sector,
-  is_current,
-  start_date,
-  end_date,
-  achievements
-) VALUES (
-  (SELECT id from cv_profile where user_id = user_id_input),
-  exp_title,
-  exp_company,
-  exp_sector,
-  exp_is_current,
-  exp_start_date,
-  exp_end_date,
-  exp_achievements
-);
-$$;
-
-ALTER FUNCTION "public"."insert_experience_of_profile"("user_id_input" "uuid", "exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_achievements" "text", "exp_end_date" timestamp with time zone) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."insert_new_user_profile_job_posting"("profile_user_id" "uuid", "user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text" DEFAULT NULL::"text") RETURNS "void"
-    LANGUAGE "sql"
-    AS $$
-INSERT INTO cv_profile (user_id)
-VALUES (profile_user_id);
-INSERT INTO user_bio (profile_id, first_name, last_name, email, phone, address)
-VALUES (
-  (SELECT id from cv_profile where user_id = profile_user_id),
-  user_first_name,
-  user_last_name,
-  user_email,
-  user_phone,
-  user_address
-);
-INSERT INTO job_posting (profile_id, title, company, sector, requirements, add_on)
-VALUES (
-  (SELECT id from cv_profile where user_id = profile_user_id),
-  job_title,
-  job_company,
-  job_sector,
-  job_requirements,
-  job_add_on
-);
-$$;
-
-ALTER FUNCTION "public"."insert_new_user_profile_job_posting"("profile_user_id" "uuid", "user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text") OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."insert_skillsets_of_profile"("user_id_input" "uuid", "skillsets_input" "text") RETURNS "void"
-    LANGUAGE "sql"
-    AS $$INSERT INTO skillset (
-  profile_id,
-  skillsets
-) VALUES (
-  (SELECT id from cv_profile where user_id = user_id_input),
-  skillsets_input
-)$$;
-
-ALTER FUNCTION "public"."insert_skillsets_of_profile"("user_id_input" "uuid", "skillsets_input" "text") OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION "public"."migrate_new_profile_data"("user_id_input" "uuid", "prev_profile_id_input" bigint, "curr_profile_id_input" bigint) RETURNS "void"
-    LANGUAGE "sql"
-    AS $$
-INSERT INTO education (
-  profile_id,
-  seq_id,
-  subject,
-  institution,
-  degree,
-  start_date,
-  end_date
-) SELECT
-    curr_profile_id_input,
-    seq_id,
-    subject,
-    institution,
-    degree,
-    start_date,
-    end_date
-  FROM education
-  JOIN cv_profile ON cv_profile.id = education.profile_id
-  WHERE cv_profile.user_id = user_id_input
-  AND cv_profile.id = prev_profile_id_input;
-
-INSERT INTO experience (
-  profile_id,
-  seq_id,
-  title,
-  company,
-  sector,
-  is_current,
-  start_date,
-  end_date,
-  achievements
-) SELECT
-    curr_profile_id_input,
-    seq_id,
-    title,
-    company,
-    sector,
-    is_current,
-    start_date,
-    end_date,
-    achievements
-  FROM experience
-  JOIN cv_profile ON cv_profile.id = experience.profile_id
-  WHERE cv_profile.user_id = user_id_input
-  AND cv_profile.id = prev_profile_id_input;
-
-INSERT INTO skillset (
-  profile_id,
-  skillsets
-) SELECT
-    curr_profile_id_input,
-    skillsets
-  FROM skillset
-  JOIN cv_profile ON cv_profile.id = skillset.profile_id
-  WHERE cv_profile.user_id = user_id_input
-  AND cv_profile.id = prev_profile_id_input;
-$$;
-
-ALTER FUNCTION "public"."migrate_new_profile_data"("user_id_input" "uuid", "prev_profile_id_input" bigint, "curr_profile_id_input" bigint) OWNER TO "postgres";
-
-SET default_tablespace = '';
-
-SET default_table_access_method = "heap";
-
 CREATE TABLE "public"."cv_file" (
     "id" bigint NOT NULL,
     "profile_id" bigint NOT NULL,
@@ -596,6 +320,282 @@ ALTER TABLE "public"."profiles" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."skillset" ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE "public"."user_bio" ENABLE ROW LEVEL SECURITY;
+
+CREATE OR REPLACE FUNCTION "public"."get_bio_posting"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text")
+    LANGUAGE "sql"
+    AS $$
+  SELECT
+  user_bio.first_name,
+  user_bio.last_name,
+  user_bio.email,
+  user_bio.phone,
+  user_bio.address,
+  job_posting.title,
+  job_posting.company,
+  job_posting.sector,
+  job_posting.requirements,
+  job_posting.add_on
+  FROM user_bio
+  JOIN cv_profile ON cv_profile.id = user_bio.profile_id
+  JOIN job_posting ON job_posting.profile_id = cv_profile.id
+  WHERE cv_profile.user_id = user_id_input
+  AND cv_profile.id = profile_id_input
+$$;
+
+ALTER FUNCTION "public"."get_bio_posting"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."get_education"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone)
+    LANGUAGE "sql"
+    AS $$
+  SELECT
+    subject,
+    institution,
+    degree,
+    start_date,
+    end_date
+  FROM education
+  JOIN cv_profile ON cv_profile.id = education.profile_id
+  WHERE cv_profile.user_id = user_id_input
+  AND cv_profile.id = profile_id_input;
+$$;
+
+ALTER FUNCTION "public"."get_education"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."get_experience"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_end_date" timestamp with time zone, "exp_achievements" "text")
+    LANGUAGE "sql"
+    AS $$
+  SELECT
+  experience.title,
+  experience.company,
+  experience.sector,
+  experience.is_current,
+  experience.start_date,
+  experience.end_date,
+  experience.achievements
+  FROM experience
+  JOIN cv_profile ON cv_profile.id = experience.profile_id
+  WHERE cv_profile.user_id = user_id_input
+  AND cv_profile.id = profile_id_input;
+$$;
+
+ALTER FUNCTION "public"."get_experience"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."get_file_list_of_user"("user_id_input" "uuid") RETURNS TABLE("filename" "text", "job_title" "text", "job_company" "text")
+    LANGUAGE "sql"
+    AS $$
+  SELECT
+  cv_file.filename,
+  job_posting.title,
+  job_posting.company
+  FROM cv_file
+  JOIN cv_profile ON cv_profile.id = cv_file.profile_id
+  JOIN job_posting ON job_posting.profile_id = cv_profile.id
+  WHERE cv_profile.user_id = user_id_input;
+$$;
+
+ALTER FUNCTION "public"."get_file_list_of_user"("user_id_input" "uuid") OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."get_profiles_of_user_time_name"("user_id_input" "uuid") RETURNS TABLE("profile_id" bigint, "profile_name" "text", "inserted_at" timestamp with time zone)
+    LANGUAGE "sql"
+    AS $$
+  SELECT
+  cv_profile.id,
+  cv_profile.name,
+  cv_profile.inserted_at
+  FROM cv_profile
+  WHERE cv_profile.user_id = user_id_input;
+$$;
+
+ALTER FUNCTION "public"."get_profiles_of_user_time_name"("user_id_input" "uuid") OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."get_skillset"("user_id_input" "uuid", "profile_id_input" bigint) RETURNS TABLE("skillset" "text")
+    LANGUAGE "sql"
+    AS $$
+  SELECT
+  skillsets
+  FROM skillset
+  JOIN cv_profile ON cv_profile.id = skillset.profile_id
+  WHERE cv_profile.user_id = user_id_input
+  AND cv_profile.id = profile_id_input;
+$$;
+
+ALTER FUNCTION "public"."get_skillset"("user_id_input" "uuid", "profile_id_input" bigint) OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+begin
+  insert into public.profiles (id, full_name, avatar_url)
+  values (new.id, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
+  return new;
+end;
+$$;
+
+ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."insert_cv_file_of_profile"("user_id_input" "uuid", "filename_input" "text") RETURNS "void"
+    LANGUAGE "sql"
+    AS $$INSERT INTO cv_file (
+  profile_id,
+  filename
+) VALUES (
+  (SELECT id from cv_profile where user_id = user_id_input),
+  filename_input
+)$$;
+
+ALTER FUNCTION "public"."insert_cv_file_of_profile"("user_id_input" "uuid", "filename_input" "text") OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."insert_education_of_profile"("user_id_input" "uuid", "ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone) RETURNS "void"
+    LANGUAGE "sql"
+    AS $$INSERT INTO education (
+  profile_id,
+  subject,
+  institution,
+  degree,
+  start_date,
+  end_date
+) values (
+  (SELECT id from cv_profile where user_id = user_id_input),
+  ed_subject,
+  ed_institution,
+  ed_degree,
+  ed_start_date,
+  ed_end_date
+);$$;
+
+ALTER FUNCTION "public"."insert_education_of_profile"("user_id_input" "uuid", "ed_subject" "text", "ed_institution" "text", "ed_degree" "text", "ed_start_date" timestamp with time zone, "ed_end_date" timestamp with time zone) OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."insert_experience_of_profile"("user_id_input" "uuid", "exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_achievements" "text", "exp_end_date" timestamp with time zone DEFAULT NULL::timestamp with time zone) RETURNS "void"
+    LANGUAGE "sql"
+    AS $$
+  INSERT INTO experience (
+  profile_id,
+  title,
+  company,
+  sector,
+  is_current,
+  start_date,
+  end_date,
+  achievements
+) VALUES (
+  (SELECT id from cv_profile where user_id = user_id_input),
+  exp_title,
+  exp_company,
+  exp_sector,
+  exp_is_current,
+  exp_start_date,
+  exp_end_date,
+  exp_achievements
+);
+$$;
+
+ALTER FUNCTION "public"."insert_experience_of_profile"("user_id_input" "uuid", "exp_title" "text", "exp_company" "text", "exp_sector" "text", "exp_is_current" boolean, "exp_start_date" timestamp with time zone, "exp_achievements" "text", "exp_end_date" timestamp with time zone) OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."insert_new_user_profile_job_posting"("profile_user_id" "uuid", "user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text" DEFAULT NULL::"text") RETURNS "void"
+    LANGUAGE "sql"
+    AS $$
+INSERT INTO cv_profile (user_id)
+VALUES (profile_user_id);
+INSERT INTO user_bio (profile_id, first_name, last_name, email, phone, address)
+VALUES (
+  (SELECT id from cv_profile where user_id = profile_user_id),
+  user_first_name,
+  user_last_name,
+  user_email,
+  user_phone,
+  user_address
+);
+INSERT INTO job_posting (profile_id, title, company, sector, requirements, add_on)
+VALUES (
+  (SELECT id from cv_profile where user_id = profile_user_id),
+  job_title,
+  job_company,
+  job_sector,
+  job_requirements,
+  job_add_on
+);
+$$;
+
+ALTER FUNCTION "public"."insert_new_user_profile_job_posting"("profile_user_id" "uuid", "user_first_name" "text", "user_last_name" "text", "user_email" "text", "user_phone" "text", "user_address" "text", "job_title" "text", "job_company" "text", "job_sector" "text", "job_requirements" "text", "job_add_on" "text") OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."insert_skillsets_of_profile"("user_id_input" "uuid", "skillsets_input" "text") RETURNS "void"
+    LANGUAGE "sql"
+    AS $$INSERT INTO skillset (
+  profile_id,
+  skillsets
+) VALUES (
+  (SELECT id from cv_profile where user_id = user_id_input),
+  skillsets_input
+)$$;
+
+ALTER FUNCTION "public"."insert_skillsets_of_profile"("user_id_input" "uuid", "skillsets_input" "text") OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."migrate_new_profile_data"("user_id_input" "uuid", "prev_profile_id_input" bigint, "curr_profile_id_input" bigint) RETURNS "void"
+    LANGUAGE "sql"
+    AS $$
+INSERT INTO education (
+  profile_id,
+  seq_id,
+  subject,
+  institution,
+  degree,
+  start_date,
+  end_date
+) SELECT
+    curr_profile_id_input,
+    seq_id,
+    subject,
+    institution,
+    degree,
+    start_date,
+    end_date
+  FROM education
+  JOIN cv_profile ON cv_profile.id = education.profile_id
+  WHERE cv_profile.user_id = user_id_input
+  AND cv_profile.id = prev_profile_id_input;
+
+INSERT INTO experience (
+  profile_id,
+  seq_id,
+  title,
+  company,
+  sector,
+  is_current,
+  start_date,
+  end_date,
+  achievements
+) SELECT
+    curr_profile_id_input,
+    seq_id,
+    title,
+    company,
+    sector,
+    is_current,
+    start_date,
+    end_date,
+    achievements
+  FROM experience
+  JOIN cv_profile ON cv_profile.id = experience.profile_id
+  WHERE cv_profile.user_id = user_id_input
+  AND cv_profile.id = prev_profile_id_input;
+
+INSERT INTO skillset (
+  profile_id,
+  skillsets
+) SELECT
+    curr_profile_id_input,
+    skillsets
+  FROM skillset
+  JOIN cv_profile ON cv_profile.id = skillset.profile_id
+  WHERE cv_profile.user_id = user_id_input
+  AND cv_profile.id = prev_profile_id_input;
+$$;
+
+ALTER FUNCTION "public"."migrate_new_profile_data"("user_id_input" "uuid", "prev_profile_id_input" bigint, "curr_profile_id_input" bigint) OWNER TO "postgres";
+
+SET default_tablespace = '';
+
+SET default_table_access_method = "heap";
 
 GRANT USAGE ON SCHEMA "extensions" TO "anon";
 GRANT USAGE ON SCHEMA "extensions" TO "authenticated";
