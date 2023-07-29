@@ -427,7 +427,7 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 							{{ if $i }}
 							<div class="job">
 							{{ end }}
-							{{ if last $i $ }}
+							{{ if last $i $e }}
 							{{ end }}
 							<div class="job last">
 								<h2>{{ $e.Company }}</h2>
