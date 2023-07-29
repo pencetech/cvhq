@@ -1,7 +1,6 @@
 package graph
 
 import (
-	"reflect"
 	"text/template"
 )
 
@@ -245,7 +244,6 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 		}
 		
 		#inner {
-		  padding: 10px 60px;
 		  margin: 80px auto;
 		}
 		.yui-gf {
@@ -286,7 +284,7 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 		  font-size: 36px;
 		  text-transform: uppercase;
 		  font-weight: bold;
-		  letter-spacing: 2px;
+		  font-spaceing: 2px;
 		}
 		h2 {
 		  font-size: 152%;
@@ -336,8 +334,6 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 		  border-bottom: 0;
 		}
 		
-		/* //-- section styles -- */
-		
 		.job {
 		  position: relative;
 		  margin-bottom: 1em;
@@ -371,7 +367,6 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 		  margin-top: 20px;
 		}
 		
-		/* --// override to force 1/8th width grids -- */
 		.yui-gf .yui-u {
 		  width: 83.2%;
 		}
@@ -423,13 +418,13 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 						</div><!--// .yui-u -->
 
 						<div class="yui-u">
+							{{ $n := len .Experiences }}
 							{{ range $i, $e := .Experiences }}
-							{{ if $i }}
+							{{ if eq (plus1 $i) $n }}
+							<div class="job last">
+							{{ else }}
 							<div class="job">
 							{{ end }}
-							{{ if last $i $e }}
-							{{ end }}
-							<div class="job last">
 								<h2>{{ $e.Company }}</h2>
 								<h3>{{ $e.Title }}</h3>
 								<h4>{{ $e.StartDate }} - {{ if $e.IsCurrent }} Present{{ else }} {{ $e.EndDate }}{{ end }}</h4>
@@ -483,7 +478,7 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 `
 
 var fns = template.FuncMap{
-    "last": func(x int, a interface{}) bool {
-        return x == reflect.ValueOf(a).Len() - 1
-    },
+	"plus1": func(x int) int {
+		return x + 1
+	},
 }
