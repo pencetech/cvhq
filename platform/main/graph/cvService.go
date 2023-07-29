@@ -63,53 +63,8 @@ func (c *CVService) ConstructCV(input model.CVContentInput) (string, error) {
 	if err != nil {
 		log.Println("[ERROR] Parse time error -> ", err)
 	}
-
-	markdown := `
-<div style="font-family: sans-serif">
-<div align="center">
 	
-# {{ .UserBio.FirstName }} {{ .UserBio.LastName }}
-	
-<b>Email:</b> {{ .UserBio.Email }} | <b>Phone:</b> {{ .UserBio.Phone }}
-	
-<b>Address:</b> {{ .UserBio.Address }}
-	
-</div>
-	
----
-
-### Summary
-
-{{ .Summary }}
-	
----
-
-## Experiences
-{{ range .Experiences }}
-
-**{{ .Title }}** at {{ .Company }} _({{ .StartDate }} - {{ if .IsCurrent }} Present{{ else }} {{ .EndDate }}{{ end }})_
-	  
-{{ .Achievements }}
-
-{{ end }}
-	
----
-
-## Education
-{{ range .Education }}
-
-**{{ .Degree }}** in {{ .Subject }} at {{ .Institution }} _({{ .StartDate }} - {{ .EndDate }})_
-	
-{{ end }}
-	
----
-
-## Skillsets
-	
-{{ .Skillsets.Skillsets }}
-</div>`
-	
-	t := template.Must(template.New("cv").Parse(markdown))
+	t := template.Must(template.New("cv").Funcs(fns).Parse(SansCV))
 	builder := &strings.Builder{}
 	if err := t.Execute(builder, input); err != nil {
 		return "", err
@@ -166,11 +121,10 @@ func (c *CVService) ParseTimeCV(input *model.CVContentInput) error {
 	return nil
 }
 
-func (c *CVService) PutCV(md string, filename string) error {
+func (c *CVService) PutCV(html string, filename string) error {
 	accessKey := os.Getenv("AWS_ACCESS_KEY")
 	secretKey := os.Getenv("AWS_SECRET_KEY")
-	html := c.MdToHtml([]byte(md))
-	pdf := c.HtmlToPdf(html)
+	pdf := c.HtmlToPdf([]byte(html))
 
 	body := bytes.NewReader(pdf)
 
