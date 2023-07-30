@@ -39,11 +39,11 @@ func (c *CVService) GetCV(filename string) ([]byte, error) {
 		Region:      "eu-west-2",
 		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
 	}
-	
+
 	client := s3.New(options)
 	res, err := client.GetObject(context.TODO(), &s3.GetObjectInput{
 		Bucket: aws.String("cvhqcv"),
-		Key: aws.String(filename),
+		Key:    aws.String(filename),
 	})
 
 	if err != nil {
@@ -58,12 +58,8 @@ func (c *CVService) GetCV(filename string) ([]byte, error) {
 }
 
 func (c *CVService) ConstructCV(input model.CVContentInput) (string, error) {
+	c.ParseTimeCV(&input)
 
-	err := c.ParseTimeCV(&input)
-	if err != nil {
-		log.Println("[ERROR] Parse time error -> ", err)
-	}
-	
 	t := template.Must(template.New("cv").Funcs(fns).Parse(SansCV))
 	builder := &strings.Builder{}
 	if err := t.Execute(builder, input); err != nil {
@@ -73,13 +69,12 @@ func (c *CVService) ConstructCV(input model.CVContentInput) (string, error) {
 	return builder.String(), nil
 }
 
-func (c *CVService) ParseTimeCV(input *model.CVContentInput) error {
+func (c *CVService) ParseTimeCV(input *model.CVContentInput) {
 
 	for i, exp := range input.Experiences {
 		startParsed, err := time.Parse(time.RFC3339, exp.StartDate)
 		if err != nil {
 			log.Println("[ERROR] Parse time error -> ", err)
-			return err
 		}
 		startMonthYear := startParsed.Format("Jan 2006")
 
@@ -88,7 +83,6 @@ func (c *CVService) ParseTimeCV(input *model.CVContentInput) error {
 			endParsed, err := time.Parse(time.RFC3339, *exp.EndDate)
 			if err != nil {
 				log.Println("[ERROR] Parse time error -> ", err)
-				return err
 			}
 
 			endMonthYear = endParsed.Format("Jan 2006")
@@ -102,23 +96,19 @@ func (c *CVService) ParseTimeCV(input *model.CVContentInput) error {
 		startEdParsed, err := time.Parse(time.RFC3339, ed.StartDate)
 		if err != nil {
 			log.Println("[ERROR] Parse time error -> ", err)
-			return err
 		}
 		startEdMonthYear := startEdParsed.Format("Jan 2006")
 
 		endEdParsed, err := time.Parse(time.RFC3339, ed.EndDate)
 		if err != nil {
 			log.Println("[ERROR] Parse time error -> ", err)
-			return err
 		}
 
 		endEdMonthYear := endEdParsed.Format("Jan 2006")
 
 		input.Education[i].StartDate = startEdMonthYear
 		input.Education[i].EndDate = endEdMonthYear
-	} 
-
-	return nil
+	}
 }
 
 func (c *CVService) PutCV(html string, filename string) error {
@@ -136,8 +126,8 @@ func (c *CVService) PutCV(html string, filename string) error {
 	client := s3.New(options)
 	_, err := client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String("cvhqcv"),
-		Key: aws.String(filename),
-		Body: body,
+		Key:    aws.String(filename),
+		Body:   body,
 	})
 
 	if err != nil {
@@ -187,10 +177,10 @@ func (c *CVService) HtmlToPdf(source []byte) []byte {
 
 	page := pdf.NewPageReader(bytes.NewReader(source))
 	page.Encoding.Set("utf-8")
-	
+
 	page.Allow.Set(".")
 	page.EnableLocalFileAccess.Set(true)
-	
+
 	pdfg.AddPage(page)
 
 	// Create PDF document in internal buffer
