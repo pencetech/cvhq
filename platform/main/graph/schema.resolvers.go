@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 
+
 	"github.com/pencetech/cvhq/graph/model"
 )
 
@@ -82,8 +83,8 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileIn
 		log.Println("ERROR: CV construction failed -> ", err)
 		return nil, err
 	}
-	lineEscapedObjStr := r.ChatBridge.escapeNewline(&resultStr)
-	tabEscapedObjStr := r.ChatBridge.escapeTabs(&lineEscapedObjStr)
+
+	tabEscapedObjStr := r.ChatBridge.escapeTabs(&resultStr)
 	filename := r.CVService.generateFileName(input.UserBio.FirstName, input.UserBio.LastName)
 	err = r.CVService.PutCV(tabEscapedObjStr, filename)
 

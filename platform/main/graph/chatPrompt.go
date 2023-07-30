@@ -304,6 +304,7 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 		  line-height: 18px;
 		  padding-right: 3em;
 		}
+
 		a {
 		  color: #990003;
 		}
@@ -316,6 +317,10 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 		li {
 		  line-height: 24px;
 		  border-bottom: 1px solid #ccc;
+		}
+
+		h3.address {
+		  white-space: pre-wrap;
 		}
 		
 		p.enlarge {
@@ -348,6 +353,9 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 		.job p {
 		  margin: 0.75em 0 2em 0;
 		}
+		p.achievements {
+		  white-space: pre-wrap;
+		}
 		
 		.education {
 			position: relative;
@@ -368,7 +376,7 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 		}
 		
 		.yui-gf .yui-u {
-		  width: 83.2%;
+		  width: 85%;
 		}
 		.yui-gf div.first {
 		  width: 12.3%;
@@ -391,7 +399,7 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 					<div class="contact-info">
 						<h3><a href="mailto:{{ .UserBio.Email }}">{{ .UserBio.Email }}</a></h3>
 						<h3>{{ .UserBio.Phone }}</h3>
-						<h3>{{ .UserBio.Address }}</h3>
+						<h3 class="address">{{ .UserBio.Address }}</h3>
 					</div><!--// .contact-info -->
 				</div>
 			</div><!--// .yui-gc -->
@@ -428,7 +436,7 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 								<h2>{{ $e.Company }}</h2>
 								<h3>{{ $e.Title }}</h3>
 								<h4>{{ $e.StartDate }} - {{ if $e.IsCurrent }} Present{{ else }} {{ $e.EndDate }}{{ end }}</h4>
-								<p>{{ $e.Achievements }}</p>
+								<p class="achievements">{{ $e.Achievements }}</p>
 							</div>
 							{{ end }}
 						</div><!--// .yui-u -->
