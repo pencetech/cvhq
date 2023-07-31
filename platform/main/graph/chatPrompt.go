@@ -284,7 +284,7 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 		  font-size: 36px;
 		  text-transform: uppercase;
 		  font-weight: bold;
-		  font-spaceing: 2px;
+		  letter-spacing: 2px;
 		}
 		h2 {
 		  font-size: 152%;
