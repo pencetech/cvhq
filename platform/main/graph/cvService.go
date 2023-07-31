@@ -57,10 +57,18 @@ func (c *CVService) GetCV(filename string) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (c *CVService) ConstructCV(input model.CVContentInput) (string, error) {
+func (c *CVService) ConstructCV(input model.CVContentInput, cvType model.CvType) (string, error) {
 	c.ParseTimeCV(&input)
+	var rawCV string
 
-	t := template.Must(template.New("cv").Funcs(fns).Parse(SansCV))
+	switch (cvType) {
+		case model.CvTypeBase: 
+			rawCV = fmt.Sprintf(SansCV, baseSansCSS)
+		case model.CvTypePrime: 
+			rawCV = fmt.Sprintf(SansCV, primeSansCSS)
+	}
+	
+	t := template.Must(template.New("cv").Funcs(fns).Parse(rawCV))
 	builder := &strings.Builder{}
 	if err := t.Execute(builder, input); err != nil {
 		return "", err

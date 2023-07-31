@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"log"
 
-
 	"github.com/pencetech/cvhq/graph/model"
 )
 
@@ -49,7 +48,14 @@ func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.A
 func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileInput) (*model.Cv, error) {
 	var cv model.Cv
 
-	profileBytes, err := json.Marshal(input)
+	cvContentObj := &model.CVContentInput{
+		UserBio:     input.UserBio,
+		Experiences: input.Experiences,
+		Education:   input.Education,
+		Skillsets:   input.Skillsets,
+	}
+
+	profileBytes, err := json.Marshal(cvContentObj)
 	if err != nil {
 		log.Println("ERROR: JSON marshaling failed -> ", err)
 		return nil, err
@@ -69,15 +75,9 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileIn
 		return nil, err
 	}
 
-	cvContentObj := &model.CVContentInput{
-		UserBio:     input.UserBio,
-		Summary:     summStr,
-		Experiences: input.Experiences,
-		Education:   input.Education,
-		Skillsets:   input.Skillsets,
-	}
+	cvContentObj.Summary = &summStr
 
-	resultStr, err := r.CVService.ConstructCV(*cvContentObj)
+	resultStr, err := r.CVService.ConstructCV(*cvContentObj, input.CvType)
 
 	if err != nil {
 		log.Println("ERROR: CV construction failed -> ", err)

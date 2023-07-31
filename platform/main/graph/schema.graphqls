@@ -40,7 +40,7 @@ type Education {
 
 type CVContent {
   userBio: UserBio!
-  summary: String!
+  summary: String
   experiences: [Experience!]!
   education: [Education!]!
   skillsets: Skillset
@@ -48,7 +48,7 @@ type CVContent {
 
 input CVContentInput {
   userBio: UserBioInput!
-  summary: String!
+  summary: String
   experiences: [ExperienceInput!]!
   education: [EducationInput!]!
   skillsets: SkillsetInput
@@ -114,6 +114,7 @@ input ProfileInput {
   experiences: [ExperienceInput!]!
   education: [EducationInput!]!
   skillsets: SkillsetInput
+  cvType: CvType!
 }
 
 type Profile {
@@ -160,4 +161,9 @@ type Mutation {
   createProfile(input: ProfileInput!): Profile!
   enhanceAchievement(input: AchievementInput!): EnhancedAchievement!
   generateCV(input: ProfileInput!): CV!
+}
+
+enum CvType {
+  BASE
+  PRIME
 }

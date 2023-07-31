@@ -2,6 +2,12 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
 type AchievementInput struct {
 	UserBio    *UserBioInput    `json:"userBio"`
 	JobPosting *JobPostingInput `json:"jobPosting"`
@@ -14,7 +20,7 @@ type Cv struct {
 
 type CVContent struct {
 	UserBio     *UserBio      `json:"userBio"`
-	Summary     string        `json:"summary"`
+	Summary     *string       `json:"summary,omitempty"`
 	Experiences []*Experience `json:"experiences"`
 	Education   []*Education  `json:"education"`
 	Skillsets   *Skillset     `json:"skillsets,omitempty"`
@@ -22,7 +28,7 @@ type CVContent struct {
 
 type CVContentInput struct {
 	UserBio     *UserBioInput      `json:"userBio"`
-	Summary     string             `json:"summary"`
+	Summary     *string            `json:"summary,omitempty"`
 	Experiences []*ExperienceInput `json:"experiences"`
 	Education   []*EducationInput  `json:"education"`
 	Skillsets   *SkillsetInput     `json:"skillsets,omitempty"`
@@ -110,6 +116,7 @@ type ProfileInput struct {
 	Experiences []*ExperienceInput `json:"experiences"`
 	Education   []*EducationInput  `json:"education"`
 	Skillsets   *SkillsetInput     `json:"skillsets,omitempty"`
+	CvType      CvType             `json:"cvType"`
 }
 
 type ProfileWithoutPosting struct {
@@ -150,4 +157,45 @@ type UserBioInput struct {
 	Email     string `json:"email"`
 	Phone     string `json:"phone"`
 	Address   string `json:"address"`
+}
+
+type CvType string
+
+const (
+	CvTypeBase  CvType = "BASE"
+	CvTypePrime CvType = "PRIME"
+)
+
+var AllCvType = []CvType{
+	CvTypeBase,
+	CvTypePrime,
+}
+
+func (e CvType) IsValid() bool {
+	switch e {
+	case CvTypeBase, CvTypePrime:
+		return true
+	}
+	return false
+}
+
+func (e CvType) String() string {
+	return string(e)
+}
+
+func (e *CvType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CvType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CvType", str)
+	}
+	return nil
+}
+
+func (e CvType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

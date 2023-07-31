@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/99designs/gqlgen v0.17.33
+	github.com/BurntSushi/toml v1.3.2
 	github.com/SebastiaanKlippert/go-wkhtmltopdf v1.9.0
 	github.com/aws/aws-sdk-go-v2 v1.18.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.26
@@ -14,10 +15,10 @@ require (
 	github.com/sashabaranov/go-openai v1.11.3
 	github.com/vektah/gqlparser/v2 v2.5.3
 	github.com/yuin/goldmark v1.5.3
+	go.uber.org/dig v1.17.0
 )
 
 require (
-	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.4.10 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.34 // indirect
@@ -35,7 +36,6 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/urfave/cli/v2 v2.25.7 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
-	go.uber.org/dig v1.17.0 // indirect
 	golang.org/x/mod v0.11.0 // indirect
 	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/text v0.10.0 // indirect
