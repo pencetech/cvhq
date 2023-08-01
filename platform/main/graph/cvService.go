@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -32,8 +33,8 @@ func NewCVService(config *Configuration) *CVService {
 }
 
 func (c *CVService) GetCV(filename string) ([]byte, error) {
-	accessKey := "AKIA5ZWKIYYRCSZBQEGP"
-	secretKey := "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"
+	accessKey := os.Getenv("AWS_ACCESS_KEY")
+	secretKey := os.Getenv("AWS_SECRET_KEY")
 	options := s3.Options{
 		Region:      "eu-west-2",
 		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
@@ -59,14 +60,13 @@ func (c *CVService) GetCV(filename string) ([]byte, error) {
 func (c *CVService) ConstructCV(input model.CVContentInput, cvType model.CvType) (string, error) {
 	c.ParseTimeCV(&input)
 	var rawCV string
-
+	
 	switch (cvType) {
 		case model.CvTypeBase: 
 			rawCV = fmt.Sprintf(SansCV, baseSansCSS)
 		case model.CvTypePrime: 
 			rawCV = fmt.Sprintf(SansCV, primeSansCSS)
 	}
-	
 	t := template.Must(template.New("cv").Funcs(fns).Parse(rawCV))
 	builder := &strings.Builder{}
 	if err := t.Execute(builder, input); err != nil {
@@ -119,8 +119,8 @@ func (c *CVService) ParseTimeCV(input *model.CVContentInput) {
 }
 
 func (c *CVService) PutCV(html string, filename string) error {
-	accessKey := "AKIA5ZWKIYYRCSZBQEGP"
-	secretKey := "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"
+	accessKey := os.Getenv("AWS_ACCESS_KEY")
+	secretKey := os.Getenv("AWS_SECRET_KEY")
 	pdf := c.HtmlToPdf([]byte(html))
 
 	body := bytes.NewReader(pdf)
