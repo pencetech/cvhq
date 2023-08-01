@@ -23,10 +23,7 @@ mutation generateCV($input: ProfileInput!) {
 
 const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
-    const [filename, setFilename] = useState("default.pdf");
-    const [cvBlobUrl, setCvBlobUrl] = useState("");
     const { token } = theme.useToken();
-    const pathName = usePathname();
     const supabase = createClientComponentClient<Database>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
@@ -67,9 +64,6 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             skillsets: '',
         }
     });
-    const [generateCV, { data, loading, error }] = useMutation(GENERATE_CV, {
-        onCompleted: async (data: any) => await handleCompleteGenerate(data.generateCV.filename)
-    })
 
     const insertUserBio = async (user: UserBio) => {
         await supabase.from('user_bio')
@@ -201,64 +195,16 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const showModal = () => {
         setIsModalOpen(true);
       };
-    
-    const handleOk = () => {
-        const currPathNoQuery = pathName.split("?")[0];
-        const currPath = currPathNoQuery
-            .split("/")
-            .filter(v => v.length > 0);
-        const currPage = currPath[currPath.length-1];
-        window.analytics?.track("Download CV", "setup", {
-            title: `Downloaded CV in ${currPage}`,
-            userId: userId,
-            profileId: profileId,
-            current_path: currPath
-        })
-    };
 
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-    
-    const handleCompleteGenerate = async (filename: string) => {
-        await supabase
-            .from("cv_file")
-            .insert({
-                filename: filename,
-                profile_id: profileId
-            });
-        setFilename(filename)
-        await fetchCV(filename);
-    }
 
     const handleSubmit = (values: Skillset) => {
         const mergingValue = { skillset: values }
         const data = { ...formData, ...mergingValue };
         setFormData(data);
-        generateCV({
-            variables: {
-                input: {
-                    id: 1,
-                    userBio: data.userBio,
-                    jobPosting: data.jobPosting,
-                    experiences: data.experiences,
-                    education: data.education,
-                    skillsets: data.skillset
-                }
-            },
-        });
         showModal();
-    }
-
-    const fetchCV = async (filename: string) => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/cv/${filename}`)
-        if (!res.ok) {
-            // This will activate the closest `error.js` Error Boundary
-            throw new Error('Failed to fetch data')
-        }
-        const blob = await res.blob();
-        const blobUrl = window.URL.createObjectURL(blob)
-        setCvBlobUrl(blobUrl);
     }
 
     const startNextAction = (
@@ -275,7 +221,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const endActions = (
         <Space>
             <Button onClick={e => handleBack(e)}>Back</Button>
-            <Button type='primary' htmlType="submit" loading={loading}>{loading ? "Generating..." : "Generate CV"}</Button>
+            <Button type='primary' htmlType="submit">Generate CV</Button>
         </Space>
     )
         // to handle async compatibility throughout the app, we're making this 
@@ -353,7 +299,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         />
         {contextHolder}
         <div style={contentStyle}>{rawItems[activeStepIndex].content}</div>
-        {!loading ? <CvDownloadModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} filename={filename} blobUrl={cvBlobUrl} /> : null}
+          <CvDownloadModal userId={userId} profileId={profileId} formData={formData} open={isModalOpen} onCancel={handleCancel} nextLink="/dashboard/home" />
         </>
     )
 }

@@ -3,20 +3,12 @@ import ProfileCard from "@/app/components/profileCard"
 import { Col, Modal, Row } from "antd"
 import FileListComponent from "./fileListComponent"
 import { CvFile, FormData } from "@/models/cv"
-import { gql, useMutation } from "@apollo/client";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import CvDownloadModal from "@/app/components/cvDownloadModal";
 
-
-const GENERATE_CV = gql`
-mutation generateCV($input: ProfileInput!) {
-    generateCV(input: $input) {
-      filename
-    }
-  }
-`
 const ProfilePageComponent = ({ id, profile, files, profileName }: {
     id: number,
     profile: FormData,
@@ -26,6 +18,7 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
     const router = useRouter();
     const pathName = usePathname();
     const supabase = createClientComponentClient<Database>();
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [user, setUser] = useState('');
     const [formData, setFormData] = useState<FormData>({
         userBio: profile.userBio,
@@ -34,19 +27,6 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         education: profile.education,
         skillset: profile.skillset
     });
-    const [generateCV, { data, loading, error }] = useMutation(GENERATE_CV, {
-        variables: {
-            input: {
-                id: 1,
-                userBio: formData.userBio,
-                jobPosting: formData.jobPosting,
-                experiences: formData.experiences,
-                education: formData.education,
-                skillsets: formData.skillset
-            }
-        },
-        onCompleted: async (data: any) => await handleCompleteGenerate(data.generateCV.filename)
-    })
 
     useEffect(() => {
         const getUser = async () => {
@@ -64,9 +44,17 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
     const handleGenerateClick = () => {
         const isValidationPassed = isAllFieldsFilled();
         if (isValidationPassed) {
-            generateCV();
+            showModal();
         }
     }
+
+    const showModal = () => {
+        setIsModalOpen(true);
+      };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
 
     const isAllFieldsFilled = () => {
         const userBioNotFilled = !formData.userBio.firstName ||
@@ -123,17 +111,6 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         return true;
     }
 
-    const handleCompleteGenerate = async (filename: string) => {
-        await supabase
-            .from("cv_file")
-            .insert({
-                filename: filename,
-                profile_id: id
-            });
-        await fetchAndDownloadCV(filename);
-        router.refresh()
-    }
-
     const fetchAndDownloadCV = async (filename: string) => {
         const currPathNoQuery = pathName.split("?")[0];
         const currPath = currPathNoQuery
@@ -163,13 +140,13 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
             </Col>
             <Col span={10}>
                 {files ? <FileListComponent 
-                    loading={loading} 
                     profileId={id}
                     files={files} 
                     onFileClick={fetchAndDownloadCV}
                     onGenerateClick={handleGenerateClick}
                      /> : "no file"}
             </Col>
+            <CvDownloadModal userId={user} profileId={id} formData={formData} open={isModalOpen} onCancel={handleCancel} nextLink={pathName} />
         </Row>
     )
 }
