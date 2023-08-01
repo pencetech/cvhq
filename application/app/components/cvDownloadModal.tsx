@@ -46,11 +46,6 @@ const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink
     const pathName = usePathname();
     const supabase = createClientComponentClient<Database>();
 
-    const handleClickWithLink = (event: any, link: string) => {
-        event.preventDefault();
-        router.push(link);
-    }  
-
     const handleCompleteGenerate = async (filename: string) => {
         await supabase
             .from("cv_file")
@@ -88,6 +83,7 @@ const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink
     return (
         <Modal
             title="Select CV format"
+            maskClosable={true}
             open={open}
             width={800}
             footer={[
@@ -99,38 +95,41 @@ const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink
                     loading={loading}
                 >{loading ? "Downloading" : "Download and proceed"}</Button>
             ]}
+            onCancel={onCancel}
             >   
             <Row justify="start">
                 <Col span={12}>
                     <Result
-                        style={{ borderRadius: "15px", border: format === BASE_CV ? '1px solid #1677ff' : "none" }}
-                        // icon={
-                        //     <Image
-                        //         fill
-                        //         style={{ objectFit: "scale-down", border: '1px solid #d9d9d9' }}
-                        //         src='/base_cv.png'
-                        //         alt='base CV image'
-                        //     />
-                        // }
+                        style={{ borderRadius: "15px", border: format === BASE_CV ? '1px solid #1677ff' : "1px solid #fff" }}
+                        icon={
+                            <Image
+                                width={200}
+                                height={282}
+                                style={{ objectFit: "scale-down", border: '1px solid #d9d9d9' }}
+                                src='/base_cv.png'
+                                alt='base CV image'
+                            />
+                        }
                         title="Base"
                         subTitle="Simple template for early hires"
-                        extra={<Button type="primary" onClick={() => setFormat(BASE_CV)}>Select</Button>}
+                        extra={<Button onClick={() => setFormat(BASE_CV)}>{format === BASE_CV ? "Selected" : "Select"}</Button>}
                     />
                 </Col>
                 <Col span={12}>
                     <Result
-                        style={{ borderRadius: "15px", border: format === PRIME_CV ? '1px solid #1677ff' : "none" }}
-                        // icon={
-                        //     <Image
-                        //         fill
-                        //         style={{ objectFit: "scale-down", border: '1px solid #d9d9d9' }}
-                        //         src='/prime_cv.png'
-                        //         alt='prime CV image'
-                        //     />
-                        // }
+                        style={{ borderRadius: "15px", border: format === PRIME_CV ? '1px solid #1677ff' : "1px solid #fff" }}
+                        icon={
+                            <Image
+                                width={200}
+                                height={282}
+                                style={{ objectFit: "scale-down", border: '1px solid #d9d9d9' }}
+                                src='/prime_cv.png'
+                                alt='prime CV image'
+                            />
+                        }
                         title="Prime"
                         subTitle="Refined template for experienced hires"
-                        extra={<Button type="primary" onClick={() => setFormat(PRIME_CV)}>Select</Button>}
+                        extra={<Button onClick={() => setFormat(PRIME_CV)}>{format === PRIME_CV ? "Selected" : "Select"}</Button>}
                     />
                 </Col>
             </Row>
