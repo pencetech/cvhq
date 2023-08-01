@@ -23,7 +23,7 @@ const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink
     open: boolean, 
     profileId: number,
     userId: string,
-    onCancel: (() => void) | undefined,
+    onCancel: (() => void),
     formData: FormData,
     nextLink: string
 }) => {
@@ -45,6 +45,11 @@ const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink
     const router = useRouter();
     const pathName = usePathname();
     const supabase = createClientComponentClient<Database>();
+
+    const handleGenerate = () => {
+        generateCV();
+        onCancel();
+    }
 
     const handleCompleteGenerate = async (filename: string) => {
         await supabase
@@ -87,7 +92,6 @@ const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink
             open={open}
             width={800}
             footer={[
-                <Button key="cancel" onClick={onCancel}>Return</Button>,
                 <Button 
                     key="download"
                     type="primary"
