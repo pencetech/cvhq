@@ -13,11 +13,6 @@ import (
 	"github.com/pencetech/cvhq/graph/model"
 )
 
-// CreateProfile is the resolver for the createProfile field.
-func (r *mutationResolver) CreateProfile(ctx context.Context, input model.ProfileInput) (*model.Profile, error) {
-	panic(fmt.Errorf("not implemented: CreateProfile - createProfile"))
-}
-
 // EnhanceAchievement is the resolver for the enhanceAchievement field.
 func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.AchievementInput) (*model.EnhancedAchievement, error) {
 	var enhanced model.EnhancedAchievement
@@ -45,15 +40,53 @@ func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.A
 }
 
 // GenerateCv is the resolver for the generateCV field.
-func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileInput) (*model.Cv, error) {
-	var cv model.Cv
+func (r *mutationResolver) GenerateCv(ctx context.Context, input model.CvInput) (*model.CvFile, error) {
+	var cv model.CvFile
 
-	cvContentObj := &model.CVContentInput{
-		UserBio:     input.UserBio,
-		Experiences: input.Experiences,
-		Education:   input.Education,
-		Skillsets:   input.Skillsets,
+	if input.CvContent.Summary == nil {
+		summary, err := r.GenerateSummary(ctx, input)
+		if err != nil {
+			log.Println("ERROR: generate summary failed -> ", err)
+			return nil, err
+		}
+		input.CvContent.Summary = &summary.Summary
 	}
+
+	var resultStr string
+	var err error
+
+	if input.CvType != nil {
+		resultStr, err = r.CVService.ConstructCV(*input.CvContent, *input.CvType)
+		if err != nil {
+			log.Println("ERROR: CV construction failed -> ", err)
+			return nil, err
+		}
+	} else {
+		resultStr, err = r.CVService.ConstructCV(*input.CvContent, model.CvTypeBase)
+		if err != nil {
+			log.Println("ERROR: CV construction failed -> ", err)
+			return nil, err
+		}
+	}
+
+	tabEscapedObjStr := r.ChatBridge.escapeTabs(&resultStr)
+	filename := r.CVService.generateFileName(input.CvContent.UserBio.FirstName, input.CvContent.UserBio.LastName)
+	err = r.CVService.PutCV(tabEscapedObjStr, filename)
+
+	if err != nil {
+		log.Println("ERROR: put CV failed -> ", err)
+		return nil, err
+	}
+
+	cv.Filename = filename
+	return &cv, nil
+}
+
+// GenerateSummary is the resolver for the generateSummary field.
+func (r *mutationResolver) GenerateSummary(ctx context.Context, input model.CvInput) (*model.Summary, error) {
+	var summary model.Summary
+
+	cvContentObj := input.CvContent
 
 	profileBytes, err := json.Marshal(cvContentObj)
 	if err != nil {
@@ -68,45 +101,17 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.ProfileIn
 	}
 
 	summaryContent := fmt.Sprintf(r.ChatBridge.getSummaryPrompt(), string(profileBytes), string(jobPostingBytes))
-
 	summStr, err := r.ChatBridge.ChatCompletion(summaryContent)
 	if err != nil {
 		log.Println("ERROR: chat completion failed -> ", err)
 		return nil, err
 	}
 
-	cvContentObj.Summary = &summStr
-
-	resultStr, err := r.CVService.ConstructCV(*cvContentObj, input.CvType)
-
-	if err != nil {
-		log.Println("ERROR: CV construction failed -> ", err)
-		return nil, err
-	}
-
-	tabEscapedObjStr := r.ChatBridge.escapeTabs(&resultStr)
-	filename := r.CVService.generateFileName(input.UserBio.FirstName, input.UserBio.LastName)
-	err = r.CVService.PutCV(tabEscapedObjStr, filename)
-
-	if err != nil {
-		log.Println("ERROR: put CV failed -> ", err)
-		return nil, err
-	}
-
-	cv.Filename = filename
-	return &cv, nil
-}
-
-// Profile is the resolver for the profile field.
-func (r *queryResolver) Profile(ctx context.Context) (*model.Profile, error) {
-	panic(fmt.Errorf("not implemented: Profile - profile"))
+	summary.Summary = summStr
+	return &summary, nil
 }
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
-// Query returns QueryResolver implementation.
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
-
 type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }

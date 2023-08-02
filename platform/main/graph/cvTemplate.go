@@ -46,14 +46,10 @@ var baseSansCSS = `
   #hd h2 {
 	text-transform: uppercase;
   }
-  #bd,
-  #ft {
-	margin-bottom: 2em;
-  }
   
   /* //-- footer -- */
   #ft {
-	padding: 1em 0 3em 0;
+	padding: 1em 0 2em 0;
 	font-size: 92%;
 	border-top: 1px solid #ccc;
 	text-align: center;
@@ -211,15 +207,12 @@ var primeSansCSS = `
   }
   #hd h2 {
 	text-transform: uppercase;
-  }
-  #bd,
-  #ft {
-	margin-bottom: 2em;
+	letter-spacing: 2px;
   }
   
   /* //-- footer -- */
   #ft {
-	padding: 1em 0 3em 0;
+	padding: 1em 0 1em 0;
 	font-size: 92%;
 	border-top: 1px solid #ccc;
 	text-align: center;

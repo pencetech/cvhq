@@ -54,6 +54,20 @@ input CVContentInput {
   skillsets: SkillsetInput
 }
 
+input CvInput {
+  id: ID
+  cvContent: CVContentInput!
+  jobPosting: JobPostingInput!
+  cvType: CvType
+}
+
+type Cv {
+  id: ID
+  cvContent: CVContent!
+  jobPosting: JobPosting!
+  cvType: CvType
+}
+
 type Skillset {
   skillsets: String!
 }
@@ -103,47 +117,12 @@ input SkillsetInput {
   skillsets: String!
 }
 
-type Query {
-  profile: Profile!
-}
-
-input ProfileInput {
-  id: ID
-  userBio: UserBioInput!
-  jobPosting: JobPostingInput!
-  experiences: [ExperienceInput!]!
-  education: [EducationInput!]!
-  skillsets: SkillsetInput
-  cvType: CvType!
-}
-
-type Profile {
-  id: ID
-  userBio: UserBio!
-  jobPosting: JobPosting!
-  experiences: [Experience!]!
-  education: [Education!]!
-  skillsets: Skillset
-}
-
-type ProfileWithoutPosting {
-  id: ID
-  userBio: UserBio!
-  experiences: [Experience!]!
-  education: [Education!]!
-  skillsets: Skillset
-}
-
-input ProfileWithoutPostingInput {
-  id: ID
-  userBio: UserBioInput!
-  experiences: [ExperienceInput!]!
-  education: [EducationInput!]!
-  skillsets: SkillsetInput
-}
-
-type CV {
+type CvFile {
   filename: String!
+}
+
+type Summary {
+  summary: String!
 }
 
 input AchievementInput {
@@ -158,9 +137,9 @@ type EnhancedAchievement {
 }
 
 type Mutation {
-  createProfile(input: ProfileInput!): Profile!
   enhanceAchievement(input: AchievementInput!): EnhancedAchievement!
-  generateCV(input: ProfileInput!): CV!
+  generateCV(input: CvInput!): CvFile! # With summary check!
+  generateSummary(input: CvInput!): Summary!
 }
 
 enum CvType {

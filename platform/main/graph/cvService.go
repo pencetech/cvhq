@@ -67,6 +67,7 @@ func (c *CVService) ConstructCV(input model.CVContentInput, cvType model.CvType)
 		case model.CvTypePrime: 
 			rawCV = fmt.Sprintf(SansCV, primeSansCSS)
 	}
+	
 	t := template.Must(template.New("cv").Funcs(fns).Parse(rawCV))
 	builder := &strings.Builder{}
 	if err := t.Execute(builder, input); err != nil {

@@ -14,10 +14,6 @@ type AchievementInput struct {
 	Experience *ExperienceInput `json:"experience"`
 }
 
-type Cv struct {
-	Filename string `json:"filename"`
-}
-
 type CVContent struct {
 	UserBio     *UserBio      `json:"userBio"`
 	Summary     *string       `json:"summary,omitempty"`
@@ -32,6 +28,24 @@ type CVContentInput struct {
 	Experiences []*ExperienceInput `json:"experiences"`
 	Education   []*EducationInput  `json:"education"`
 	Skillsets   *SkillsetInput     `json:"skillsets,omitempty"`
+}
+
+type Cv struct {
+	ID         *string     `json:"id,omitempty"`
+	CvContent  *CVContent  `json:"cvContent"`
+	JobPosting *JobPosting `json:"jobPosting"`
+	CvType     *CvType     `json:"cvType,omitempty"`
+}
+
+type CvFile struct {
+	Filename string `json:"filename"`
+}
+
+type CvInput struct {
+	ID         *string          `json:"id,omitempty"`
+	CvContent  *CVContentInput  `json:"cvContent"`
+	JobPosting *JobPostingInput `json:"jobPosting"`
+	CvType     *CvType          `json:"cvType,omitempty"`
 }
 
 type Education struct {
@@ -100,47 +114,16 @@ type Match struct {
 	Reason      string `json:"reason"`
 }
 
-type Profile struct {
-	ID          *string       `json:"id,omitempty"`
-	UserBio     *UserBio      `json:"userBio"`
-	JobPosting  *JobPosting   `json:"jobPosting"`
-	Experiences []*Experience `json:"experiences"`
-	Education   []*Education  `json:"education"`
-	Skillsets   *Skillset     `json:"skillsets,omitempty"`
-}
-
-type ProfileInput struct {
-	ID          *string            `json:"id,omitempty"`
-	UserBio     *UserBioInput      `json:"userBio"`
-	JobPosting  *JobPostingInput   `json:"jobPosting"`
-	Experiences []*ExperienceInput `json:"experiences"`
-	Education   []*EducationInput  `json:"education"`
-	Skillsets   *SkillsetInput     `json:"skillsets,omitempty"`
-	CvType      CvType             `json:"cvType"`
-}
-
-type ProfileWithoutPosting struct {
-	ID          *string       `json:"id,omitempty"`
-	UserBio     *UserBio      `json:"userBio"`
-	Experiences []*Experience `json:"experiences"`
-	Education   []*Education  `json:"education"`
-	Skillsets   *Skillset     `json:"skillsets,omitempty"`
-}
-
-type ProfileWithoutPostingInput struct {
-	ID          *string            `json:"id,omitempty"`
-	UserBio     *UserBioInput      `json:"userBio"`
-	Experiences []*ExperienceInput `json:"experiences"`
-	Education   []*EducationInput  `json:"education"`
-	Skillsets   *SkillsetInput     `json:"skillsets,omitempty"`
-}
-
 type Skillset struct {
 	Skillsets string `json:"skillsets"`
 }
 
 type SkillsetInput struct {
 	Skillsets string `json:"skillsets"`
+}
+
+type Summary struct {
+	Summary string `json:"summary"`
 }
 
 type UserBio struct {
