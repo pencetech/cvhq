@@ -1,7 +1,6 @@
 "use client";
 import { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { gql, useMutation } from '@apollo/client';
 import { Education, Experience, FormData, JobPosting, Skillset, UserBio } from '@/models/cv';
 import { Button, Space, Steps, message, theme } from 'antd';
 import BioForm from './bioForm';
@@ -11,15 +10,7 @@ import EducationForm from './educationForm';
 import SkillsetForm from './skillsetForm';
 import { Database } from '@/types/supabase';
 import CvDownloadModal from './cvDownloadModal';
-import { usePathname } from 'next/navigation';
 
-const GENERATE_CV = gql`
-mutation generateCV($input: ProfileInput!) {
-    generateCV(input: $input) {
-      filename
-    }
-  }
-`
 
 const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);

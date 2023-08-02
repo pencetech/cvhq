@@ -12,7 +12,7 @@ const BASE_CV = "BASE"
 const PRIME_CV = "PRIME"
 
 const GENERATE_CV = gql`
-mutation generateCV($input: ProfileInput!) {
+mutation generateCV($input: CvInput!) {
     generateCV(input: $input) {
       filename
     }
@@ -32,11 +32,13 @@ const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink
         variables: {
             input: {
                 id: 1,
-                userBio: formData.userBio,
+                cvContent: {
+                    userBio: formData.userBio,
+                    experiences: formData.experiences,
+                    education: formData.education,
+                    skillsets: formData.skillset
+                },
                 jobPosting: formData.jobPosting,
-                experiences: formData.experiences,
-                education: formData.education,
-                skillsets: formData.skillset,
                 cvType: format
             }
         },
