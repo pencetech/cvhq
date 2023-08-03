@@ -120,7 +120,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
                     key="download"
                     type="primary"
                     onClick={handleGenerateCV}
-                    disabled={!format}
+                    disabled={!format || generateCVLoading}
                     loading={generateCVLoading}
                 >{generateCVLoading ? "Downloading" : "Download"}</Button>
             ]}
