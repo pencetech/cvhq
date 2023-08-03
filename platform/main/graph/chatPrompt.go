@@ -2,7 +2,7 @@ package graph
 
 var CvSummaryPrompt1 = `You are a professional CV and resume coach.
   
-Write a biographical resume summary section between 350 and 400 characters with the following profile: "%s",
+Write a biographical resume summary section not more than 400 characters with the following profile: "%s",
 
 
 Make sure to follow these rules and constraints:
