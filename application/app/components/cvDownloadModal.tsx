@@ -131,10 +131,10 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
                     <Input.TextArea 
                     name="okay"
                     showCount 
-                    maxLength={420}
+                    maxLength={500}
                     value={formData.summary?.summary}
                     style={{ width: '100%' }} 
-                    autoSize={{ minRows: 3, maxRows: 15 }}
+                    autoSize={{ minRows: 4, maxRows: 15 }}
                     onChange={e => onChangeSummary(e.target.value)}
                     bordered={false}
                     disabled={loading}
