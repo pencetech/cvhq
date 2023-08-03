@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { gql, useMutation } from "@apollo/client";
 import { FormData } from "@/models/cv";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
 import { Mutation } from "../__generated__/graphql";
@@ -131,7 +131,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
                     <Input.TextArea 
                     name="okay"
                     showCount 
-                    maxLength={500}
+                    maxLength={400}
                     value={formData.summary?.summary}
                     style={{ width: '100%' }} 
                     autoSize={{ minRows: 4, maxRows: 15 }}
