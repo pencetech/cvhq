@@ -52,10 +52,6 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
     const [generateCV, { data: graphCvData, loading: generateCVLoading }] = useMutation<Mutation>(GENERATE_CV, {
         variables: {
             input: cvInput
-        },
-        onCompleted: async (data: any) => {
-            if (graphCvData) { await handleCompleteGenerate(graphCvData.generateCV.filename) }
-            else { return }
         }
     })
 
@@ -63,8 +59,11 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
     const pathName = usePathname();
     const supabase = createClientComponentClient<Database>();
 
-    const handleGenerateCV = () => {
-        generateCV();
+    const handleGenerateCV = async () => {
+        const { data } = await generateCV();
+        if (data?.generateCV.filename) {
+            await handleCompleteGenerate(data?.generateCV.filename);
+        }
         onCancel();
     }
 
@@ -112,7 +111,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
 
     return (
         <Modal
-            title="Select CV format"
+            title="Final touches"
             maskClosable={true}
             open={open}
             width={800}
@@ -121,8 +120,9 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
                     key="download"
                     type="primary"
                     onClick={handleGenerateCV}
+                    disabled={!format}
                     loading={generateCVLoading}
-                >{generateCVLoading ? "Downloading" : "Download and proceed"}</Button>
+                >{generateCVLoading ? "Downloading" : "Download"}</Button>
             ]}
             onCancel={onCancel}
             >
@@ -135,13 +135,14 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
                     autoSize={{ minRows: 3, maxRows: 15 }}
                     onChange={e => onChangeSummary(e.target.value)}
                     bordered={false}
+                    disabled={loading}
                     ref={inputRef}
                     />
                 </Card>
                 <Row justify='end'>
                     <Space direction="horizontal">
                         <Button onClick={() => toggleEditing()}>Edit</Button>
-                        <Button onClick={async () => await handleGenerateSummary()} loading={loading}>Retry</Button>
+                        <Button onClick={async () => await handleGenerateSummary()} loading={loading}>{loading ? "Retrying" : "Retry"}</Button>
                     </Space>
                 </Row>
                 <Row justify="start">

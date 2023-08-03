@@ -73,7 +73,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         cvContent: {
             userBio: formData.userBio,
             experiences: formData.experiences,
-            summary: formData.summary ? formData.summary : undefined,
+            summary: formData.summary,
             education: formData.education,
             skillsets: formData.skillset
         },
@@ -87,8 +87,12 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     })
 
     const handleGenerateSummary = async () => {
-        await generateSummary();
-        handleChangeSummary(graphSummaryData ? graphSummaryData.generateSummary.summary : '');
+        if (!loading) {
+            setLoading(true);
+        }
+        const { data } = await generateSummary();
+        handleChangeSummary(data ? data.generateSummary.summary : '');
+        setLoading(false);
     }
 
     const handleChangeSummary = (summary: string) => {
@@ -241,9 +245,8 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         const mergingValue = { skillset: values }
         const data = { ...formData, ...mergingValue };
         setFormData(data);
-        await handleGenerateSummary();
-        setLoading(false);
         showModal();
+        await handleGenerateSummary();
     }
 
     const startNextAction = (
@@ -260,7 +263,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const endActions = (
         <Space>
             <Button onClick={e => handleBack(e)}>Back</Button>
-            <Button type='primary' htmlType="submit" loading={loading}>Generate CV</Button>
+            <Button type='primary' htmlType="submit" loading={loading}>{loading ? "Generating" : "Generate CV"}</Button>
         </Space>
     )
         // to handle async compatibility throughout the app, we're making this 
@@ -346,7 +349,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             onCancel={handleCancel} 
             onFetchSummary={handleGenerateSummary}
             onChangeSummary={handleChangeSummary}
-            loading={generateSummaryLoading}
+            loading={loading}
             nextLink="/dashboard/home" 
             />
         </>

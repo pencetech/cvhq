@@ -372,7 +372,7 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 						</div>
 						<div class="yui-u">
 							<p class="enlarge">
-								{{ .Summary }}
+								{{ .Summary.Summary }}
 							</p>
 						</div>
 					</div><!--// .yui-gf -->
@@ -658,7 +658,7 @@ var SerifCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://
 						</div>
 						<div class="yui-u">
 							<p class="enlarge">
-								{{ .Summary }}
+								{{ .Summary.Summary }}
 							</p>
 						</div>
 					</div><!--// .yui-gf -->

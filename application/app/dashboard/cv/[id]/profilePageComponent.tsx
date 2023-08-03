@@ -46,7 +46,7 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         cvContent: {
             userBio: formData.userBio,
             experiences: formData.experiences,
-            summary: formData.summary ? formData.summary : undefined,
+            summary: formData.summary,
             education: formData.education,
             skillsets: formData.skillset
         },
@@ -61,8 +61,8 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
     })
 
     const handleGenerateSummary = async () => {
-        await generateSummary();
-        handleChangeSummary(graphSummaryData ? graphSummaryData.generateSummary.summary : '');
+        const { data } = await generateSummary();
+        handleChangeSummary(data ? data.generateSummary.summary : '');
     }
 
     const handleChangeSummary = (summary: string) => {
@@ -89,10 +89,11 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         getUser();
       }, [supabase.auth])
 
-    const handleGenerateClick = () => {
+    const handleGenerateClick = async () => {
         const isValidationPassed = isAllFieldsFilled();
         if (isValidationPassed) {
             showModal();
+            await handleGenerateSummary();
         }
     }
 
