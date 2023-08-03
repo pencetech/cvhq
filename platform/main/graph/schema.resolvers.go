@@ -111,7 +111,21 @@ func (r *mutationResolver) GenerateSummary(ctx context.Context, input model.CvIn
 	return &summary, nil
 }
 
+// Filename is the resolver for the filename field.
+func (r *queryResolver) Filename(ctx context.Context) ([]*model.CvFile, error) {
+	panic(fmt.Errorf("not implemented: Filename - filename"))
+}
+
+// Summary is the resolver for the summary field.
+func (r *queryResolver) Summary(ctx context.Context, id string) (*model.Summary, error) {
+	panic(fmt.Errorf("not implemented: Summary - summary"))
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+// Query returns QueryResolver implementation.
+func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+
 type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }

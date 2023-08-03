@@ -136,6 +136,11 @@ type EnhancedAchievement {
   achievements: String!
 }
 
+type Query {
+  filename: [CvFile!]!
+  summary(id: ID!): Summary!
+}
+
 type Mutation {
   enhanceAchievement(input: AchievementInput!): EnhancedAchievement!
   generateCV(input: CvInput!): CvFile! # With summary check!
