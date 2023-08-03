@@ -113,6 +113,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
         <Modal
             title="Final touches"
             maskClosable={true}
+            centered
             open={open}
             width={800}
             footer={[
