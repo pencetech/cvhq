@@ -7,7 +7,7 @@ import { FormData } from "@/models/cv";
 import { useEffect, useRef, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
-import { CvFile, Summary } from "../__generated__/graphql";
+import { Mutation } from "../__generated__/graphql";
 import { TextAreaRef } from "antd/es/input/TextArea";
 
 const BASE_CV = "BASE"
@@ -21,66 +21,47 @@ mutation generateCV($input: CvInput!) {
     }
   }
 `
-const GENERATE_SUMMARY = gql`
-mutation generateSummary($input: CvInput!) {
-    generateSummary(input: $input) {
-        summary
-    }
-}
-`
 
-const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink }: { 
+const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onChangeSummary, onCancel, formData, nextLink }: { 
     open: boolean, 
+    loading: boolean,
     profileId: number,
     userId: string,
+    onFetchSummary: (() => Promise<void>),
+    onChangeSummary: ((e: string) => void),
     onCancel: (() => void),
     formData: FormData,
     nextLink: string
 }) => {
     
     const [format, setFormat] = useState("");
-    const [summary, setSummary] = useState("");
+    
     const inputRef = useRef<TextAreaRef>(null);
     const cvInput = {
         id: 1,
         cvContent: {
             userBio: formData.userBio,
             experiences: formData.experiences,
-            summary: summary,
+            summary: formData.summary ? formData.summary : undefined,
             education: formData.education,
             skillsets: formData.skillset
         },
         jobPosting: formData.jobPosting,
-        cvType: format
+        cvType: format ? format : "BASE"
     }
-    const [generateCV, { data: graphCvData, loading: generateCVLoading }] = useMutation<CvFile>(GENERATE_CV, {
+    const [generateCV, { data: graphCvData, loading: generateCVLoading }] = useMutation<Mutation>(GENERATE_CV, {
         variables: {
             input: cvInput
         },
         onCompleted: async (data: any) => {
-            if (graphCvData)  { await handleCompleteGenerate(graphCvData?.filename) }
+            if (graphCvData) { await handleCompleteGenerate(graphCvData.generateCV.filename) }
             else { return }
         }
     })
-    const [generateSummary, { data: graphSummaryData, loading: generateSummaryLoading }] = useMutation<Summary>(GENERATE_SUMMARY, {
-        variables: {
-            input: cvInput
-        }
-    })
+
     const router = useRouter();
     const pathName = usePathname();
     const supabase = createClientComponentClient<Database>();
-
-    useEffect(() => {
-        const getSummary = async () => {
-            await generateSummary();
-            if (graphSummaryData) {
-                setSummary(graphSummaryData.summary);
-            }
-        }
-
-        getSummary();
-    }, [])
 
     const handleGenerateCV = () => {
         generateCV();
@@ -88,10 +69,7 @@ const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink
     }
 
     const handleGenerateSummary = async () => {
-        await generateSummary();
-        if (graphSummaryData) {
-            setSummary(graphSummaryData.summary)
-        }
+        await onFetchSummary();
     }
 
     const toggleEditing = () => {
@@ -152,10 +130,10 @@ const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink
                 <Card size="small" title="Summary" style={{ width: '100%' }}>
                     <Input.TextArea 
                     name="okay"
-                    value={summary}
+                    value={formData.summary?.summary}
                     style={{ width: '100%' }} 
                     autoSize={{ minRows: 3, maxRows: 15 }}
-                    onChange={e => setSummary(e.target.value)}
+                    onChange={e => onChangeSummary(e.target.value)}
                     bordered={false}
                     ref={inputRef}
                     />
@@ -163,7 +141,7 @@ const CvDownloadModal = ({ profileId, userId, open, onCancel, formData, nextLink
                 <Row justify='end'>
                     <Space direction="horizontal">
                         <Button onClick={() => toggleEditing()}>Edit</Button>
-                        <Button onClick={async () => await handleGenerateSummary()} loading={generateSummaryLoading}>Retry</Button>
+                        <Button onClick={async () => await handleGenerateSummary()} loading={loading}>Retry</Button>
                     </Space>
                 </Row>
                 <Row justify="start">

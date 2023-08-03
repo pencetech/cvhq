@@ -49,7 +49,7 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.CvInput) 
 			log.Println("ERROR: generate summary failed -> ", err)
 			return nil, err
 		}
-		input.CvContent.Summary = &summary.Summary
+		input.CvContent.Summary.Summary = summary.Summary
 	}
 
 	var resultStr string

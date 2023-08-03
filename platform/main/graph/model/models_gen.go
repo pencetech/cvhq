@@ -16,7 +16,7 @@ type AchievementInput struct {
 
 type CVContent struct {
 	UserBio     *UserBio      `json:"userBio"`
-	Summary     *string       `json:"summary,omitempty"`
+	Summary     *Summary      `json:"summary"`
 	Experiences []*Experience `json:"experiences"`
 	Education   []*Education  `json:"education"`
 	Skillsets   *Skillset     `json:"skillsets,omitempty"`
@@ -24,7 +24,7 @@ type CVContent struct {
 
 type CVContentInput struct {
 	UserBio     *UserBioInput      `json:"userBio"`
-	Summary     *string            `json:"summary,omitempty"`
+	Summary     *SummaryInput      `json:"summary"`
 	Experiences []*ExperienceInput `json:"experiences"`
 	Education   []*EducationInput  `json:"education"`
 	Skillsets   *SkillsetInput     `json:"skillsets,omitempty"`
@@ -123,6 +123,10 @@ type SkillsetInput struct {
 }
 
 type Summary struct {
+	Summary string `json:"summary"`
+}
+
+type SummaryInput struct {
 	Summary string `json:"summary"`
 }
 

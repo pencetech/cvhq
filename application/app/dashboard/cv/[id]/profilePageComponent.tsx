@@ -8,6 +8,16 @@ import { Database } from "@/types/supabase";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CvDownloadModal from "@/app/components/cvDownloadModal";
+import { gql, useMutation } from "@apollo/client";
+import { Mutation } from "@/app/__generated__/graphql";
+
+const GENERATE_SUMMARY = gql`
+mutation generateSummary($input: CvInput!) {
+    generateSummary(input: $input) {
+        summary
+    }
+}
+`
 
 const ProfilePageComponent = ({ id, profile, files, profileName }: {
     id: number,
@@ -25,8 +35,46 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         jobPosting: profile.jobPosting,
         experiences: profile.experiences,
         education: profile.education,
-        skillset: profile.skillset
+        skillset: profile.skillset,
+        summary: {
+            summary: ''
+        }
     });
+
+    const cvInput = {
+        id: 1,
+        cvContent: {
+            userBio: formData.userBio,
+            experiences: formData.experiences,
+            summary: formData.summary ? formData.summary : undefined,
+            education: formData.education,
+            skillsets: formData.skillset
+        },
+        jobPosting: formData.jobPosting,
+        cvType: "BASE"
+    }
+
+    const [generateSummary, { data: graphSummaryData, loading: generateSummaryLoading }] = useMutation<Mutation>(GENERATE_SUMMARY, {
+        variables: {
+            input: cvInput
+        }
+    })
+
+    const handleGenerateSummary = async () => {
+        await generateSummary();
+        handleChangeSummary(graphSummaryData ? graphSummaryData.generateSummary.summary : '');
+    }
+
+    const handleChangeSummary = (summary: string) => {
+        const values = { 
+            summary: {
+                summary: summary
+            }
+        }
+        const data = { ...formData, ...values };
+        setFormData(data);
+    }
+
 
     useEffect(() => {
         const getUser = async () => {
@@ -146,7 +194,17 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
                     onGenerateClick={handleGenerateClick}
                      /> : "no file"}
             </Col>
-            <CvDownloadModal userId={user} profileId={id} formData={formData} open={isModalOpen} onCancel={handleCancel} nextLink={pathName} />
+            <CvDownloadModal 
+                userId={user} 
+                profileId={id} 
+                formData={formData} 
+                open={isModalOpen} 
+                onCancel={handleCancel} 
+                onFetchSummary={handleGenerateSummary}
+                onChangeSummary={handleChangeSummary}
+                loading={generateSummaryLoading}
+                nextLink={pathName} 
+            />
         </Row>
     )
 }

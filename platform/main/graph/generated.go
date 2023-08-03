@@ -505,6 +505,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputExperienceInput,
 		ec.unmarshalInputJobPostingInput,
 		ec.unmarshalInputSkillsetInput,
+		ec.unmarshalInputSummaryInput,
 		ec.unmarshalInputUserBioInput,
 	)
 	first := true
@@ -812,11 +813,14 @@ func (ec *executionContext) _CVContent_summary(ctx context.Context, field graphq
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*model.Summary)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNSummary2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSummary(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_CVContent_summary(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -826,7 +830,11 @@ func (ec *executionContext) fieldContext_CVContent_summary(ctx context.Context, 
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "summary":
+				return ec.fieldContext_Summary_summary(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Summary", field.Name)
 		},
 	}
 	return fc, nil
@@ -4808,7 +4816,7 @@ func (ec *executionContext) unmarshalInputCVContentInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalNSummaryInput2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSummaryInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5162,6 +5170,35 @@ func (ec *executionContext) unmarshalInputSkillsetInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSummaryInput(ctx context.Context, obj interface{}) (model.SummaryInput, error) {
+	var it model.SummaryInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"summary"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "summary":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Summary = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUserBioInput(ctx context.Context, obj interface{}) (model.UserBioInput, error) {
 	var it model.UserBioInput
 	asMap := map[string]interface{}{}
@@ -5253,6 +5290,9 @@ func (ec *executionContext) _CVContent(ctx context.Context, sel ast.SelectionSet
 			}
 		case "summary":
 			out.Values[i] = ec._CVContent_summary(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "experiences":
 			out.Values[i] = ec._CVContent_experiences(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -6596,6 +6636,11 @@ func (ec *executionContext) marshalNSummary2ᚖgithubᚗcomᚋpencetechᚋcvhq�
 		return graphql.Null
 	}
 	return ec._Summary(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNSummaryInput2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSummaryInput(ctx context.Context, v interface{}) (*model.SummaryInput, error) {
+	res, err := ec.unmarshalInputSummaryInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNUserBio2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐUserBio(ctx context.Context, sel ast.SelectionSet, v *model.UserBio) graphql.Marshaler {

@@ -10,15 +10,24 @@ import EducationForm from './educationForm';
 import SkillsetForm from './skillsetForm';
 import { Database } from '@/types/supabase';
 import CvDownloadModal from './cvDownloadModal';
+import { gql, useMutation } from '@apollo/client';
+import { Mutation } from '../__generated__/graphql';
 
+const GENERATE_SUMMARY = gql`
+mutation generateSummary($input: CvInput!) {
+    generateSummary(input: $input) {
+        summary
+    }
+}
+`
 
 const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
     const { token } = theme.useToken();
     const supabase = createClientComponentClient<Database>();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
-
     const [formData, setFormData] = useState<FormData>({
         userBio: {
             firstName: '',
@@ -53,8 +62,44 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         }],
         skillset: {
             skillsets: '',
+        },
+        summary: {
+            summary: ''
         }
     });
+
+    const cvInput = {
+        id: 1,
+        cvContent: {
+            userBio: formData.userBio,
+            experiences: formData.experiences,
+            summary: formData.summary ? formData.summary : undefined,
+            education: formData.education,
+            skillsets: formData.skillset
+        },
+        jobPosting: formData.jobPosting,
+        cvType: "BASE"
+    }
+    const [generateSummary, { data: graphSummaryData, loading: generateSummaryLoading }] = useMutation<Mutation>(GENERATE_SUMMARY, {
+        variables: {
+            input: cvInput
+        }
+    })
+
+    const handleGenerateSummary = async () => {
+        await generateSummary();
+        handleChangeSummary(graphSummaryData ? graphSummaryData.generateSummary.summary : '');
+    }
+
+    const handleChangeSummary = (summary: string) => {
+        const values = { 
+            summary: {
+                summary: summary
+            }
+        }
+        const data = { ...formData, ...values };
+        setFormData(data);
+    }
 
     const insertUserBio = async (user: UserBio) => {
         await supabase.from('user_bio')
@@ -163,13 +208,14 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     }
 
     const insertSkillset = async (sk: Skillset) => {
+        setLoading(true);
         await supabase.from('skillset')
         .upsert({
             profile_id: profileId,
             skillsets: sk.skillsets
         }, { onConflict: 'profile_id' })
         messageApi.success("Skillset saved!");
-        handleSubmit(sk);
+        await handleSubmit(sk);
     }
 
     const handleBack = (e: any) => {
@@ -191,10 +237,12 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         setIsModalOpen(false);
     };
 
-    const handleSubmit = (values: Skillset) => {
+    const handleSubmit = async (values: Skillset) => {
         const mergingValue = { skillset: values }
         const data = { ...formData, ...mergingValue };
         setFormData(data);
+        await handleGenerateSummary();
+        setLoading(false);
         showModal();
     }
 
@@ -212,7 +260,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const endActions = (
         <Space>
             <Button onClick={e => handleBack(e)}>Back</Button>
-            <Button type='primary' htmlType="submit">Generate CV</Button>
+            <Button type='primary' htmlType="submit" loading={loading}>Generate CV</Button>
         </Space>
     )
         // to handle async compatibility throughout the app, we're making this 
@@ -290,7 +338,17 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         />
         {contextHolder}
         <div style={contentStyle}>{rawItems[activeStepIndex].content}</div>
-          <CvDownloadModal userId={userId} profileId={profileId} formData={formData} open={isModalOpen} onCancel={handleCancel} nextLink="/dashboard/home" />
+          <CvDownloadModal 
+            userId={userId} 
+            profileId={profileId} 
+            formData={formData} 
+            open={isModalOpen}
+            onCancel={handleCancel} 
+            onFetchSummary={handleGenerateSummary}
+            onChangeSummary={handleChangeSummary}
+            loading={generateSummaryLoading}
+            nextLink="/dashboard/home" 
+            />
         </>
     )
 }

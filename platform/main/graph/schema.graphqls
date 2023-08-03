@@ -40,7 +40,7 @@ type Education {
 
 type CVContent {
   userBio: UserBio!
-  summary: String
+  summary: Summary!
   experiences: [Experience!]!
   education: [Education!]!
   skillsets: Skillset
@@ -48,7 +48,7 @@ type CVContent {
 
 input CVContentInput {
   userBio: UserBioInput!
-  summary: String
+  summary: SummaryInput!
   experiences: [ExperienceInput!]!
   education: [EducationInput!]!
   skillsets: SkillsetInput
@@ -70,6 +70,10 @@ type Cv {
 
 type Skillset {
   skillsets: String!
+}
+
+type Summary {
+  summary: String!
 }
 
 type Match {
@@ -117,12 +121,12 @@ input SkillsetInput {
   skillsets: String!
 }
 
-type CvFile {
-  filename: String!
+input SummaryInput {
+  summary: String!
 }
 
-type Summary {
-  summary: String!
+type CvFile {
+  filename: String!
 }
 
 input AchievementInput {
