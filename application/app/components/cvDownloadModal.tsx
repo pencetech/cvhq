@@ -130,6 +130,8 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
                 <Card size="small" title="Summary" style={{ width: '100%' }}>
                     <Input.TextArea 
                     name="okay"
+                    showCount 
+                    maxLength={420}
                     value={formData.summary?.summary}
                     style={{ width: '100%' }} 
                     autoSize={{ minRows: 3, maxRows: 15 }}
