@@ -145,7 +145,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
                 <Row justify='end'>
                     <Space direction="horizontal">
                         <Button onClick={() => toggleEditing()}>Edit</Button>
-                        <Button onClick={async () => await handleGenerateSummary()} loading={loading}>{loading ? "Retrying" : "Retry"}</Button>
+                        <Button onClick={async () => await handleGenerateSummary()} loading={loading}>{loading ? "Loading" : "Retry"}</Button>
                     </Space>
                 </Row>
                 <Row justify="start">
