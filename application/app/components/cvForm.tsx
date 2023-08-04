@@ -80,19 +80,32 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         jobPosting: formData.jobPosting,
         cvType: "BASE"
     }
-    const [generateSummary, { data: graphSummaryData, loading: generateSummaryLoading }] = useMutation<Mutation>(GENERATE_SUMMARY, {
-        variables: {
-            input: cvInput
-        }
-    })
+    const [generateSummary, { data: graphSummaryData, loading: generateSummaryLoading }] = useMutation<Mutation>(GENERATE_SUMMARY);
 
-    const handleGenerateSummary = async () => {
-        if (!loading) {
-            setLoading(true);
-        }
-        const { data } = await generateSummary();
-        handleChangeSummary(data ? data.generateSummary.summary : '');
+    const handleRetrySummary = async () => {
+        setLoading(true);
+        const summary = await handleGenerateSummary();
+        handleChangeSummary(summary? summary : '');
         setLoading(false);
+    }
+    const handleGenerateSummary = async (sk?: Skillset) => {
+        const { data } = await generateSummary({
+            variables: {
+                input: {
+                    id: 1,
+                    cvContent: {
+                        userBio: formData.userBio,
+                        experiences: formData.experiences,
+                        summary: formData.summary,
+                        education: formData.education,
+                        skillsets: sk ? sk : formData.skillset
+                    },
+                    jobPosting: formData.jobPosting,
+                    cvType: "BASE"
+                }
+            }
+        });
+        return data?.generateSummary.summary
     }
 
     const handleChangeSummary = (summary: string) => {
@@ -101,8 +114,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 summary: summary
             }
         }
-        const data = { ...formData, ...values };
-        setFormData(data);
+        setFormData(oldData => ({ ...oldData, ...values }));
     }
 
     const insertUserBio = async (user: UserBio) => {
@@ -220,6 +232,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         }, { onConflict: 'profile_id' })
         messageApi.success("Skillset saved!");
         await handleSubmit(sk);
+        setLoading(false);
     }
 
     const handleBack = (e: any) => {
@@ -242,11 +255,10 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     };
 
     const handleSubmit = async (values: Skillset) => {
-        const mergingValue = { skillset: values }
-        const data = { ...formData, ...mergingValue };
-        setFormData(data);
+        const summary = await handleGenerateSummary(values);
+        const mergingValue = { skillset: values, summary: { summary: summary ? summary : "" }}
+        setFormData(oldData => ({ ...oldData, ...mergingValue }));
         showModal();
-        await handleGenerateSummary();
     }
 
     const startNextAction = (
@@ -347,7 +359,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             formData={formData} 
             open={isModalOpen}
             onCancel={handleCancel} 
-            onFetchSummary={handleGenerateSummary}
+            onFetchSummary={handleRetrySummary}
             onChangeSummary={handleChangeSummary}
             loading={loading}
             nextLink="/dashboard/home" 

@@ -146,6 +146,12 @@ var baseSansCSS = `
 	  padding-bottom: 1em;
 	}
   
+	.education h4 {
+		position: absolute;
+		top: 0.35em;
+		right: 0;
+		}
+
   .last {
 	border: none;
   }
@@ -305,6 +311,12 @@ var primeSansCSS = `
 	  margin-bottom: 1em;
 	  padding-bottom: 1em;
 	}
+
+	.education h4 {
+		position: absolute;
+		top: 0.35em;
+		right: 0;
+		}
   
   .last {
 	border: none;
@@ -409,6 +421,7 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 							<div class="education">
 								<h2>{{ .Institution }}</h2>
 								<h3>{{ .Degree }}, {{ .Subject }}</h3>
+								<h4>{{ .StartDate }} - {{ .EndDate }}</h4>
 							</div>
 						{{ end }}
 						</div>
