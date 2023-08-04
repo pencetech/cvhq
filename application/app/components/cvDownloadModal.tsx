@@ -1,5 +1,5 @@
 "use client";
-import { Button, Card, Col, Input, Modal, Result, Row, Space } from "antd";
+import { Button, Card, Col, Input, Modal, Result, Row, Space, Typography } from "antd";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { gql, useMutation } from "@apollo/client";
@@ -115,7 +115,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
             maskClosable={true}
             centered
             open={open}
-            width={800}
+            width={1000}
             footer={[
                 <Button 
                     key="download"
@@ -127,7 +127,8 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
             ]}
             onCancel={onCancel}
             >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: "8px" }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: "center", gap: "8px" }}>
+                <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '8px' }}>
                 <Card size="small" title="Summary" style={{ width: '100%' }}>
                     <Input.TextArea 
                     name="okay"
@@ -148,14 +149,16 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
                         <Button onClick={async () => await handleGenerateSummary()} loading={loading}>{loading ? "Loading" : "Retry"}</Button>
                     </Space>
                 </Row>
-                <Row justify="start">
+                </div>
+                <Typography.Title level={3} style={{ margin: "0" }}>Choose a template</Typography.Title>
+                <Row justify="start" style={{ width: '100%' }}>
                     <Col span={12}>
                         <Result
                             style={{ borderRadius: "15px", border: format === BASE_CV ? '1px solid #1677ff' : "1px solid #fff" }}
                             icon={
                                 <Image
-                                    width={200}
-                                    height={282}
+                                    width={150}
+                                    height={212}
                                     style={{ objectFit: "scale-down", border: '1px solid #d9d9d9' }}
                                     src='/base_cv.png'
                                     alt='base CV image'
@@ -171,8 +174,8 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
                             style={{ borderRadius: "15px", border: format === PRIME_CV ? '1px solid #1677ff' : "1px solid #fff" }}
                             icon={
                                 <Image
-                                    width={200}
-                                    height={282}
+                                    width={150}
+                                    height={212}
                                     style={{ objectFit: "scale-down", border: '1px solid #d9d9d9' }}
                                     src='/prime_cv.png'
                                     alt='prime CV image'
