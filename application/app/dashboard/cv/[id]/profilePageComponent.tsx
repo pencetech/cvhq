@@ -189,6 +189,7 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
             </Col>
             <Col span={10}>
                 {files ? <FileListComponent 
+                    profileName={profileName}
                     profileId={id}
                     files={files} 
                     onFileClick={fetchAndDownloadCV}

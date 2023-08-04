@@ -61,7 +61,8 @@ type ComplexityRoot struct {
 	}
 
 	CvFile struct {
-		Filename func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		Filename  func(childComplexity int) int
 	}
 
 	Education struct {
@@ -217,6 +218,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cv.JobPosting(childComplexity), true
+
+	case "CvFile.createdAt":
+		if e.complexity.CvFile.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.CvFile.CreatedAt(childComplexity), true
 
 	case "CvFile.filename":
 		if e.complexity.CvFile.Filename == nil {
@@ -1231,6 +1239,50 @@ func (ec *executionContext) _CvFile_filename(ctx context.Context, field graphql.
 }
 
 func (ec *executionContext) fieldContext_CvFile_filename(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CvFile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CvFile_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.CvFile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CvFile_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CvFile_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CvFile",
 		Field:      field,
@@ -2348,6 +2400,8 @@ func (ec *executionContext) fieldContext_Mutation_generateCV(ctx context.Context
 			switch field.Name {
 			case "filename":
 				return ec.fieldContext_CvFile_filename(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_CvFile_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type CvFile", field.Name)
 		},
@@ -2466,6 +2520,8 @@ func (ec *executionContext) fieldContext_Query_filename(ctx context.Context, fie
 			switch field.Name {
 			case "filename":
 				return ec.fieldContext_CvFile_filename(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_CvFile_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type CvFile", field.Name)
 		},
@@ -5389,6 +5445,11 @@ func (ec *executionContext) _CvFile(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = graphql.MarshalString("CvFile")
 		case "filename":
 			out.Values[i] = ec._CvFile_filename(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._CvFile_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

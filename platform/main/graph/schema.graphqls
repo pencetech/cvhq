@@ -127,6 +127,7 @@ input SummaryInput {
 
 type CvFile {
   filename: String!
+  createdAt: String!
 }
 
 input AchievementInput {

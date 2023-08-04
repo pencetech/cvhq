@@ -38,7 +38,8 @@ type Cv struct {
 }
 
 type CvFile struct {
-	Filename string `json:"filename"`
+	Filename  string `json:"filename"`
+	CreatedAt string `json:"createdAt"`
 }
 
 type CvInput struct {

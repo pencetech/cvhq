@@ -10,7 +10,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.26
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.35.0
 	github.com/go-chi/chi v1.5.4
-	github.com/google/uuid v1.3.0
 	github.com/rs/cors v1.9.0
 	github.com/sashabaranov/go-openai v1.11.3
 	github.com/vektah/gqlparser/v2 v2.5.3

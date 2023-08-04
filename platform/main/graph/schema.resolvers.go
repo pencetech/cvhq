@@ -9,6 +9,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/pencetech/cvhq/graph/model"
 )
@@ -68,17 +71,25 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.CvInput) 
 			return nil, err
 		}
 	}
-
+	creationTime := time.Now().UTC()
+	timeStr := strconv.FormatInt(creationTime.Unix(), 10)
 	tabEscapedObjStr := r.ChatBridge.escapeTabs(&resultStr)
-	filename := r.CVService.generateFileName(input.CvContent.UserBio.FirstName, input.CvContent.UserBio.LastName)
-	err = r.CVService.PutCV(tabEscapedObjStr, filename)
+	filename := r.CVService.generateFileName(
+		input.CvContent.UserBio.FirstName,
+		input.CvContent.UserBio.LastName,
+		input.JobPosting.Title,
+		input.JobPosting.Company,
+		timeStr)
+	filenameNoSpace := strings.Replace(filename, " ", "", -1)
+	err = r.CVService.PutCV(tabEscapedObjStr, filenameNoSpace)
 
 	if err != nil {
 		log.Println("ERROR: put CV failed -> ", err)
 		return nil, err
 	}
 
-	cv.Filename = filename
+	cv.Filename = filenameNoSpace
+	cv.CreatedAt = creationTime.Format(time.RFC3339)
 	return &cv, nil
 }
 
