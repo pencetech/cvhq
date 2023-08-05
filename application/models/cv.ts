@@ -35,6 +35,9 @@ export interface Education {
 export interface Skillset {
     skillsets: string
 }
+export interface Summary {
+    summary: string
+}
 
 export interface ProfileName {
     profileName: string
@@ -51,7 +54,8 @@ export interface FormData {
     jobPosting: JobPosting,
     experiences: Experience[],
     education: Education[],
-    skillset: Skillset
+    skillset: Skillset,
+    summary?: Summary
 };
 
 export interface ProfileMeta {

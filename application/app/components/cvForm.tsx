@@ -1,7 +1,6 @@
 "use client";
 import { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { gql, useMutation } from '@apollo/client';
 import { Education, Experience, FormData, JobPosting, Skillset, UserBio } from '@/models/cv';
 import { Button, Space, Steps, message, theme } from 'antd';
 import BioForm from './bioForm';
@@ -11,26 +10,24 @@ import EducationForm from './educationForm';
 import SkillsetForm from './skillsetForm';
 import { Database } from '@/types/supabase';
 import CvDownloadModal from './cvDownloadModal';
-import { usePathname } from 'next/navigation';
+import { gql, useMutation } from '@apollo/client';
+import { Mutation } from '../__generated__/graphql';
 
-const GENERATE_CV = gql`
-mutation generateCV($input: ProfileInput!) {
-    generateCV(input: $input) {
-      filename
+const GENERATE_SUMMARY = gql`
+mutation generateSummary($input: CvInput!) {
+    generateSummary(input: $input) {
+        summary
     }
-  }
+}
 `
 
 const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
-    const [filename, setFilename] = useState("default.pdf");
-    const [cvBlobUrl, setCvBlobUrl] = useState("");
     const { token } = theme.useToken();
-    const pathName = usePathname();
     const supabase = createClientComponentClient<Database>();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
-
     const [formData, setFormData] = useState<FormData>({
         userBio: {
             firstName: '',
@@ -65,11 +62,60 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         }],
         skillset: {
             skillsets: '',
+        },
+        summary: {
+            summary: ''
         }
     });
-    const [generateCV, { data, loading, error }] = useMutation(GENERATE_CV, {
-        onCompleted: async (data: any) => await handleCompleteGenerate(data.generateCV.filename)
-    })
+
+    const cvInput = {
+        id: 1,
+        cvContent: {
+            userBio: formData.userBio,
+            experiences: formData.experiences,
+            summary: formData.summary,
+            education: formData.education,
+            skillsets: formData.skillset
+        },
+        jobPosting: formData.jobPosting,
+        cvType: "BASE"
+    }
+    const [generateSummary, { data: graphSummaryData, loading: generateSummaryLoading }] = useMutation<Mutation>(GENERATE_SUMMARY);
+
+    const handleRetrySummary = async () => {
+        setLoading(true);
+        const summary = await handleGenerateSummary();
+        handleChangeSummary(summary? summary : '');
+        setLoading(false);
+    }
+    const handleGenerateSummary = async (sk?: Skillset) => {
+        const { data } = await generateSummary({
+            variables: {
+                input: {
+                    id: 1,
+                    cvContent: {
+                        userBio: formData.userBio,
+                        experiences: formData.experiences,
+                        summary: formData.summary,
+                        education: formData.education,
+                        skillsets: sk ? sk : formData.skillset
+                    },
+                    jobPosting: formData.jobPosting,
+                    cvType: "BASE"
+                }
+            }
+        });
+        return data?.generateSummary.summary
+    }
+
+    const handleChangeSummary = (summary: string) => {
+        const values = { 
+            summary: {
+                summary: summary
+            }
+        }
+        setFormData(oldData => ({ ...oldData, ...values }));
+    }
 
     const insertUserBio = async (user: UserBio) => {
         await supabase.from('user_bio')
@@ -178,13 +224,15 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     }
 
     const insertSkillset = async (sk: Skillset) => {
+        setLoading(true);
         await supabase.from('skillset')
         .upsert({
             profile_id: profileId,
             skillsets: sk.skillsets
         }, { onConflict: 'profile_id' })
         messageApi.success("Skillset saved!");
-        handleSubmit(sk);
+        await handleSubmit(sk);
+        setLoading(false);
     }
 
     const handleBack = (e: any) => {
@@ -201,64 +249,16 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const showModal = () => {
         setIsModalOpen(true);
       };
-    
-    const handleOk = () => {
-        const currPathNoQuery = pathName.split("?")[0];
-        const currPath = currPathNoQuery
-            .split("/")
-            .filter(v => v.length > 0);
-        const currPage = currPath[currPath.length-1];
-        window.analytics?.track("Download CV", "setup", {
-            title: `Downloaded CV in ${currPage}`,
-            userId: userId,
-            profileId: profileId,
-            current_path: currPath
-        })
-    };
 
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-    
-    const handleCompleteGenerate = async (filename: string) => {
-        await supabase
-            .from("cv_file")
-            .insert({
-                filename: filename,
-                profile_id: profileId
-            });
-        setFilename(filename)
-        await fetchCV(filename);
-    }
 
-    const handleSubmit = (values: Skillset) => {
-        const mergingValue = { skillset: values }
-        const data = { ...formData, ...mergingValue };
-        setFormData(data);
-        generateCV({
-            variables: {
-                input: {
-                    id: 1,
-                    userBio: data.userBio,
-                    jobPosting: data.jobPosting,
-                    experiences: data.experiences,
-                    education: data.education,
-                    skillsets: data.skillset
-                }
-            },
-        });
+    const handleSubmit = async (values: Skillset) => {
+        const summary = await handleGenerateSummary(values);
+        const mergingValue = { skillset: values, summary: { summary: summary ? summary : "" }}
+        setFormData(oldData => ({ ...oldData, ...mergingValue }));
         showModal();
-    }
-
-    const fetchCV = async (filename: string) => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/cv/${filename}`)
-        if (!res.ok) {
-            // This will activate the closest `error.js` Error Boundary
-            throw new Error('Failed to fetch data')
-        }
-        const blob = await res.blob();
-        const blobUrl = window.URL.createObjectURL(blob)
-        setCvBlobUrl(blobUrl);
     }
 
     const startNextAction = (
@@ -275,7 +275,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const endActions = (
         <Space>
             <Button onClick={e => handleBack(e)}>Back</Button>
-            <Button type='primary' htmlType="submit" loading={loading}>{loading ? "Generating..." : "Generate CV"}</Button>
+            <Button type='primary' htmlType="submit" loading={loading}>{loading ? "Generating" : "Generate CV"}</Button>
         </Space>
     )
         // to handle async compatibility throughout the app, we're making this 
@@ -353,7 +353,17 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         />
         {contextHolder}
         <div style={contentStyle}>{rawItems[activeStepIndex].content}</div>
-        {!loading ? <CvDownloadModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} filename={filename} blobUrl={cvBlobUrl} /> : null}
+          <CvDownloadModal 
+            userId={userId} 
+            profileId={profileId} 
+            formData={formData} 
+            open={isModalOpen}
+            onCancel={handleCancel} 
+            onFetchSummary={handleRetrySummary}
+            onChangeSummary={handleChangeSummary}
+            loading={loading}
+            nextLink="/dashboard/home" 
+            />
         </>
     )
 }

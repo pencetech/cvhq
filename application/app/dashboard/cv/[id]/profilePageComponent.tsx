@@ -3,20 +3,22 @@ import ProfileCard from "@/app/components/profileCard"
 import { Col, Modal, Row } from "antd"
 import FileListComponent from "./fileListComponent"
 import { CvFile, FormData } from "@/models/cv"
-import { gql, useMutation } from "@apollo/client";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import CvDownloadModal from "@/app/components/cvDownloadModal";
+import { gql, useMutation } from "@apollo/client";
+import { Mutation } from "@/app/__generated__/graphql";
 
-
-const GENERATE_CV = gql`
-mutation generateCV($input: ProfileInput!) {
-    generateCV(input: $input) {
-      filename
+const GENERATE_SUMMARY = gql`
+mutation generateSummary($input: CvInput!) {
+    generateSummary(input: $input) {
+        summary
     }
-  }
+}
 `
+
 const ProfilePageComponent = ({ id, profile, files, profileName }: {
     id: number,
     profile: FormData,
@@ -26,27 +28,53 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
     const router = useRouter();
     const pathName = usePathname();
     const supabase = createClientComponentClient<Database>();
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [user, setUser] = useState('');
     const [formData, setFormData] = useState<FormData>({
         userBio: profile.userBio,
         jobPosting: profile.jobPosting,
         experiences: profile.experiences,
         education: profile.education,
-        skillset: profile.skillset
+        skillset: profile.skillset,
+        summary: {
+            summary: ''
+        }
     });
-    const [generateCV, { data, loading, error }] = useMutation(GENERATE_CV, {
-        variables: {
-            input: {
-                id: 1,
-                userBio: formData.userBio,
-                jobPosting: formData.jobPosting,
-                experiences: formData.experiences,
-                education: formData.education,
-                skillsets: formData.skillset
-            }
+
+    const cvInput = {
+        id: 1,
+        cvContent: {
+            userBio: formData.userBio,
+            experiences: formData.experiences,
+            summary: formData.summary,
+            education: formData.education,
+            skillsets: formData.skillset
         },
-        onCompleted: async (data: any) => await handleCompleteGenerate(data.generateCV.filename)
+        jobPosting: formData.jobPosting,
+        cvType: "BASE"
+    }
+
+    const [generateSummary, { data: graphSummaryData, loading: generateSummaryLoading }] = useMutation<Mutation>(GENERATE_SUMMARY, {
+        variables: {
+            input: cvInput
+        }
     })
+
+    const handleGenerateSummary = async () => {
+        const { data } = await generateSummary();
+        handleChangeSummary(data ? data.generateSummary.summary : '');
+    }
+
+    const handleChangeSummary = (summary: string) => {
+        const values = { 
+            summary: {
+                summary: summary
+            }
+        }
+        const data = { ...formData, ...values };
+        setFormData(data);
+    }
+
 
     useEffect(() => {
         const getUser = async () => {
@@ -61,12 +89,21 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         getUser();
       }, [supabase.auth])
 
-    const handleGenerateClick = () => {
+    const handleGenerateClick = async () => {
         const isValidationPassed = isAllFieldsFilled();
         if (isValidationPassed) {
-            generateCV();
+            showModal();
+            await handleGenerateSummary();
         }
     }
+
+    const showModal = () => {
+        setIsModalOpen(true);
+      };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
 
     const isAllFieldsFilled = () => {
         const userBioNotFilled = !formData.userBio.firstName ||
@@ -123,17 +160,6 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         return true;
     }
 
-    const handleCompleteGenerate = async (filename: string) => {
-        await supabase
-            .from("cv_file")
-            .insert({
-                filename: filename,
-                profile_id: id
-            });
-        await fetchAndDownloadCV(filename);
-        router.refresh()
-    }
-
     const fetchAndDownloadCV = async (filename: string) => {
         const currPathNoQuery = pathName.split("?")[0];
         const currPath = currPathNoQuery
@@ -163,13 +189,24 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
             </Col>
             <Col span={10}>
                 {files ? <FileListComponent 
-                    loading={loading} 
+                    profileName={profileName}
                     profileId={id}
                     files={files} 
                     onFileClick={fetchAndDownloadCV}
                     onGenerateClick={handleGenerateClick}
                      /> : "no file"}
             </Col>
+            <CvDownloadModal 
+                userId={user} 
+                profileId={id} 
+                formData={formData} 
+                open={isModalOpen} 
+                onCancel={handleCancel} 
+                onFetchSummary={handleGenerateSummary}
+                onChangeSummary={handleChangeSummary}
+                loading={generateSummaryLoading}
+                nextLink={pathName} 
+            />
         </Row>
     )
 }

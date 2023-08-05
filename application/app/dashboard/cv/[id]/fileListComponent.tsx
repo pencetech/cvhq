@@ -11,12 +11,12 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { useState, useEffect } from 'react';
 
-const FileListComponent = ({ files, onFileClick, profileId, onGenerateClick, loading }: { 
+const FileListComponent = ({ files, onFileClick, profileName, profileId, onGenerateClick }: { 
   files: CvFile[], 
   onFileClick: (name: string) => Promise<void>,
+  profileName: string,
   profileId: number,
-  onGenerateClick: any
-  loading: boolean
+  onGenerateClick: (() => Promise<void>)
 }) => {
   const pathName = usePathname();
   const [user, setUser] = useState('');
@@ -63,8 +63,8 @@ const FileListComponent = ({ files, onFileClick, profileId, onGenerateClick, loa
   return (
   <Card>
     <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Typography.Title level={4} style={{ margin: 0 }}>Versions</Typography.Title>
-      <Button type='primary' loading={loading} onClick={() => onGenerateClick()}>Generate new version</Button>
+      <Typography.Title level={4} style={{ margin: 0 }}>{`Versions - ${profileName}`}</Typography.Title>
+      <Button type='primary' onClick={onGenerateClick}>Generate new version</Button>
     </div> 
     <Typography.Paragraph style={{ marginTop: "12px" }}>Make sure you&apos;ve saved all tabs before generating new CV versions.</Typography.Paragraph>
     <Divider />
