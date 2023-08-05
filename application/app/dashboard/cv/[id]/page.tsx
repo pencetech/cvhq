@@ -165,7 +165,8 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
             let { data, error, status } = await supabase
                 .from('cv_file')
                 .select('filename, inserted_at')
-                .eq('profile_id', params.id);
+                .eq('profile_id', params.id)
+                .order('inserted_at', { ascending: false });
 
             if (error && status !== 406) {
                 throw error;
