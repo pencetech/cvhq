@@ -9,6 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CvDownloadModal from "@/app/components/cvDownloadModal";
 import { gql, useMutation } from "@apollo/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Mutation } from "@/app/__generated__/graphql";
 
 const GENERATE_SUMMARY = gql`
@@ -40,6 +41,30 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
             summary: ''
         }
     });
+
+    const getFileList = async () => {
+        let { data, error, status } = await supabase
+            .from('cv_file')
+            .select('filename, inserted_at')
+            .eq('profile_id', id)
+            .order('inserted_at', { ascending: false });
+
+        if (error && status !== 406) {
+            throw error;
+        }
+
+        const files = data?.map(file => ({
+            filename: file.filename,
+            createdAt: file.inserted_at
+        }))
+        return files;
+    }
+    
+    const { data: fileData } = useQuery({
+        queryKey: ['file-list'],
+        queryFn: getFileList,
+        initialData: files
+    })
 
     const cvInput = {
         id: 1,
@@ -75,7 +100,6 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         setFormData(data);
     }
 
-
     useEffect(() => {
         const getUser = async () => {
           const {
@@ -87,7 +111,7 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
         }
     
         getUser();
-      }, [supabase.auth])
+    }, [supabase.auth])
 
     const handleGenerateClick = async () => {
         const isValidationPassed = isAllFieldsFilled();
@@ -188,10 +212,10 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
                 {profile ? <ProfileCard title={profileName} profileId={id} profile={formData} onUpdate={(value) => setFormData(value)}/> : "profile empty"}  
             </Col>
             <Col span={10}>
-                {files ? <FileListComponent 
+                {fileData ? <FileListComponent 
                     profileName={profileName}
                     profileId={id}
-                    files={files} 
+                    files={fileData} 
                     onFileClick={fetchAndDownloadCV}
                     onGenerateClick={handleGenerateClick}
                      /> : "no file"}

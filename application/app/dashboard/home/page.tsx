@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import HomePageComponent from './homePageComponent';
+import { Profiles } from '@/models/cv';
 
 type FileData = {
   filename: string,
@@ -17,21 +18,26 @@ const HomePage = async () => {
 
   const userId = session?.user.id;
 
-  let { data, error, status } = await supabase
-    .rpc('get_profiles_of_user_time_name', {
-      user_id_input: userId
-  })
+  const getProfiles = async () => {
+    let { data, error, status } = await supabase
+    .from('cv_profile')
+    .select('id, name, inserted_at')
+    .eq('user_id', userId)
+    .order('inserted_at', { ascending: false })
 
-  if (error && status !== 406) {
-    throw error
-  }
+    if (error && status !== 406) {
+      throw error
+    }
 
-  const parsedData = data.map((obj: any) => {
-    return {
-      id: obj.profile_id,
-      description: obj.profile_name,
-      createdAt: obj.inserted_at
-    }})
+    return data?.map(obj => {
+      return {
+        id: obj.id,
+        description: obj.name,
+        createdAt: obj.inserted_at
+      }}) as Profiles
+  };
+
+  const parsedData = await getProfiles();
   
   return (
     <HomePageComponent profiles={parsedData} />

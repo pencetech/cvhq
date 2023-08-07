@@ -3,6 +3,7 @@ import type { PropsWithChildren } from 'react';
 import Script from 'next/script';
 import { AntdProvider } from '@/scripts/root-style-registry';
 import { ApolloWrapper } from "@/lib/apollo-wrapper";
+import TanstackProvider from '@/lib/providers';
 
 
 export const metadata = {
@@ -27,9 +28,11 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body>
-        <ApolloWrapper>
-          <AntdProvider>{children}</AntdProvider>
-        </ApolloWrapper>
+        <TanstackProvider>
+          <ApolloWrapper>
+            <AntdProvider>{children}</AntdProvider>
+          </ApolloWrapper>
+        </TanstackProvider>
       </body>
     </html>
   )

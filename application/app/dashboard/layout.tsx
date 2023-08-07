@@ -10,19 +10,24 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
         data: { session },
       } = await supabase.auth.getSession();
     
-    let { data, error, status } = await supabase
+    const getProfiles = async () => {
+        let { data, error, status } = await supabase
         .from('cv_profile')
         .select('id, name')
         .eq('user_id', session?.user.id)
-    if (error && status !== 406) {
-        throw error
-    }
-        
-    const parsedData = data?.map(obj => {
-        return {
-        id: obj.id,
-        description: obj.name
-    }})
+        .order('inserted_at', { ascending: false })
+        if (error && status !== 406) {
+            throw error
+        }
+            
+        return data?.map(obj => {
+            return {
+            id: obj.id,
+            description: obj.name
+        }})
+    };
+    
+    const parsedData = await getProfiles();
 
     return (
         <DashboardLayoutComponent 
