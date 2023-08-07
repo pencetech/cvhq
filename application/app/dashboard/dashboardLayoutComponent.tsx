@@ -8,6 +8,7 @@ import type { MenuProps } from 'antd';
 import { Layout, Menu, Button, theme, Tag, Space, Alert } from 'antd';
 import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
+import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -45,6 +46,29 @@ const DashboardLayoutComponent = ({
     }
   }, [user])
 
+  const getProfiles = async () => {
+    let { data, error, status } = await supabase
+    .from('cv_profile')
+    .select('id, name')
+    .eq('user_id', user?.id)
+    .order('inserted_at', { ascending: false })
+    if (error && status !== 406) {
+        throw error
+    }
+        
+    return data?.map(obj => {
+        return {
+        id: obj.id,
+        description: obj.name
+    }})
+  };
+
+  const { data: profileData } = useQuery({
+    queryKey: ['profile-list'],
+    queryFn: getProfiles,
+    initialData: profiles
+  })
+
   function getItem(
     label: React.ReactNode,
     key: React.Key,
@@ -65,7 +89,7 @@ const DashboardLayoutComponent = ({
 
   const items: MenuItem[] = [
       getItem("Home", "home", <HomeOutlined />), 
-      getItem("CVs", "cv", loadingProfileIcon, profiles.map(p => {
+      getItem("CVs", "cv", loadingProfileIcon, profileData?.map(p => {
         return getItem(p.description, p.id)
       }))
   ]

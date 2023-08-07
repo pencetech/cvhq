@@ -7,6 +7,7 @@ import { FormData } from "@/models/cv";
 import { useRef, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
+import { useQueryClient } from "@tanstack/react-query";
 import { Mutation } from "../__generated__/graphql";
 import { TextAreaRef } from "antd/es/input/TextArea";
 
@@ -35,7 +36,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
 }) => {
     
     const [format, setFormat] = useState("");
-    
+    const queryClient = useQueryClient();
     const inputRef = useRef<TextAreaRef>(null);
     const cvInput = {
         id: 1,
@@ -105,6 +106,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
         }
         const blob = await res.blob();
         const blobUrl = window.URL.createObjectURL(blob)
+        queryClient.invalidateQueries({ queryKey: ["file-list"] })
         window.open(blobUrl, '_blank');
     }
 

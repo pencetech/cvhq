@@ -10,16 +10,17 @@ import Link from 'next/link';
 import { ProfileName, Profiles } from '@/models/cv';
 import ProfileNameForm from '@/app/components/profileNameForm';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
 
 const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
   const supabase = createClientComponentClient<Database>();
   const [messageApi, contextHolder] = message.useMessage();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<string>();
-
   useEffect(() => {
     const getUser = async () => {
         const {
@@ -31,17 +32,41 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
 
     getUser();
   }, [supabase.auth])
+  
+  const getProfiles = async () => {
+    let { data, error, status } = await supabase
+    .from('cv_profile')
+    .select('id, name, inserted_at')
+    .eq('user_id', user)
+    .order('inserted_at', { ascending: false })
+
+    if (error && status !== 406) {
+      throw error
+    }
+
+    return data?.map((obj: any) => {
+      return {
+        id: obj.profile_id,
+        description: obj.profile_name,
+        createdAt: obj.inserted_at
+      }}) as Profiles
+  }; 
+
+  const { data: profileData } = useQuery({
+    queryKey: ['profile-list', 'complete'],
+    queryFn: getProfiles,
+    initialData: profiles
+  })
 
   const handleAddPosting = () => {
     setIsOpen(true);
   }
 
   const handleCreate = async (value: ProfileName) => {
-    const prevId = await getPrevProfile();
     await setProfile(value);
     const currId = await getCurrProfile(value);
-    if (prevId && currId) {
-      await buildNewProfile(prevId, currId);
+    if (currId) {
+      await buildNewProfile(profileData[0].id, currId);
     }
     if (currId) {
 
@@ -50,6 +75,12 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
   }
 
   const setProfile = async (value: ProfileName) => {
+    const conflicts = profileData.filter(p => p.description === value.profileName)
+    if (conflicts.length > 0) {
+      messageApi.error("Job posting nickname exists. Please use another nickname.");
+      return;
+    }
+    
     if (user) {
       const { error } = await supabase.from('cv_profile')
       .insert({
@@ -60,25 +91,13 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
       if (error) {
         if (error.code === "23505") {
           messageApi.error("Job posting nickname exists. Please use another nickname.");
+          return;
         } else {
           messageApi.error("An error occured.");
+          return;
         }
       }
     }
-    
-  }
-
-  const getPrevProfile = async () => {
-      const { data, error } = await supabase.from('cv_profile')
-      .select('id').eq('user_id', user).order('inserted_at', { ascending: true })
-
-      if (error) {
-        messageApi.error('An error occured.')
-      }
-      if (data) {
-        return data[0].id;
-      }
-    messageApi.error('An error occured.')
   }
 
   const getCurrProfile = async (profileName: ProfileName) => {
@@ -107,6 +126,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
         throw error
       }
     }
+    queryClient.invalidateQueries({ queryKey: ['profile-list']})
   }
 
   const renderTime = (date: string) => {
@@ -131,7 +151,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
     <Divider />
     <List
       itemLayout="horizontal"
-      dataSource={profiles}
+      dataSource={profileData}
       renderItem={(item, _) => (
         <List.Item
           actions={[
