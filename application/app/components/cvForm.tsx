@@ -11,6 +11,7 @@ import CvDownloadModal from './cvDownloadModal';
 import { gql, useMutation } from '@apollo/client';
 import { Mutation } from '../__generated__/graphql';
 import FinalTouchesForm from './finalTouchesForm';
+import SelectCvOptionModal from './selectCVOptionModal';
 
 const GENERATE_SUMMARY = gql`
 mutation generateSummary($input: CvInput!) {
@@ -24,7 +25,9 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const [activeStepIndex, setActiveStepIndex] = useState(0);
     const { token } = theme.useToken();
     const supabase = createClientComponentClient<Database>();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+    const [isCvModalOpen, setIsCvModalOpen] = useState(false);
+    const [isPreferenceChosen, setIsPreferenceChosen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const [formData, setFormData] = useState<FormData>({
@@ -67,18 +70,6 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         }
     });
 
-    const cvInput = {
-        id: 1,
-        cvContent: {
-            userBio: formData.userBio,
-            experiences: formData.experiences,
-            summary: formData.summary,
-            education: formData.education,
-            skillsets: formData.skillset
-        },
-        jobPosting: formData.jobPosting,
-        cvType: "BASE"
-    }
     const [generateSummary, { data: graphSummaryData, loading: generateSummaryLoading }] = useMutation<Mutation>(GENERATE_SUMMARY);
 
     const handleRetrySummary = async () => {
@@ -139,6 +130,9 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             add_on: job.addOn
         }, { onConflict: 'profile_id' })
         messageApi.success("Job posting saved!");
+        if (!isPreferenceChosen) {
+            setIsCvModalOpen(true);
+        }
         handleProgress({
             jobPosting: job
         });
@@ -226,6 +220,10 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         }, { onConflict: 'profile_id' })
     }
 
+    const handleCVSelect = () => {
+        // what happens when they press back after going into the experience? What should they expect?
+    }
+
     const handleBack = (e: any) => {
         e.preventDefault();
         setActiveStepIndex(activeStepIndex - 1);
@@ -237,12 +235,20 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         setActiveStepIndex(activeStepIndex + 1);
     }
 
-    const showModal = () => {
-        setIsModalOpen(true);
+    const showCvModal = () => {
+        setIsCvModalOpen(true);
+    }
+
+    const handleCancelCvModal = () => {
+        setIsCvModalOpen(false);
+    }
+
+    const showDownloadModal = () => {
+        setIsDownloadModalOpen(true);
       };
 
     const handleCancel = () => {
-        setIsModalOpen(false);
+        setIsDownloadModalOpen(false);
     };
 
     const handleSubmit = async (values: BioSkillset) => {
@@ -257,7 +263,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             userBio: values.userBio
         }
         setFormData(oldData => ({ ...oldData, ...mergingValue }));
-        showModal();
+        showDownloadModal();
         setLoading(false);
     }
 
@@ -358,12 +364,16 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             userId={userId} 
             profileId={profileId} 
             formData={formData} 
-            open={isModalOpen}
+            open={isDownloadModalOpen}
             onCancel={handleCancel} 
             onFetchSummary={handleRetrySummary}
             onChangeSummary={handleChangeSummary}
             loading={loading}
             nextLink="/dashboard/home" 
+            />
+            <SelectCvOptionModal 
+                title="Pick your preference"
+                onSelect
             />
         </>
     )
