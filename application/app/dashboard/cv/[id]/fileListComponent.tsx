@@ -52,8 +52,8 @@ const FileListComponent = ({ files, onFileClick, profileName, profileId, onGener
             .split("/")
             .filter(v => v.length > 0);
         const currPage = currPath[currPath.length-1];
-        window.analytics?.track("Applied enhancement", {
-            title: `Applied enhancement in ${currPage}`,
+        window.analytics?.track("Download CV", {
+            title: `Downloaded CV in ${currPage}`,
             userId: user,
             profileId: profileId,
             current_path: currPath
