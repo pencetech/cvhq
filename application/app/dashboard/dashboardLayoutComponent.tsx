@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Logo from '@/public/CVHQ.png';
 import Breadcrumbs from '../components/breadcrumbs';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, Button, theme, Tag, Space, Alert } from 'antd';
+import { Layout, Menu, Button, theme, Tag, Space, Alert, Card } from 'antd';
 import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { useQuery } from '@tanstack/react-query';
@@ -170,13 +170,11 @@ const DashboardLayoutComponent = ({
           <Breadcrumbs />
           <Content
             style={{
-              padding: 24,
               margin: 0,
-              minHeight: 280,
-              background: colorBgContainer,
+              minHeight: 280
             }}
           >
-            {children}
+            <Card style={{ margin: 0, background: '#FFFFFF' }}>{children}</Card>
           </Content>
         </Layout>
       </Layout>
