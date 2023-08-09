@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Education, Experience, FormData, JobPosting, Skillset, UserBio } from '@/models/cv';
+import { BioSkillset, Education, Experience, FormData, JobPosting, Skillset, UserBio } from '@/models/cv';
 import { Button, Space, Steps, message, theme } from 'antd';
 import BioForm from './bioForm';
 import JobPostingForm from './jobPostingForm';
@@ -12,6 +12,7 @@ import { Database } from '@/types/supabase';
 import CvDownloadModal from './cvDownloadModal';
 import { gql, useMutation } from '@apollo/client';
 import { Mutation } from '../__generated__/graphql';
+import FinalTouchesForm from './finalTouchesForm';
 
 const GENERATE_SUMMARY = gql`
 mutation generateSummary($input: CvInput!) {
@@ -127,10 +128,6 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             phone: user.phone,
             address: user.address
         }, { onConflict: 'user_id' })
-        messageApi.success("User bio saved!");
-        handleProgress({
-            userBio: user
-        });
     }
 
     const insertJobPosting = async (job: JobPosting) => {
@@ -224,15 +221,11 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     }
 
     const insertSkillset = async (sk: Skillset) => {
-        setLoading(true);
         await supabase.from('skillset')
         .upsert({
             profile_id: profileId,
             skillsets: sk.skillsets
         }, { onConflict: 'profile_id' })
-        messageApi.success("Skillset saved!");
-        await handleSubmit(sk);
-        setLoading(false);
     }
 
     const handleBack = (e: any) => {
@@ -254,11 +247,20 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         setIsModalOpen(false);
     };
 
-    const handleSubmit = async (values: Skillset) => {
-        const summary = await handleGenerateSummary(values);
-        const mergingValue = { skillset: values, summary: { summary: summary ? summary : "" }}
+    const handleSubmit = async (values: BioSkillset) => {
+        setLoading(true);
+        await insertSkillset(values.skillsets);
+        await insertUserBio(values.userBio);
+        messageApi.success("Your bio and skillset saved!");
+        const summary = await handleGenerateSummary(values.skillsets);
+        const mergingValue = { 
+            skillset: values.skillsets, 
+            summary: { summary: summary ? summary : "" },
+            userBio: values.userBio
+        }
         setFormData(oldData => ({ ...oldData, ...mergingValue }));
         showModal();
+        setLoading(false);
     }
 
     const startNextAction = (
@@ -280,11 +282,6 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     )
         // to handle async compatibility throughout the app, we're making this 
     const rawItems = [
-        {   
-            key: 'bio',
-            label: 'Your Bio',
-            content: <BioForm isIntro title="How best can employers contact you?" description="Email and phone number recommended." value={formData.userBio} onSubmit={insertUserBio} actions={startNextAction} />
-        },
         {
             key: 'job',
             label: 'Job Posting',
@@ -318,14 +315,14 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 />
         },
         {
-            key: 'skillsets',
-            label: 'Skillsets',
-            content: <SkillsetForm 
+            key: 'bio-skillsets',
+            label: 'Final touches',
+            content: <FinalTouchesForm 
                 isIntro 
-                title="Time to show your skills" 
-                description="Add unique skills that make you stand out." 
-                value={formData.skillset} 
-                onSubmit={insertSkillset} 
+                title="Final touches" 
+                description="Add your bio and unique skills that make you stand out." 
+                value={{ skillsets: formData.skillset, userBio: formData.userBio }} 
+                onSubmit={handleSubmit} 
                 actions={endActions} 
             />
         }

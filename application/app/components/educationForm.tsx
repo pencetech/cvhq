@@ -9,10 +9,6 @@ import 'formik-antd/es/form/style';
 import * as Yup from 'yup';
 import { Education } from '@/models/cv';
 
-
-type EducationFormSchema = {
-    education: Education[]
-}
 interface OtherProps {
     title: string;
     description?: string;

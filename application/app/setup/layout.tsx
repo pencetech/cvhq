@@ -3,12 +3,12 @@ import React, { useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Logo from '@/public/CVHQ.png';
-import { Layout, Button, Space, Tag } from 'antd';
+import { Layout, Button, Space, Tag, Card } from 'antd';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
 const SetupLayout = ({
     children,
@@ -56,14 +56,16 @@ const SetupLayout = ({
                       />
                       <Tag color="#2db7f5" style={{ color: "#111111", fontSize: "12px" }}>BETA</Tag>
                     </Space>
-                    <Link href="https://tally.so/r/3NDNxO" target="_blank">
-                        <Button type="text" style={{ color: '#FFFFFF' }}>Feedback</Button>
-                    </Link>
-                    <Button type="text" style={{ color: "#FFFFFF" }} onClick={handleSignOut}>Sign out</Button>
+                    <Space>
+                      <Link href="https://tally.so/r/3NDNxO" target="_blank">
+                          <Button type="text" style={{ color: '#FFFFFF' }}>Feedback</Button>
+                      </Link>
+                      <Button type="text" style={{ color: "#FFFFFF" }} onClick={handleSignOut}>Sign out</Button>
+                    </Space>
                 </div>
             </Header>
             <Content style={{ padding: 0 }}>
-                <div style={{ padding: 24, height: '100%', background: '#FFFFFF' }}>{children}</div>
+                <Card style={{ margin: 16, background: '#FFFFFF' }}>{children}</Card>
             </Content>
       </Layout>
     )

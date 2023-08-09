@@ -43,6 +43,11 @@ export interface ProfileName {
     profileName: string
 }
 
+export interface BioSkillset {
+    userBio: UserBio,
+    skillsets: Skillset
+}
+
 export interface CvFile {
     filename: string,
     createdAt: string
