@@ -3,11 +3,9 @@ import { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { BioSkillset, Education, Experience, FormData, JobPosting, Skillset, UserBio } from '@/models/cv';
 import { Button, Space, Steps, message, theme } from 'antd';
-import BioForm from './bioForm';
 import JobPostingForm from './jobPostingForm';
 import ExperiencesForm from './experiencesForm';
 import EducationForm from './educationForm';
-import SkillsetForm from './skillsetForm';
 import { Database } from '@/types/supabase';
 import CvDownloadModal from './cvDownloadModal';
 import { gql, useMutation } from '@apollo/client';
@@ -285,7 +283,13 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         {
             key: 'job',
             label: 'Job Posting',
-            content: <JobPostingForm isIntro title="Where are you applying to?" description="We'll use this to create a CV specific to this job." value={formData.jobPosting} onSubmit={insertJobPosting} actions={midNextActions} />
+            content: <JobPostingForm 
+            isIntro 
+            title="Where are you applying to?" 
+            description="We'll use this to create a CV specific to this job." 
+            value={formData.jobPosting} 
+            onSubmit={insertJobPosting} 
+            actions={startNextAction} />
         },
         {
             key: 'experiences',
