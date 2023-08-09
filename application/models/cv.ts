@@ -63,6 +63,11 @@ export interface FormData {
     summary?: Summary
 };
 
+export interface AchivementPlus {
+    description: string,
+    isAdded: boolean
+}
+
 export interface ProfileMeta {
     id: number,
     description: string,

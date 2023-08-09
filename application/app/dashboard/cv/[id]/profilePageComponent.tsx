@@ -190,8 +190,8 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
             .split("/")
             .filter(v => v.length > 0);
         const currPage = currPath[currPath.length-1];
-        window.analytics?.track("Applied enhancement", {
-            title: `Applied enhancement in ${currPage}`,
+        window.analytics?.track("Download CV", {
+            title: `Download CV in ${currPage}`,
             userId: user,
             profileId: id,
             current_path: currPath
