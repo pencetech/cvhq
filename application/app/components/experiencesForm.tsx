@@ -58,6 +58,7 @@ const ExperiencesForm = (props: OtherProps) => {
                 experiences: value
             }}
             validationSchema={experienceValidationSchema}
+            enableReinitialize
             onSubmit={(values, actions) => {
                 onSubmit(values.experiences)
             }}
