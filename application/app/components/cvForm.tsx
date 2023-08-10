@@ -21,6 +21,37 @@ mutation generateSummary($input: CvInput!) {
 }
 `
 
+const MOCK_GENERATED_EXPERIENCE = [{
+    id: 1,
+    title: "Ok",
+    company: "Ok",
+    sector: "Ok",
+    isCurrent: false,
+    startDate: "Ok",
+    endDate: "Ok",
+    achievements: "Ok"
+},
+{
+    id: 2,
+    title: "can",
+    company: "can",
+    sector: "can",
+    isCurrent: false,
+    startDate: "can",
+    endDate: "can",
+    achievements: "can"
+},
+{
+    id: 3,
+    title: "chill",
+    company: "chill",
+    sector: "chill",
+    isCurrent: false,
+    startDate: "chill",
+    endDate: "chill",
+    achievements: "chill"
+}]
+
 const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
     const { token } = theme.useToken();
@@ -130,8 +161,9 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             add_on: job.addOn
         }, { onConflict: 'profile_id' })
         messageApi.success("Job posting saved!");
+
         if (!isPreferenceChosen) {
-            setIsCvModalOpen(true);
+            showCvModal();
         }
         handleProgress({
             jobPosting: job
@@ -220,8 +252,18 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         }, { onConflict: 'profile_id' })
     }
 
-    const handleCVSelect = () => {
-        // what happens when they press back after going into the experience? What should they expect?
+    const handleCvSelect = (value: string) => {
+        setIsPreferenceChosen(true);
+        if (value == "pre-filled") {
+            // call the API and pre-fill formData
+            const mockExperience = {
+                experiences: MOCK_GENERATED_EXPERIENCE
+            }
+            setFormData(oldData => ({ ...oldData, ...mockExperience }))
+        }
+        handleCancelCvModal();
+        // if pre-filled, query list of experiences from prompts
+        // if empty, proceed to an empty experience field
     }
 
     const handleBack = (e: any) => {
@@ -247,7 +289,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         setIsDownloadModalOpen(true);
       };
 
-    const handleCancel = () => {
+    const handleCancelDownloadModal = () => {
         setIsDownloadModalOpen(false);
     };
 
@@ -365,7 +407,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             profileId={profileId} 
             formData={formData} 
             open={isDownloadModalOpen}
-            onCancel={handleCancel} 
+            onCancel={handleCancelDownloadModal} 
             onFetchSummary={handleRetrySummary}
             onChangeSummary={handleChangeSummary}
             loading={loading}
@@ -373,7 +415,9 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             />
             <SelectCvOptionModal 
                 title="Pick your preference"
-                onSelect
+                onSelect={handleCvSelect}
+                onCancel={handleCancelCvModal}
+                open={isCvModalOpen}
             />
         </>
     )

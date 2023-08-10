@@ -3,7 +3,7 @@ import { ArrowRightOutlined } from "@ant-design/icons";
 import { Button, List, Modal, Typography } from "antd";
 
 const SelectCvOptionModal = ({ onSelect, onCancel, open, title }: { 
-    onSelect: ((value: string) => void),
+    onSelect: ((value: "pre-filled" | "empty") => void),
     onCancel: (() => void)
     open: boolean,
     title: string
@@ -11,12 +11,12 @@ const SelectCvOptionModal = ({ onSelect, onCancel, open, title }: {
     
     const dataSource = [
         {   
-            key: "pre-filled",
+            key: "pre-filled" as "pre-filled",
             label: "Start with a pre-filled CV",
             description: "See what a perfectly-matched CV looks like."
         },
         {
-            key: "empty",
+            key: "empty" as "empty",
             label: "Start with an empty CV",
             description: "Build your own profile from scratch."
         }
@@ -26,6 +26,8 @@ const SelectCvOptionModal = ({ onSelect, onCancel, open, title }: {
         <Modal
             title={title}
             open={open}
+            closeIcon={false}
+            footer={null}
             onCancel={onCancel}
         >
             <List
