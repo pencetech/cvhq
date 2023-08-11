@@ -29,7 +29,7 @@ interface ExperienceCardProps {
     value: Experience,
     userBio: UserBio,
     jobPosting: JobPosting,
-    profileId?: number,
+    profileId: number,
     index: number,
     onClick: () => Promise<void>
 }
