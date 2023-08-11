@@ -26,7 +26,8 @@ Write a well-written and concise professional summary strictly between 300 and 4
 {{ range .CvContent.Experiences }}
 - a professional with the role of {{ .Title }}, operating in the {{ .Sector }} field.
 
-- extensive experience such as {{ .Achievements }}.
+- extensive experience such as:
+	{{ .Achievements }}.
 {{ end }}
 (end of list)".
 
