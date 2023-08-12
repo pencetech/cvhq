@@ -39,6 +39,10 @@ export interface Summary {
     summary: string
 }
 
+export interface Experiences {
+    experiences: Experience[]
+}
+
 export interface ProfileName {
     profileName: string
 }

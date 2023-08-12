@@ -1,13 +1,16 @@
 "use client";
 import React from 'react';
-import { Formik, FieldArray } from "formik";
+import { Formik, FieldArray, FormikProps } from "formik";
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Row, Col, Space, Typography } from 'antd';
+import { Button, Row, Col, Space, Typography, Collapse, theme } from 'antd';
+import type { CollapseProps } from 'antd';
 import ExperienceCard from '@/app/components/experienceCard';
+import ExperiencePlusCard from './experiencePlusCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import * as Yup from 'yup';
-import { Experience, JobPosting, UserBio } from '@/models/cv';
+import { Experience, Experiences, JobPosting, UserBio } from '@/models/cv';
+import { CaretRightOutlined } from '@ant-design/icons';
 
 interface OtherProps {
     title: string;
@@ -46,6 +49,35 @@ const experienceValidationSchema = Yup.object().shape({
 
 const ExperiencesForm = (props: OtherProps) => {
     const { title, description, isIntro, onSubmit, profileId, value, userBio, jobPosting, actions } = props;
+    const { token } = theme.useToken();
+
+    const panelStyle: React.CSSProperties = {
+        marginBottom: 24,
+        background: token.colorFillAlter,
+        borderRadius: token.borderRadiusLG,
+        border: 'none',
+    };
+
+    const getItems: (
+        panelStyle: React.CSSProperties, 
+        formProps: FormikProps<Experiences>,
+        values: Experience[],
+        remover: (i: number) => void) => CollapseProps['items'] = (panelStyle, formProps, values, remover) => 
+        values.map((value, index) => (
+        {
+            key: index + 1,
+            label: `Experience ${index + 1}`,
+            children: <ExperiencePlusCard
+                formProps={formProps}
+                value={value}
+                userBio={userBio}
+                jobPosting={jobPosting}
+                profileId={profileId}
+                index={index}
+                onRemove={remover}
+            />,
+            style: panelStyle
+        }));
 
     const formItemLayout = {
         labelCol: { span: 24 },
@@ -83,35 +115,33 @@ const ExperiencesForm = (props: OtherProps) => {
                             name='experiences'
                             render={(arrayHelpers: any) => (
                                 <Space direction='vertical' className='w-full'>
-                                    {props.values.experiences.map((experience, index) => (
-                                        <React.Fragment key={index}>
-                                            <ExperienceCard 
-                                                formProps={props} 
-                                                profileId={profileId}
-                                                index={index} 
-                                                onClick={async () => arrayHelpers.remove(index)}
-                                                userBio={userBio}
-                                                jobPosting={jobPosting}
-                                                value={props.values.experiences[index]}
-                                            />
-                                        </React.Fragment>
-                                    ))}
-                                        <Button 
-                                            type='dashed' 
-                                            block
-                                            onClick={() => arrayHelpers.push({
-                                                id: props.values.experiences.length + 1,
-                                                title: '',
-                                                isCurrent: false,
-                                                startDate: new Date(),
-                                                endDate: new Date(),
-                                                achievements: ''
-                                            })}
-                                        >+ Add experience</Button>
-                                        <Row justify='end'>
-                                            {actions}
-                                        </Row>
-                                        
+                                    <Collapse
+                                        bordered={false}
+                                        defaultActiveKey={['1']}
+                                        expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                                        style={{ background: token.colorBgContainer }}
+                                        items={getItems(
+                                            panelStyle,
+                                            props,
+                                            props.values.experiences,
+                                            (index: number) => arrayHelpers.remove(index)
+                                        )}
+                                    />
+                                    <Button 
+                                        type='dashed' 
+                                        block
+                                        onClick={() => arrayHelpers.push({
+                                            id: props.values.experiences.length + 1,
+                                            title: '',
+                                            isCurrent: false,
+                                            startDate: new Date(),
+                                            endDate: new Date(),
+                                            achievements: ''
+                                        })}
+                                    >+ Add experience</Button>
+                                    <Row justify='end'>
+                                        {actions}
+                                    </Row>
                                 </Space>
                                 
                             )}

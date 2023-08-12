@@ -1,5 +1,5 @@
 'use client';
-import { Experience } from "@/models/cv";
+import { Experiences } from "@/models/cv";
 import dayjs from 'dayjs';
 import { sectors } from '@/models/sector';
 import { Button, Cascader, Col, DatePicker, Popover, Row, theme } from "antd";
@@ -10,19 +10,14 @@ import Input from "formik-antd/es/input";
 import { FC } from "react";
 import { FireFilled, InfoCircleOutlined } from "@ant-design/icons";
 
-interface Experiences {
-    experiences: Experience[]
-}
-
 interface ExperienceCardFormProps {
     formProps: FormikProps<Experiences>,
     index: number,
-    onEnhance: () => Promise<void>,
-    onRemove: () => Promise<void>
+    onEnhance: () => void
 }
 
 const ExperienceCardForm: FC<ExperienceCardFormProps> = ({
-    formProps, index, onEnhance, onRemove
+    formProps, index, onEnhance
 }: ExperienceCardFormProps) => {
     const { token } = theme.useToken();
     const containerStyle: React.CSSProperties = {
@@ -43,7 +38,7 @@ const ExperienceCardForm: FC<ExperienceCardFormProps> = ({
     );
 
     return (
-        <div style={containerStyle}>
+        <div>
             <Row gutter={24} justify="start">
                 <Col span={12} key={1}>
                     <Form.Item required={true} name={`experiences[${index}].title`} label='Job title'>
@@ -123,9 +118,6 @@ const ExperienceCardForm: FC<ExperienceCardFormProps> = ({
                     <Button type="primary" size="large" icon={<FireFilled />} onClick={onEnhance}>Enhance</Button>
                 </div>
             </Form.Item>
-            <Row justify='end'>
-                <Button onClick={onRemove}>Remove</Button>
-            </Row>
         </div>
     )
 }
