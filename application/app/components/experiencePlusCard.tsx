@@ -4,7 +4,7 @@ import { FormikProps } from "formik";
 import { FC, useState } from "react";
 import AchievementPlus from "./achievementPlus";
 import ExperienceCardForm from "./experienceCardForm";
-import { Button, Divider, Row } from "antd";
+import { Button, Divider, Row, Typography } from "antd";
 
 interface ExperiencePlusCardProps {
     formProps: FormikProps<Experiences>,
@@ -12,12 +12,11 @@ interface ExperiencePlusCardProps {
     userBio: UserBio,
     jobPosting: JobPosting,
     profileId: number,
-    index: number,
-    onRemove: (index: number) => void
+    index: number
 }
 
 const ExperiencePlusCard: FC<ExperiencePlusCardProps> = ({
-    formProps, value, userBio, jobPosting, profileId, index, onRemove
+    formProps, value, userBio, jobPosting, profileId, index
 }: ExperiencePlusCardProps) => {
     const [loading, setLoading] = useState(false);
     const [isPlusOpen, setIsPlusOpen] = useState(false);
@@ -69,11 +68,10 @@ const ExperiencePlusCard: FC<ExperiencePlusCardProps> = ({
     return (
         <>
             <ExperienceCardForm formProps={formProps} index={index} onEnhance={handleEnhance} />
-            <Divider></Divider>
+            <Divider orientation="left" orientationMargin="0">
+                <Typography.Title level={4} style={{ margin: 0 }}>{`Enhancements: ${formProps.values.experiences[index].title}, ${formProps.values.experiences[index].company}`}</Typography.Title>
+            </Divider>
             <AchievementPlus loading={loading} achievements={achievements} onAdd={handleAdd} />
-            <Row justify='end'>
-                <Button onClick={() => onRemove(index)}>Remove</Button>
-            </Row>
         </>
     )
 }

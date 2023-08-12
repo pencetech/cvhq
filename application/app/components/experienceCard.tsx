@@ -187,7 +187,7 @@ const ExperienceCard: FC<ExperienceCardProps> = ({
             <Row justify='end'>
                 <Space direction="horizontal">
                     <Button onClick={() => toggleEditing()}>Edit</Button>
-                    <Button onClick={generateAchievements}>Retry</Button>
+                    <Button onClick={() => generateAchievements()}>Retry</Button>
                 </Space>
             </Row>
             </div>
