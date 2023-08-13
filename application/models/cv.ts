@@ -39,6 +39,10 @@ export interface Summary {
     summary: string
 }
 
+export interface EducationArray {
+    education: Education[]
+}
+
 export interface Experiences {
     experiences: Experience[]
 }

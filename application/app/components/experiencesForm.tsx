@@ -1,16 +1,15 @@
 "use client";
 import React from 'react';
-import { Formik, FieldArray, FormikProps } from "formik";
+import { Formik, FieldArray, FormikProps, FormikErrors } from "formik";
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Row, Col, Space, Typography, Collapse, theme } from 'antd';
+import { Button, Row, Col, Space, Typography, Collapse, theme, Tag } from 'antd';
 import type { CollapseProps } from 'antd';
-import ExperienceCard from '@/app/components/experienceCard';
 import ExperiencePlusCard from './experiencePlusCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import * as Yup from 'yup';
 import { Experience, Experiences, JobPosting, UserBio } from '@/models/cv';
-import { CaretRightOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, CloseCircleFilled, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import ReadOnlyJobPosting from './readOnlyJobPosting';
 
 interface OtherProps {
@@ -59,26 +58,43 @@ const ExperiencesForm = (props: OtherProps) => {
         border: 'none',
     };
 
+    const countErrors = (error: FormikErrors<Experience>[]) => {
+        return Object.values(error).reduce((a, item) => a + (item ? 1 : 0), 0)
+    }
+
     const getItems: (
         panelStyle: React.CSSProperties, 
         formProps: FormikProps<Experiences>,
         values: Experience[],
-        remover: (i: number) => void) => CollapseProps['items'] = (panelStyle, formProps, values, remover) => 
-        values.map((value, index) => (
-        {
-            key: index + 1,
-            label: `Experience ${index + 1}`,
-            children: <ExperiencePlusCard
-                formProps={formProps}
-                value={value}
-                userBio={userBio}
-                jobPosting={jobPosting}
-                profileId={profileId}
-                index={index}
-            />,
-            extra: (<DeleteOutlined onClick={() => remover(index)}/>),
-            style: panelStyle
-        }));
+        remover: (i: number) => void
+        ) => CollapseProps['items'] = (panelStyle, formProps, values, remover) => {
+
+            const errCount = (index: number) => formProps.errors.experiences && formProps.errors.experiences[index] ?
+                countErrors(formProps.errors.experiences[index] as FormikErrors<Experience>[]) : 0;
+                
+            return values.map((value, index) => ({
+                key: index + 1,
+                label: (<Space>
+                            <Typography.Text>{`Experience ${index + 1}`}</Typography.Text>
+                            {errCount(index) ?
+                                <Tag icon={<CloseCircleOutlined />} color="error">
+                                  {`${errCount(index)} ${errCount(index) > 1 ? "errors" : "error"}`}
+                                </Tag>
+                            : null}   
+                        </Space>),
+                children: (<ExperiencePlusCard
+                    formProps={formProps}
+                    value={value}
+                    userBio={userBio}
+                    jobPosting={jobPosting}
+                    profileId={profileId}
+                    index={index}
+                />),
+                extra: (<DeleteOutlined onClick={() => remover(index)}/>),
+                style: panelStyle
+            }));
+        }
+            
 
     const formItemLayout = {
         labelCol: { span: 24 },
