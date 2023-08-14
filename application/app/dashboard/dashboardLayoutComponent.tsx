@@ -135,7 +135,10 @@ const DashboardLayoutComponent = ({
           <Button type="text">Give feedback</Button>
         </Link>
       }/>
-      <Header style={{ display: 'flex', alignItems: 'center' }}>
+      <Header style={{ 
+        display: 'flex', 
+        alignItems: 'center'
+        }}>
       <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Space align="center">
                       <Image 

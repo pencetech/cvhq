@@ -54,7 +54,7 @@ const SetupLayout = ({
                           fill={false}
                           priority 
                       />
-                      <Tag color="#2db7f5" style={{ color: "#111111", fontSize: "12px" }}>BETA</Tag>
+                      <Tag color="#2db7f5" style={{ color: "#111111" }}>BETA</Tag>
                     </Space>
                     <Space>
                       <Link href="https://tally.so/r/3NDNxO" target="_blank">
