@@ -97,22 +97,12 @@ func (r *mutationResolver) GenerateCv(ctx context.Context, input model.CvInput) 
 func (r *mutationResolver) GenerateSummary(ctx context.Context, input model.CvInput) (*model.Summary, error) {
 	var summary model.Summary
 
-	cvContentObj := input.CvContent
-
-	profileBytes, err := json.Marshal(cvContentObj)
+	content, err := r.ChatBridge.InjectPrompt(r.ChatBridge.getSummaryPrompt(), input)
 	if err != nil {
-		log.Println("ERROR: JSON marshaling failed -> ", err)
+		log.Println("ERROR: prompt injection failed -> ", err)
 		return nil, err
 	}
-
-	jobPostingBytes, err := json.Marshal(input.JobPosting)
-	if err != nil {
-		log.Println("ERROR: JSON marshaling failed -> ", err)
-		return nil, err
-	}
-
-	summaryContent := fmt.Sprintf(r.ChatBridge.getSummaryPrompt(), string(profileBytes), string(jobPostingBytes))
-	summStr, err := r.ChatBridge.ChatCompletion(summaryContent)
+	summStr, err := r.ChatBridge.ChatCompletion(content)
 	if err != nil {
 		log.Println("ERROR: chat completion failed -> ", err)
 		return nil, err

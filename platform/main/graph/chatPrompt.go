@@ -18,11 +18,60 @@ what roles are this person excels at, their impact in their past roles and exper
 8. do not exceed 400 characters.
 
 `
-var CvSummaryPrompt2 = `print the following object as text: "%s",
+var CvSummaryPrompt2 = `You are a professional career coach, HR professional, and expert at CV and resume coaching.
 
+Write a well-written and concise professional summary strictly between 300 and 400 characters with the following profile: "
 
-Also print this object as text: "%s",
+(begin list)
+{{ range .CvContent.Experiences }}
+- a professional with the role of {{ .Title }}, operating in the {{ .Sector }} field.
 
+- extensive experience such as:
+	{{ .Achievements }}.
+{{ end }}
+(end of list)".
+
+Make sure to follow these rules and constraints:
+
+1.  Read the description previously provided for the person's qualifications, skills, experiences, and achievements thoroughly. 
+
+2. Do not mention the profile name, first name, last name, or make it into a third-person summary
+
+3. Make sure to understand the key points and highlights of the description.
+
+4. Craft a professional summary that effectively showcases the person's expertise and suitability for the desired role, which is : a 
+{{ .JobPosting.Title }}
+.
+
+5. Keep the summary concise and focused, using clear and concise language.
+
+6. Use proper grammar, punctuation, and sentence structure to ensure a polished and professional summary.
+
+7. Avoid using personal pronouns and maintain a formal tone throughout the summary.
+
+8. Emphasize the person's most relevant qualifications and skills that align with the requirements of the desired role, which is the following: "(begin list) 
+{{ .JobPosting.Requirements }}
+(end of list)".
+
+9. Highlight key achievements and experiences that demonstrate the person's expertise and success in their field.
+
+10. Ensure that the summary is engaging and captures the attention of potential employers or recruiters.
+
+11. Review and proofread the summary to eliminate any grammatical errors or inconsistencies.
+
+12. Do not blindly write the output directly from the potential job details, it will produce untruthful result,
+
+13. do not exceed 400 characters,
+
+14. if there are missing experience or skillset from the person's profile compared to the desired role, do not mention it at all. Omit this information from the summary.
+
+15.  Do not mention the profile name, first name, last name, or make it into a third-person summary.
+
+16. Do not mention if this person is seeking a position anywhere
+
+17. do not exceed 400 characters.
+
+Remember, the goal is to create a compelling professional summary that stands out and accurately represents the person's qualifications and suitability for the desired role.
 `
 var CvSummaryPrompt3 = `You are a professional CV and resume coach.
   
