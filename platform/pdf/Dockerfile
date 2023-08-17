@@ -1,4 +1,4 @@
-FROM debian:bullseye as builder
+FROM node:18-slim as builder
 
 ARG NODE_VERSION=18.0.0
 
@@ -14,13 +14,7 @@ RUN apt-get update \
       --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-
-RUN apt-get update; apt install -y curl python-is-python3 pkg-config build-essential
-RUN curl https://get.volta.sh | bash
-ENV VOLTA_HOME /root/.volta
-ENV PATH /root/.volta/bin:$PATH
 ENV PATH /usr/bin:$PATH
-RUN volta install node@${NODE_VERSION}
 RUN google-chrome-stable --no-sandbox --disable-gpu --headless=true
 #######################################################################
 
@@ -32,8 +26,6 @@ WORKDIR /app
 # Ref: https://docs.npmjs.com/cli/v9/commands/npm-install#description
 
 ENV NODE_ENV production
-# We don't need the standalone Chromium
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
 COPY . .
 
@@ -44,7 +36,9 @@ FROM debian:bullseye
 
 LABEL fly_launch_runtime="nodejs"
 
-COPY --from=builder /root/.volta /root/.volta
+# We don't need the standalone Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+
 COPY --from=builder /usr/bin /usr/bin
 COPY --from=builder /app /app
 
