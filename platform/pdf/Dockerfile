@@ -1,4 +1,4 @@
-FROM node:18-slim as builder
+FROM debian:bullseye as builder
 
 ARG NODE_VERSION=18.0.0
 
