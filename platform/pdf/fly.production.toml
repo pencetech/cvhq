@@ -1,23 +1,16 @@
-# fly.toml file generated for cvhq-platform-staging on 2023-06-25T16:19:21+01:00
+# fly.toml file generated for cvhq-pdf-production on 2023-08-16T19:36:28+01:00
 
-app = "cvhq-platform-staging"
+app = "cvhq-pdf-production"
 kill_signal = "SIGINT"
 kill_timeout = 5
+mounts = []
 primary_region = "lhr"
 processes = []
 
-[env]
-  PDF_URL = "https://cvhq-pdf-staging.fly.dev/cv"
-
-[experimental]
-  auto_rollback = true
-
 [[services]]
-  http_checks = []
   internal_port = 8080
   processes = ["app"]
   protocol = "tcp"
-  script_checks = []
   [services.concurrency]
     hard_limit = 25
     soft_limit = 20
@@ -31,9 +24,3 @@ processes = []
   [[services.ports]]
     handlers = ["tls", "http"]
     port = 443
-
-  [[services.tcp_checks]]
-    grace_period = "1s"
-    interval = "15s"
-    restart_limit = 0
-    timeout = "2s"

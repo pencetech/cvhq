@@ -3,6 +3,11 @@ package graph
 import "text/template"
 
 var baseSansCSS = `
+@page {
+	size: A4 portait;
+  	margin: 40px 80px;
+}
+
 .msg {
 	padding: 10px;
 	background: #222;
@@ -27,10 +32,6 @@ var baseSansCSS = `
 	font-family: "Plus Jakarta Sans", sans-serif;
   }
   
-  #inner {
-	padding: 10px 80px;
-	margin: 80px auto;
-  }
   .yui-gf {
 	margin-bottom: 2em;
 	padding-bottom: 2em;
@@ -172,6 +173,11 @@ var baseSansCSS = `
   }`
 
 var primeSansCSS = `
+@page {
+	size: A4 portait;
+  	margin: 40px 80px;
+}
+
 .msg {
 	padding: 10px;
 	background: #222;
@@ -196,9 +202,6 @@ var primeSansCSS = `
 	font-family: "Plus Jakarta Sans", sans-serif;
   }
   
-  #inner {
-	margin: 80px auto;
-  }
   .yui-gf {
 	margin-bottom: 2em;
 	padding-bottom: 2em;
@@ -345,9 +348,8 @@ var SansCV = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://w
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
-
 	<link rel="preconnect" href="https://fonts.gstatic.com" />
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" />
 	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" media="all" /> 
 	<style type="text/css">
 		%s

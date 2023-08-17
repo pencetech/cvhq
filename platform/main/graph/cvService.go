@@ -3,9 +3,12 @@ package graph
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -23,6 +26,10 @@ import (
 
 type CVService struct {
 	config *Configuration
+}
+
+type CvPdfInput struct {
+	Html string `json:"html"`
 }
 
 func NewCVService(config *Configuration) *CVService {
@@ -121,17 +128,40 @@ func (c *CVService) ParseTimeCV(input *model.CVContentInput) {
 func (c *CVService) PutCV(html string, filename string) error {
 	accessKey := os.Getenv("AWS_ACCESS_KEY")
 	secretKey := os.Getenv("AWS_SECRET_KEY")
-	pdf := c.HtmlToPdf([]byte(html))
+	
+	var input CvPdfInput
+	input.Html = html
+	var buf bytes.Buffer
+    err := json.NewEncoder(&buf).Encode(input)
+    if err != nil {
+        log.Fatal(err)
+    }
 
-	body := bytes.NewReader(pdf)
+	req, err := http.NewRequest(http.MethodPut, os.Getenv("PDF_URL"), &buf)
+    if err != nil {
+        log.Println("[ERROR] PUT /cv new request error -> ", err)
+		return err
+    }
+
+    req.Header.Set("Content-Type", "application/json")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+		log.Println("[ERROR] PUT /cv error -> ", err)
+		return err
+    }
+    defer resp.Body.Close()
+	bodyByte, err := io.ReadAll(resp.Body)
+	body := bytes.NewReader(bodyByte)
 
 	options := s3.Options{
 		Region:      "eu-west-2",
 		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
 	}
 
-	client := s3.New(options)
-	_, err := client.PutObject(context.TODO(), &s3.PutObjectInput{
+	s3Client := s3.New(options)
+	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String("cvhqcv"),
 		Key:    aws.String(filename),
 		Body:   body,
