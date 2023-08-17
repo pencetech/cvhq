@@ -51,7 +51,13 @@ class PuppeteerApi {
 }
 
 const config = {
-    headless: true
+    executablePath: 'chromium',
+    headless: true,
+    args: [
+        "--no-sandbox",
+        "--disable-gpu",
+        "--single-process"
+    ]
 } as BrowserLaunchArgumentOptions
 
 const browserApi = new PuppeteerApi(config)
