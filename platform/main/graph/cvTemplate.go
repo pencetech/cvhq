@@ -167,6 +167,7 @@ var baseSansCSS = `
   
   .yui-gf .yui-u {
 	width: 82.5%;
+	break-inside: avoid;
   }
   .yui-gf div.first {
 	width: 12.3%;
@@ -335,6 +336,7 @@ var primeSansCSS = `
   
   .yui-gf .yui-u {
 	width: 85%;
+	break-inside: avoid;
   }
   .yui-gf div.first {
 	width: 12.3%;
