@@ -10,6 +10,7 @@ router.put('/', async function(req, res, next) {
   await page.emulateMediaType('screen');
   const pdfBuffer = await page.pdf({
     printBackground: true,
+    preferCSSPageSize: true,
     format: 'A4',
   })
   res.setHeader('Content-Type', "application/pdf")
