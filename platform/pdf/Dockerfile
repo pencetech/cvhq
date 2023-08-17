@@ -19,7 +19,7 @@ RUN apt-get update; apt install -y curl python-is-python3 pkg-config build-essen
 RUN curl https://get.volta.sh | bash
 ENV VOLTA_HOME /root/.volta
 ENV PATH /root/.volta/bin:$PATH
-ENV PATH /root:$PATH
+ENV PATH /usr/bin:$PATH
 RUN volta install node@${NODE_VERSION}
 
 #######################################################################
@@ -44,12 +44,13 @@ FROM debian:bullseye
 
 LABEL fly_launch_runtime="nodejs"
 
-COPY --from=builder /root /root
+COPY --from=builder /root/.volta /root/.volta
+COPY --from=builder /usr/bin /usr/bin
 COPY --from=builder /app /app
 
 WORKDIR /app
 ENV NODE_ENV production
 ENV PATH /root/.volta/bin:$PATH
-ENV PATH /root:$PATH
+ENV PATH /usr/bin:$PATH
 
 CMD [ "npm", "run", "start" ]
