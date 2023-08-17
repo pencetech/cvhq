@@ -51,8 +51,12 @@ class PuppeteerApi {
 }
 
 const config = {
-    executablePath: '/usr/bin/google-chrome',
-    headless: true
+    executablePath: 'google-chrome-stable',
+    headless: true,
+    args: [
+        "--no-sandbox",
+        "--disable-gpu",
+    ]
 } as BrowserLaunchArgumentOptions
 
 const browserApi = new PuppeteerApi(config)
