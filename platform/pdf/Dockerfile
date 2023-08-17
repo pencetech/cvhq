@@ -23,9 +23,6 @@ COPY . .
 
 RUN npm install --production=false
 
-WORKDIR /app/node_modules/puppeteer
-RUN npm install
-
 WORKDIR /app
 FROM debian:bullseye
 
