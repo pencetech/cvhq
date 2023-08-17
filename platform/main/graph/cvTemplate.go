@@ -36,6 +36,7 @@ var baseSansCSS = `
 	margin-bottom: 2em;
 	padding-bottom: 2em;
 	border-bottom: 1px solid #ccc;
+	break-inside: avoid;
   }
   
   /* //-- header, body, footer -- */
@@ -167,7 +168,6 @@ var baseSansCSS = `
   
   .yui-gf .yui-u {
 	width: 82.5%;
-	break-inside: avoid;
   }
   .yui-gf div.first {
 	width: 12.3%;
@@ -207,6 +207,7 @@ var primeSansCSS = `
 	margin-bottom: 2em;
 	padding-bottom: 2em;
 	border-bottom: 1px solid #ccc;
+	break-inside: avoid;
   }
   
   /* //-- header, body, footer -- */
@@ -336,7 +337,6 @@ var primeSansCSS = `
   
   .yui-gf .yui-u {
 	width: 85%;
-	break-inside: avoid;
   }
   .yui-gf div.first {
 	width: 12.3%;
