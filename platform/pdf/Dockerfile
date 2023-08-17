@@ -21,7 +21,7 @@ ENV VOLTA_HOME /root/.volta
 ENV PATH /root/.volta/bin:$PATH
 ENV PATH /usr/bin:$PATH
 RUN volta install node@${NODE_VERSION}
-
+RUN google-chrome-stable --no-sandbox --disable-gpu --headless=true
 #######################################################################
 
 RUN mkdir /app
