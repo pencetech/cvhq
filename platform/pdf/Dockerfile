@@ -43,8 +43,7 @@ FROM debian:bullseye
 
 LABEL fly_launch_runtime="nodejs"
 
-COPY --from=builder /root/.volta /root/.volta
-COPY --from=builder /root/.google-chrome-stable /root/.google-chrome-stable
+COPY --from=builder /root /root
 COPY --from=builder /app /app
 
 WORKDIR /app
