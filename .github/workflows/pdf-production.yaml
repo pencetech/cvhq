@@ -15,5 +15,7 @@ jobs:
         working-directory: ./platform/pdf
     steps:
       - uses: actions/checkout@v3
+      - name: Install Typescript
+        run: npm install tsc
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only -t ${{ secrets.FLY_API_TOKEN_CVHQ }} --config ./fly.production.toml
