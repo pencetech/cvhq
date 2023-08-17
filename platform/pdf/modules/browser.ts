@@ -51,6 +51,7 @@ class PuppeteerApi {
 }
 
 const config = {
+    executablePath: '/usr/bin/google-chrome',
     headless: true
 } as BrowserLaunchArgumentOptions
 
