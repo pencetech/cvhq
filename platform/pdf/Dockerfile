@@ -1,4 +1,4 @@
-FROM debian:bullseye as builder
+FROM node:18-slim
 
 ARG NODE_VERSION=18.0.0
 
@@ -29,19 +29,13 @@ ENV NODE_ENV production
 COPY . .
 
 RUN npm install --production=false
-FROM debian:bullseye
 
 LABEL fly_launch_runtime="nodejs"
 
 # We don't need the standalone Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
-COPY --from=builder /usr/bin /usr/bin
-COPY --from=builder /app /app
-
 WORKDIR /app
 ENV NODE_ENV production
-ENV PATH /root/.volta/bin:$PATH
-ENV PATH /usr/bin:$PATH
 
 CMD [ "npm", "run", "start" ]
