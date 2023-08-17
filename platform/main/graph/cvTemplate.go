@@ -5,7 +5,7 @@ import "text/template"
 var baseSansCSS = `
 @page {
 	size: A4 portait;
-  	margin: 10px 80px;
+  	margin: 40px 80px;
 }
 
 .msg {
