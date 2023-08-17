@@ -36,7 +36,6 @@ var baseSansCSS = `
 	margin-bottom: 2em;
 	padding-bottom: 2em;
 	border-bottom: 1px solid #ccc;
-	break-inside: avoid;
   }
   
   /* //-- header, body, footer -- */
@@ -207,7 +206,6 @@ var primeSansCSS = `
 	margin-bottom: 2em;
 	padding-bottom: 2em;
 	border-bottom: 1px solid #ccc;
-	break-inside: avoid;
   }
   
   /* //-- header, body, footer -- */
