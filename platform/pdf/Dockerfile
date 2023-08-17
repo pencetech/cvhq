@@ -15,7 +15,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PATH /usr/bin:$PATH
-RUN google-chrome-stable --no-sandbox --disable-gpu --headless=true
 #######################################################################
 
 RUN mkdir /app
