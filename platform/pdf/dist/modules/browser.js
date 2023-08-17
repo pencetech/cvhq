@@ -127,7 +127,13 @@ var PuppeteerApi = /** @class */ (function () {
     return PuppeteerApi;
 }());
 var config = {
-    headless: true
+    // executablePath: 'chromium',
+    headless: true,
+    // args: [
+    //     "--no-sandbox",
+    //     "--disable-gpu",
+    //     "--single-process"
+    // ]
 };
 var browserApi = new PuppeteerApi(config);
 exports.default = browserApi;

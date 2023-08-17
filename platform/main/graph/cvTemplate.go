@@ -3,6 +3,11 @@ package graph
 import "text/template"
 
 var baseSansCSS = `
+@page {
+	size: A4 portait;
+  	margin: 10px 80px;
+}
+
 .msg {
 	padding: 10px;
 	background: #222;
@@ -27,10 +32,6 @@ var baseSansCSS = `
 	font-family: "Plus Jakarta Sans", sans-serif;
   }
   
-  #inner {
-	padding: 10px 80px;
-	margin: 80px auto;
-  }
   .yui-gf {
 	margin-bottom: 2em;
 	padding-bottom: 2em;
@@ -172,6 +173,11 @@ var baseSansCSS = `
   }`
 
 var primeSansCSS = `
+@page {
+	size: A4 portait;
+  	margin: 10px 80px;
+}
+
 .msg {
 	padding: 10px;
 	background: #222;
@@ -196,9 +202,6 @@ var primeSansCSS = `
 	font-family: "Plus Jakarta Sans", sans-serif;
   }
   
-  #inner {
-	margin: 80px auto;
-  }
   .yui-gf {
 	margin-bottom: 2em;
 	padding-bottom: 2em;
