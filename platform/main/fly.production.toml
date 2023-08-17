@@ -7,6 +7,7 @@ primary_region = "lhr"
 processes = []
 
 [env]
+  PDF_URL = "https://cvhq-pdf-production.fly.dev/cv"
 
 [experimental]
   auto_rollback = true
