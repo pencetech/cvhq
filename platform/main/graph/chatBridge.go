@@ -3,7 +3,6 @@ package graph
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"regexp"
 	"strings"
@@ -32,7 +31,7 @@ func (c *ChatBridge) InjectPrompt(prompt string, data any) (string, error) {
 }
 
 func (c *ChatBridge) ChatCompletion(content string) (string, error) {
-	client := openai.NewClient(os.Getenv("OPENAI_KEY"))
+	client := openai.NewClient(c.config.OpenAIKey)
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{

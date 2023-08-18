@@ -9,7 +9,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -39,8 +38,8 @@ func NewCVService(config *Configuration) *CVService {
 }
 
 func (c *CVService) GetCV(filename string) ([]byte, error) {
-	accessKey := os.Getenv("AWS_ACCESS_KEY")
-	secretKey := os.Getenv("AWS_SECRET_KEY")
+	accessKey := c.config.AWSAccessKey
+	secretKey := c.config.AWSSecretKey
 	options := s3.Options{
 		Region:      "eu-west-2",
 		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
@@ -126,8 +125,8 @@ func (c *CVService) ParseTimeCV(input *model.CVContentInput) {
 }
 
 func (c *CVService) PutCV(html string, filename string) error {
-	accessKey := os.Getenv("AWS_ACCESS_KEY")
-	secretKey := os.Getenv("AWS_SECRET_KEY")
+	accessKey := c.config.AWSAccessKey
+	secretKey := c.config.AWSSecretKey
 	
 	var input CvPdfInput
 	input.Html = html
@@ -137,7 +136,7 @@ func (c *CVService) PutCV(html string, filename string) error {
         log.Fatal(err)
     }
 
-	req, err := http.NewRequest(http.MethodPut, os.Getenv("PDF_URL"), &buf)
+	req, err := http.NewRequest(http.MethodPut, c.config.PDFUrl, &buf)
     if err != nil {
         log.Println("[ERROR] PUT /cv new request error -> ", err)
 		return err
