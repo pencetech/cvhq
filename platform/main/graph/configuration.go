@@ -26,7 +26,7 @@ func NewConfiguration() *Configuration {
 	}
 	fmt.Println("Configuration added")
 
-	if os.Getenv("APP_ENV") != "prod" ||  
+	if os.Getenv("APP_ENV") != "prod" &&  
 	os.Getenv("APP_ENV") != "demo" {
 		err := godotenv.Load()
 		if err != nil {
@@ -38,6 +38,6 @@ func NewConfiguration() *Configuration {
 	conf.AWSSecretKey = os.Getenv("AWS_SECRET_KEY")
 	conf.OpenAIKey = os.Getenv("OPENAI_KEY")
 	conf.PDFUrl = os.Getenv("PDF_URL")
-	
+
 	return &conf
 }
