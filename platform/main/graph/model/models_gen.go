@@ -115,6 +115,17 @@ type Match struct {
 	Reason      string `json:"reason"`
 }
 
+type SampleCv struct {
+	Experiences []*Experience `json:"experiences"`
+}
+
+type SampleCvInput struct {
+	Title             string `json:"title"`
+	YearsOfExperience int    `json:"yearsOfExperience"`
+	Sector            string `json:"sector"`
+	JobRequirements   string `json:"jobRequirements"`
+}
+
 type Skillset struct {
 	Skillsets string `json:"skillsets"`
 }

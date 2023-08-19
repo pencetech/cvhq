@@ -3,7 +3,6 @@ package graph
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"regexp"
 	"strings"
@@ -32,7 +31,7 @@ func (c *ChatBridge) InjectPrompt(prompt string, data any) (string, error) {
 }
 
 func (c *ChatBridge) ChatCompletion(content string) (string, error) {
-	client := openai.NewClient(os.Getenv("OPENAI_KEY"))
+	client := openai.NewClient(c.config.OpenAIKey)
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
@@ -54,7 +53,32 @@ func (c *ChatBridge) ChatCompletion(content string) (string, error) {
 	return resp.Choices[0].Message.Content, nil
 }
 
+func (c *ChatBridge) ChatCompletionWithSystemPrompt(system string, content string) (string, error) {
+	client := openai.NewClient(c.config.OpenAIKey)
+	resp, err := client.CreateChatCompletion(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model: openai.GPT4,
+			Messages: []openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleSystem,
+					Content: system,
+				},
+				{
+					Role:    openai.ChatMessageRoleUser,
+					Content: content,
+				},
+			},
+		},
+	)
 
+	if err != nil {
+		fmt.Printf("ChatCompletion error: %v\n", err)
+		return "", err
+	}
+
+	return resp.Choices[0].Message.Content, nil
+}
 
 func (c *ChatBridge) escapeNewline(rawStr *string) string {
 	matchNewlines := regexp.MustCompile(`[\r\n]`)

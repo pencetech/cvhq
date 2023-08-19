@@ -112,6 +112,32 @@ func (r *mutationResolver) GenerateSummary(ctx context.Context, input model.CvIn
 	return &summary, nil
 }
 
+// GenerateSampleCv is the resolver for the generateSampleCv field.
+func (r *mutationResolver) GenerateSampleCv(ctx context.Context, input model.SampleCvInput) (*model.SampleCv, error) {
+	var sample model.SampleCv
+
+	content, err := r.ChatBridge.InjectPrompt(SampleCvPrompt, input)
+	if err != nil {
+		log.Println("ERROR: prompt injection failed -> ", err)
+		return nil, err
+	}
+	
+	objStr, err := r.ChatBridge.ChatCompletionWithSystemPrompt(SampleCvSystemPrompt, content)
+	fmt.Print(objStr)
+	if err != nil {
+		log.Println("ERROR: chat completion failed -> ", err)
+		return nil, err
+	}
+	lineEscapedObjStr := r.ChatBridge.escapeNewline(&objStr)
+	err = json.Unmarshal([]byte(lineEscapedObjStr), &sample.Experiences)
+	if err != nil {
+		log.Println("ERROR: JSON unmarshaling failed -> ", err)
+		return nil, err
+	}
+
+	return &sample, nil
+}
+
 // Filename is the resolver for the filename field.
 func (r *queryResolver) Filename(ctx context.Context) ([]*model.CvFile, error) {
 	panic(fmt.Errorf("not implemented: Filename - filename"))

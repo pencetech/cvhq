@@ -136,6 +136,17 @@ input AchievementInput {
   experience: ExperienceInput!
 }
 
+input SampleCvInput {
+  title: String!
+  yearsOfExperience: Int!
+  sector: String!
+  jobRequirements: String!
+}
+
+type SampleCv {
+  experiences: [Experience!]!
+}
+
 type EnhancedAchievement {
   match: Match!
   achievements: String!
@@ -150,6 +161,7 @@ type Mutation {
   enhanceAchievement(input: AchievementInput!): EnhancedAchievement!
   generateCV(input: CvInput!): CvFile! # With summary check!
   generateSummary(input: CvInput!): Summary!
+  generateSampleCv(input: SampleCvInput!): SampleCv!
 }
 
 enum CvType {
