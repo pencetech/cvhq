@@ -106,12 +106,17 @@ type ComplexityRoot struct {
 	Mutation struct {
 		EnhanceAchievement func(childComplexity int, input model.AchievementInput) int
 		GenerateCv         func(childComplexity int, input model.CvInput) int
+		GenerateSampleCv   func(childComplexity int, input model.SampleCvInput) int
 		GenerateSummary    func(childComplexity int, input model.CvInput) int
 	}
 
 	Query struct {
 		Filename func(childComplexity int) int
 		Summary  func(childComplexity int, id string) int
+	}
+
+	SampleCv struct {
+		Experiences func(childComplexity int) int
 	}
 
 	Skillset struct {
@@ -135,6 +140,7 @@ type MutationResolver interface {
 	EnhanceAchievement(ctx context.Context, input model.AchievementInput) (*model.EnhancedAchievement, error)
 	GenerateCv(ctx context.Context, input model.CvInput) (*model.CvFile, error)
 	GenerateSummary(ctx context.Context, input model.CvInput) (*model.Summary, error)
+	GenerateSampleCv(ctx context.Context, input model.SampleCvInput) (*model.SampleCv, error)
 }
 type QueryResolver interface {
 	Filename(ctx context.Context) ([]*model.CvFile, error)
@@ -418,6 +424,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.GenerateCv(childComplexity, args["input"].(model.CvInput)), true
 
+	case "Mutation.generateSampleCv":
+		if e.complexity.Mutation.GenerateSampleCv == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_generateSampleCv_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.GenerateSampleCv(childComplexity, args["input"].(model.SampleCvInput)), true
+
 	case "Mutation.generateSummary":
 		if e.complexity.Mutation.GenerateSummary == nil {
 			break
@@ -448,6 +466,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Summary(childComplexity, args["id"].(string)), true
+
+	case "SampleCv.experiences":
+		if e.complexity.SampleCv.Experiences == nil {
+			break
+		}
+
+		return e.complexity.SampleCv.Experiences(childComplexity), true
 
 	case "Skillset.skillsets":
 		if e.complexity.Skillset.Skillsets == nil {
@@ -512,6 +537,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputEducationInput,
 		ec.unmarshalInputExperienceInput,
 		ec.unmarshalInputJobPostingInput,
+		ec.unmarshalInputSampleCvInput,
 		ec.unmarshalInputSkillsetInput,
 		ec.unmarshalInputSummaryInput,
 		ec.unmarshalInputUserBioInput,
@@ -653,6 +679,21 @@ func (ec *executionContext) field_Mutation_generateCV_args(ctx context.Context, 
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNCvInput2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐCvInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_generateSampleCv_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.SampleCvInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNSampleCvInput2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSampleCvInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2479,6 +2520,65 @@ func (ec *executionContext) fieldContext_Mutation_generateSummary(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_generateSampleCv(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_generateSampleCv(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().GenerateSampleCv(rctx, fc.Args["input"].(model.SampleCvInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SampleCv)
+	fc.Result = res
+	return ec.marshalNSampleCv2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSampleCv(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_generateSampleCv(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "experiences":
+				return ec.fieldContext_SampleCv_experiences(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SampleCv", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_generateSampleCv_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_filename(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_filename(ctx, field)
 	if err != nil {
@@ -2712,6 +2812,68 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SampleCv_experiences(ctx context.Context, field graphql.CollectedField, obj *model.SampleCv) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SampleCv_experiences(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Experiences, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Experience)
+	fc.Result = res
+	return ec.marshalNExperience2ᚕᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐExperienceᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SampleCv_experiences(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SampleCv",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Experience_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Experience_title(ctx, field)
+			case "company":
+				return ec.fieldContext_Experience_company(ctx, field)
+			case "sector":
+				return ec.fieldContext_Experience_sector(ctx, field)
+			case "isCurrent":
+				return ec.fieldContext_Experience_isCurrent(ctx, field)
+			case "startDate":
+				return ec.fieldContext_Experience_startDate(ctx, field)
+			case "endDate":
+				return ec.fieldContext_Experience_endDate(ctx, field)
+			case "achievements":
+				return ec.fieldContext_Experience_achievements(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Experience", field.Name)
 		},
 	}
 	return fc, nil
@@ -5197,6 +5359,62 @@ func (ec *executionContext) unmarshalInputJobPostingInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSampleCvInput(ctx context.Context, obj interface{}) (model.SampleCvInput, error) {
+	var it model.SampleCvInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"title", "yearsOfExperience", "sector", "jobRequirements"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Title = data
+		case "yearsOfExperience":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearsOfExperience"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.YearsOfExperience = data
+		case "sector":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sector"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Sector = data
+		case "jobRequirements":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("jobRequirements"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.JobRequirements = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSkillsetInput(ctx context.Context, obj interface{}) (model.SkillsetInput, error) {
 	var it model.SkillsetInput
 	asMap := map[string]interface{}{}
@@ -5786,6 +6004,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "generateSampleCv":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_generateSampleCv(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5880,6 +6105,45 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var sampleCvImplementors = []string{"SampleCv"}
+
+func (ec *executionContext) _SampleCv(ctx context.Context, sel ast.SelectionSet, obj *model.SampleCv) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sampleCvImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SampleCv")
+		case "experiences":
+			out.Values[i] = ec._SampleCv_experiences(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6645,6 +6909,21 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) marshalNJobPosting2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐJobPosting(ctx context.Context, sel ast.SelectionSet, v *model.JobPosting) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -6668,6 +6947,25 @@ func (ec *executionContext) marshalNMatch2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋg
 		return graphql.Null
 	}
 	return ec._Match(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSampleCv2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSampleCv(ctx context.Context, sel ast.SelectionSet, v model.SampleCv) graphql.Marshaler {
+	return ec._SampleCv(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSampleCv2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSampleCv(ctx context.Context, sel ast.SelectionSet, v *model.SampleCv) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SampleCv(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNSampleCvInput2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSampleCvInput(ctx context.Context, v interface{}) (model.SampleCvInput, error) {
+	res, err := ec.unmarshalInputSampleCvInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
