@@ -20,6 +20,21 @@ mutation generateSummary($input: CvInput!) {
     }
 }
 `
+const GENERATE_SAMPLE_CV = gql`
+    mutation generateSampleCv($input: SampleCvInput!) {
+        generateSampleCv(input: $input) {
+            experiences {
+                title
+                company
+                sector
+                isCurrent
+                startDate
+                endDate
+                achievements
+            }
+        }
+    }
+`
 
 const MOCK_GENERATED_EXPERIENCE = [{
     id: 1,
@@ -102,6 +117,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     });
 
     const [generateSummary, { data: graphSummaryData, loading: generateSummaryLoading }] = useMutation<Mutation>(GENERATE_SUMMARY);
+    const [generateSampleCv, { data: sampleCvData, loading: sampleCvLoading }] = useMutation<Mutation>(GENERATE_SAMPLE_CV);
 
     const handleRetrySummary = async () => {
         setLoading(true);
@@ -252,12 +268,22 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         }, { onConflict: 'profile_id' })
     }
 
-    const handleCvSelect = (value: string) => {
+    const handleCvSelect = async (value: string) => {
         setIsPreferenceChosen(true);
         if (value == "pre-filled") {
-            // call the API and pre-fill formData
+            const { data } = await generateSampleCv({
+                variables: {
+                    input: {
+                        title: formData.jobPosting.title,
+                        company: formData.jobPosting.company,
+                        sector: formData.jobPosting.company,
+                        jobRequirements: formData.jobPosting.requirements
+                    }
+                }
+            })
+
             const mockExperience = {
-                experiences: MOCK_GENERATED_EXPERIENCE
+                experiences: data?.generateSampleCv.experiences
             }
             setFormData(oldData => ({ ...oldData, ...mockExperience }))
         }

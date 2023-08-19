@@ -27,7 +27,7 @@ export type CvContent = {
   education: Array<Education>;
   experiences: Array<Experience>;
   skillsets?: Maybe<Skillset>;
-  summary?: Maybe<Scalars['String']['output']>;
+  summary: Summary;
   userBio: UserBio;
 };
 
@@ -35,7 +35,7 @@ export type CvContentInput = {
   education: Array<EducationInput>;
   experiences: Array<ExperienceInput>;
   skillsets?: InputMaybe<SkillsetInput>;
-  summary?: InputMaybe<Scalars['String']['input']>;
+  summary: SummaryInput;
   userBio: UserBioInput;
 };
 
@@ -49,6 +49,7 @@ export type Cv = {
 
 export type CvFile = {
   __typename?: 'CvFile';
+  createdAt: Scalars['String']['output'];
   filename: Scalars['String']['output'];
 };
 
@@ -139,6 +140,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   enhanceAchievement: EnhancedAchievement;
   generateCV: CvFile;
+  generateSampleCv: SampleCv;
   generateSummary: Summary;
 };
 
@@ -150,6 +152,11 @@ export type MutationEnhanceAchievementArgs = {
 
 export type MutationGenerateCvArgs = {
   input: CvInput;
+};
+
+
+export type MutationGenerateSampleCvArgs = {
+  input: SampleCvInput;
 };
 
 
@@ -168,6 +175,18 @@ export type QuerySummaryArgs = {
   id: Scalars['ID']['input'];
 };
 
+export type SampleCv = {
+  __typename?: 'SampleCv';
+  experiences: Array<Experience>;
+};
+
+export type SampleCvInput = {
+  jobRequirements: Scalars['String']['input'];
+  sector: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  yearsOfExperience: Scalars['Int']['input'];
+};
+
 export type Skillset = {
   __typename?: 'Skillset';
   skillsets: Scalars['String']['output'];
@@ -180,6 +199,10 @@ export type SkillsetInput = {
 export type Summary = {
   __typename?: 'Summary';
   summary: Scalars['String']['output'];
+};
+
+export type SummaryInput = {
+  summary: Scalars['String']['input'];
 };
 
 export type UserBio = {
@@ -199,6 +222,20 @@ export type UserBioInput = {
   phone: Scalars['String']['input'];
 };
 
+export type GenerateCvMutationVariables = Exact<{
+  input: CvInput;
+}>;
+
+
+export type GenerateCvMutation = { __typename?: 'Mutation', generateCV: { __typename?: 'CvFile', filename: string } };
+
+export type GenerateSummaryMutationVariables = Exact<{
+  input: CvInput;
+}>;
+
+
+export type GenerateSummaryMutation = { __typename?: 'Mutation', generateSummary: { __typename?: 'Summary', summary: string } };
+
 export type EnhanceAchievementMutationVariables = Exact<{
   input: AchievementInput;
 }>;
@@ -207,4 +244,6 @@ export type EnhanceAchievementMutationVariables = Exact<{
 export type EnhanceAchievementMutation = { __typename?: 'Mutation', enhanceAchievement: { __typename?: 'EnhancedAchievement', achievements: string, match: { __typename?: 'Match', matchFactor?: number | null, reason: string } } };
 
 
+export const GenerateCvDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"generateCV"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CvInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"generateCV"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filename"}}]}}]}}]} as unknown as DocumentNode<GenerateCvMutation, GenerateCvMutationVariables>;
+export const GenerateSummaryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"generateSummary"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CvInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"generateSummary"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"summary"}}]}}]}}]} as unknown as DocumentNode<GenerateSummaryMutation, GenerateSummaryMutationVariables>;
 export const EnhanceAchievementDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"enhanceAchievement"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AchievementInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"enhanceAchievement"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"match"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"matchFactor"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}}]}},{"kind":"Field","name":{"kind":"Name","value":"achievements"}}]}}]}}]} as unknown as DocumentNode<EnhanceAchievementMutation, EnhanceAchievementMutationVariables>;
