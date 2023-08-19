@@ -10,6 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.26
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.35.0
 	github.com/go-chi/chi v1.5.4
+	github.com/joho/godotenv v1.5.1
 	github.com/rs/cors v1.9.0
 	github.com/sashabaranov/go-openai v1.11.3
 	github.com/vektah/gqlparser/v2 v2.5.3
@@ -31,7 +32,6 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.4 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/urfave/cli/v2 v2.25.7 // indirect

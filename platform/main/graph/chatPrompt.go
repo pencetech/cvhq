@@ -144,13 +144,13 @@ and "achievements" is the improved and rewritten version of {{ .UserBio.FirstNam
 
 Rule 2: "match" has to be a short summary (less than 400 characters) of which key job requirements are either a match or not a match to their current experience.
 
-Rule 3: "achievements" bullet points must contain the impact to the business and can be quantified in a numerical sense. An example of this is (begin list) " - Automated treasury  system saving 70% time year per year. - Optimised transactions , leading to 50% cut in data processing time. - Contributed to territory expansion leading to new 100 clients per quarter. - Drove 120% increased revenue in Finance sector clients." (end of list).
+Rule 3: "achievements" bullet points must contain the impact to the business and can be quantified in a numerical sense. An example of this is (begin list) " - Automated treasury  system saving 70%% time year per year. - Optimised transactions , leading to 50%% cut in data processing time. - Contributed to territory expansion leading to new 100 clients per quarter. - Drove 120%% increased revenue in Finance sector clients." (end of list).
 
 Rule 4: "achievements" doesnt exceed 5 bullet points.
 
 Rule 5: "achievements" must not just duplicate words from the listed job requirements, you'll end up making up things that are not true! 
 
-Rule 6: "achievements" at least 2/3 of the bullet points must contain the impact to the business and can be quantified in a numerical sense. Always include a numeric,percentage, or KPI-specific information. An example of this is (begin list) " - Automated treasury  system saving 70% time year per year. - Optimised transactions , leading to 50% cut in data processing time. - Contributed to territory expansion leading to new 100 clients per quarter. - Drove 120% increased revenue in Finance sector clients." (end of list).
+Rule 6: "achievements" at least 2/3 of the bullet points must contain the impact to the business and can be quantified in a numerical sense. Always include a numeric,percentage, or KPI-specific information. An example of this is (begin list) " - Automated treasury  system saving 70% time year per year. - Optimised transactions , leading to 50%% cut in data processing time. - Contributed to territory expansion leading to new 100 clients per quarter. - Drove 120%% increased revenue in Finance sector clients." (end of list).
 `
 
 var EnhanceAchievementPrompt2 = `{{ .UserBio.FirstName }} {{ .UserBio.LastName }} is currently a {{ .Experience.Title }} at {{ .Experience.Company }}, 
@@ -250,3 +250,91 @@ As the last section, do not insert "---" as a line separator in the markdown for
 In the case where "skillsets" is not in the CV, DO NOT insert "---" as the line separator after the "education" section.
 
  DO NOT put any note or any disclaimer in the markdown or the result of this prompt.`
+
+ var SampleCvSystemPrompt = `You are a professional CV writer, CV coach and HR coach.`
+
+ var SampleCvPrompt = `
+**Prompt**
+
+Imagine you are a professional resume writer tasked with creating a compelling CV example for {{ .Title }} with {{ .YearsOfExperience }} years of experience in the 
+{{ .Sector }} sector. The CV should showcase three job experiences, each with 3-4 bullet points highlighting professional achievements relevant to the respective job roles. The biography, education, and skillset sections should be excluded.
+Given this context, please generate a stunning CV example that impressively represents the {{ .Title }}'s skills and accomplishments. Remember to focus on the three job experiences, emphasizing the professional achievements within each role. Aim to make the CV engaging and persuasive, highlighting the {{ .Title }}'s relevant expertise to catch the attention of potential employers.
+
+**What you will see:**
+Professional Resume Writer Task: Create a CV example for a {{ .Title }} with {{ .YearsOfExperience }} years of experience in the {{ .Sector }}
+sector. Exclude biography, education, and skillset sections.
+
+**What you need to do:**
+
+Generate an impressive CV example that showcases three job experiences, each with 3-4 bullet points highlighting professional achievements relevant to the respective job roles. Ensure the CV is engaging and persuasive, focusing on the expertise to catch the attention of potential employers. 
+
+The output has to follow this JSON format for each of the job experience:
+
+{
+	"title": string, 
+   
+   "company": string,
+   
+   "sector": string,
+   
+	"isCurrent": boolean,
+   
+   "startDate": string,
+   
+   "endDate": string | null,
+   
+	"achievements": string,
+   }
+
+The content has to demonstrate meeting most of the following job requirements: (begin list) " 
+
+{{ .JobRequirements }}
+
+" (end of list).
+
+**This is the sample output of the CV example of a project manager:**
+
+Project Manager, ABC Company (November 2019 - Present)
+
+- Successfully led a cross-functional team of 10 members to deliver a complex software project, resulting in a 20%% increase in efficiency.
+
+- Implemented Agile methodologies, resulting in a 30%% decrease in project timeline and improved collaboration among team members.
+
+- Managed project budget of $1 million, consistently delivering within 5%% deviation.
+
+Assistant Project Manager, XYZ Corporation (April 2017 - November 2019)
+
+- Assisted in the execution of a large-scale construction project, achieving project completion ahead of schedule and under budget.
+
+- Led the implementation of a new project management software, resulting in a 25%% increase in team productivity.
+
+- Streamlined communication channels between stakeholders, mitigating potential conflicts and ensuring smooth project progression.
+
+Project Coordinator, DEF Solutions (November 2016 - April 2017)
+
+- Coordinated project activities, ensuring timely execution and adherence to quality standards.
+
+- Developed and implemented a risk management strategy, reducing project risks by 15%%.
+
+- Assisted in the development of project plans and timelines, contributing to the successful completion of multiple projects.
+
+
+Remember, do NOT include the test case scenarios and expected outputs in your prompt.
+
+Only respond as a JSON array of this object:
+{
+	"title": string, 
+   
+   "company": string,
+   
+   "sector": string,
+   
+	"isCurrent": boolean,
+   
+   "startDate": string ("2023-08-19T13:15:48Z" for example),
+   
+   "endDate": string ("2023-08-19T13:15:48Z" for example)| null,
+   
+	"achievements": string (with \n newline please),
+   }
+`
