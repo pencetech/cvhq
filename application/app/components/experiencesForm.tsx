@@ -69,13 +69,26 @@ const ExperiencesForm = (props: OtherProps) => {
         remover: (i: number) => void
         ) => CollapseProps['items'] = (panelStyle, formProps, values, remover) => {
 
-            const errCount = (index: number) => formProps.errors.experiences && formProps.errors.experiences[index] ?
-                countErrors(formProps.errors.experiences[index] as FormikErrors<Experience>[]) : 0;
-                
+            const errCount = (index: number) => {
+                if (formProps.errors.experiences && formProps.errors.experiences[index]) {
+                    const filteredError = Object.entries(formProps.errors.experiences[index])
+                        .filter((field, i) => {
+                            if (formProps.touched.experiences && formProps.touched.experiences[index]) {
+                                const touchedExperience = formProps.touched.experiences[index]
+                                return touchedExperience[field[0]]
+                            }
+                        })
+                    return countErrors(formProps.errors.experiences[index] as FormikErrors<Experience>[]);
+                } else {
+                    return 0;
+                }
+            }
+
             return values.map((value, index) => ({
                 key: index + 1,
                 label: (<Space>
-                            <Typography.Text>{`Experience ${index + 1}`}</Typography.Text>
+                            <Typography.Text>{formProps.values.experiences[index].company ? 
+                            formProps.values.experiences[index].company : `Experience ${index + 1}`}</Typography.Text>
                             {errCount(index) ?
                                 <Tag icon={<CloseCircleOutlined />} color="error">
                                   {`${errCount(index)} ${errCount(index) > 1 ? "errors" : "error"}`}
@@ -117,7 +130,7 @@ const ExperiencesForm = (props: OtherProps) => {
                 return (
                     <Form {...formItemLayout} layout="vertical">
                          <Row gutter={24}>
-                            <Col span={isIntro ? 12 : 24}>
+                            <Col span={isIntro ? 16 : 24}>
                                 <div style={{ marginBottom: "12px"}}>
                                     <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>    
                                     {description ? <div style={{ marginLeft: "12px" }}>
@@ -163,7 +176,7 @@ const ExperiencesForm = (props: OtherProps) => {
                                     )}
                                 />
                             </Col>
-                        {isIntro ? <Col span={12}>
+                        {isIntro ? <Col span={8}>
                             <ReadOnlyJobPosting jobPosting={jobPosting} />
                         </Col> : null}
                         </Row>

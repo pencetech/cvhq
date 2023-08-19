@@ -24,6 +24,7 @@ const GENERATE_SAMPLE_CV = gql`
     mutation generateSampleCv($input: SampleCvInput!) {
         generateSampleCv(input: $input) {
             experiences {
+                id
                 title
                 company
                 sector
@@ -35,6 +36,8 @@ const GENERATE_SAMPLE_CV = gql`
         }
     }
 `
+
+const YEARS_OF_EXPERIENCE = 3;
 
 const MOCK_GENERATED_EXPERIENCE = [{
     id: 1,
@@ -275,17 +278,27 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 variables: {
                     input: {
                         title: formData.jobPosting.title,
-                        company: formData.jobPosting.company,
-                        sector: formData.jobPosting.company,
+                        yearsOfExperience: YEARS_OF_EXPERIENCE,
+                        sector: formData.jobPosting.sector,
                         jobRequirements: formData.jobPosting.requirements
                     }
                 }
             })
-
-            const mockExperience = {
-                experiences: data?.generateSampleCv.experiences
+            if (data?.generateSampleCv.experiences) {
+                const mockExperience = {
+                    experiences: data?.generateSampleCv.experiences.map(exp => ({
+                        id: Number(exp.id),
+                        title: exp.title,
+                        company: exp.company,
+                        sector: exp.sector,
+                        isCurrent: exp.isCurrent,
+                        startDate: exp.startDate,
+                        endDate: exp.endDate ? exp.endDate : '',
+                        achievements: exp.achievements
+                    }))
+                }
+                setFormData(oldData => ({ ...oldData, ...mockExperience }))
             }
-            setFormData(oldData => ({ ...oldData, ...mockExperience }))
         }
         handleCancelCvModal();
         // if pre-filled, query list of experiences from prompts
@@ -440,6 +453,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             nextLink="/dashboard/home" 
             />
             <SelectCvOptionModal 
+                loading={sampleCvLoading}
                 title="Pick your preference"
                 onSelect={handleCvSelect}
                 onCancel={handleCancelCvModal}

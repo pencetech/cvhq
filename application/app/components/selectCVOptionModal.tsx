@@ -1,10 +1,11 @@
 "use client";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { Button, List, Modal, Typography } from "antd";
+import { Button, List, Modal, Spin, Typography } from "antd";
 
-const SelectCvOptionModal = ({ onSelect, onCancel, open, title }: { 
+const SelectCvOptionModal = ({ onSelect, onCancel, loading, open, title }: { 
     onSelect: ((value: "pre-filled" | "empty") => void),
-    onCancel: (() => void)
+    onCancel: (() => void),
+    loading: boolean,
     open: boolean,
     title: string
 }) => {
@@ -22,6 +23,29 @@ const SelectCvOptionModal = ({ onSelect, onCancel, open, title }: {
         }
     ]
 
+    const CvOption = () => (<List
+        itemLayout="horizontal"
+        dataSource={dataSource}
+        renderItem={(item, _) => (
+            <List.Item
+            actions={[
+                <Button 
+                key="download" 
+                type="primary" 
+                icon={<ArrowRightOutlined />} 
+                onClick={() => onSelect(item.key)}>
+                    Create    
+                </Button>
+            ]}
+            >
+            <List.Item.Meta
+                title={<Typography.Title level={5}>{item.label}</Typography.Title>}
+                description={item.description}
+            />
+            </List.Item>
+        )}
+    />)
+
     return (
         <Modal
             title={title}
@@ -30,28 +54,12 @@ const SelectCvOptionModal = ({ onSelect, onCancel, open, title }: {
             footer={null}
             onCancel={onCancel}
         >
-            <List
-                itemLayout="horizontal"
-                dataSource={dataSource}
-                renderItem={(item, _) => (
-                    <List.Item
-                    actions={[
-                        <Button 
-                        key="download" 
-                        type="primary" 
-                        icon={<ArrowRightOutlined />} 
-                        onClick={() => onSelect(item.key)}>
-                            Create    
-                        </Button>
-                    ]}
-                    >
-                    <List.Item.Meta
-                        title={<Typography.Title level={5}>{item.label}</Typography.Title>}
-                        description={item.description}
-                    />
-                    </List.Item>
-                )}
-            />
+            {loading ? 
+            <Spin tip="Loading. our minions might take a while to finish..." size="large">
+                <CvOption /> 
+            </Spin> :
+            <CvOption />
+            }
         </Modal>
     )
 }
