@@ -49,7 +49,7 @@ const ExperiencePlusCard: FC<ExperiencePlusCardProps> = ({
 
     const handleAdd = (value: string, achievementIndex: number) => {
         const currAchievements = formProps.values.experiences[index].achievements
-        formProps.setFieldValue(`experiences[${index}].achievements`, currAchievements + value)
+        formProps.setFieldValue(`experiences[${index}].achievements`, currAchievements + "\n" + value)
         formProps.setFieldTouched(`experiences[${index}].achievements`, true, false)
         setAchievements(list => list.map((item, i) => // Array.protptype.map creates new array
             i === achievementIndex
@@ -64,12 +64,26 @@ const ExperiencePlusCard: FC<ExperiencePlusCardProps> = ({
     const handleEnhance = () => {
         console.log("Achievements enhancing...");
     }
+
+    const enhancementTitle = () => {
+        let baseTitle = "Enhancements"
+
+        if (formProps.values.experiences[index].title) {
+            baseTitle = baseTitle + ": " + formProps.values.experiences[index].title 
+        } 
+        
+        if (formProps.values.experiences[index].company) {
+            baseTitle = baseTitle + ", " + formProps.values.experiences[index].company
+        }
+
+        return baseTitle;
+    }
     
     return (
         <>
             <ExperienceCardForm formProps={formProps} index={index} onEnhance={handleEnhance} />
             <Divider orientation="left" orientationMargin="0">
-                <Typography.Title level={4} style={{ margin: 0 }}>{`Enhancements: ${formProps.values.experiences[index].title}, ${formProps.values.experiences[index].company}`}</Typography.Title>
+                <Typography.Title level={4} style={{ margin: 0 }}>{enhancementTitle()}</Typography.Title>
             </Divider>
             <AchievementPlus loading={loading} achievements={achievements} onAdd={handleAdd} />
         </>

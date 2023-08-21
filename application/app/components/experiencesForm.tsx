@@ -1,15 +1,15 @@
 "use client";
 import React from 'react';
-import { Formik, FieldArray, FormikProps, FormikErrors } from "formik";
+import { Formik, FieldArray, FormikProps, FormikErrors, FormikTouched, FieldMetaProps } from "formik";
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Row, Col, Space, Typography, Collapse, theme, Tag } from 'antd';
+import { Button, Row, Col, Space, Typography, Collapse, theme, Tag, Card } from 'antd';
 import type { CollapseProps } from 'antd';
 import ExperiencePlusCard from './experiencePlusCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import * as Yup from 'yup';
 import { Experience, Experiences, JobPosting, UserBio } from '@/models/cv';
-import { CaretRightOutlined, CloseCircleFilled, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import ReadOnlyJobPosting from './readOnlyJobPosting';
 
 interface OtherProps {
@@ -58,8 +58,8 @@ const ExperiencesForm = (props: OtherProps) => {
         border: 'none',
     };
 
-    const countErrors = (error: FormikErrors<Experience>[]) => {
-        return Object.values(error).reduce((a, item) => a + (item ? 1 : 0), 0)
+    const countErrors = (error: [string, string][]) => {
+        return error.reduce((a, item) => a + (item[1] ? 1 : 0), 0)
     }
 
     const getItems: (
@@ -71,27 +71,34 @@ const ExperiencesForm = (props: OtherProps) => {
 
             const errCount = (index: number) => {
                 if (formProps.errors.experiences && formProps.errors.experiences[index]) {
+                    const touchedExperience = formProps.touched.experiences ? 
+                        formProps.touched?.experiences[index] as FormikTouched<Experience> : {}
+                    const erroredExperience  = formProps.errors.experiences ?
+                        formProps.errors.experiences[index] as FormikErrors<Experience> : {}
+                    console.log("aggregate touched: ", formProps.touched.experiences)
+                    console.log(touchedExperience)
                     const filteredError = Object.entries(formProps.errors.experiences[index])
-                        .filter((field, i) => {
-                            if (formProps.touched.experiences && formProps.touched.experiences[index]) {
-                                const touchedExperience = formProps.touched.experiences[index]
-                                return touchedExperience[field[0]]
-                            }
-                        })
-                    return countErrors(formProps.errors.experiences[index] as FormikErrors<Experience>[]);
+                    .filter((field, i) => {
+                        
+                        return touchedExperience[field[0] as keyof FormikTouched<Experience>] && 
+                            erroredExperience[field[0] as keyof FormikErrors<Experience>]
+                    })
+                    return countErrors(filteredError);
                 } else {
                     return 0;
                 }
             }
 
-            return values.map((value, index) => ({
+            return values.map((value, index) => {
+                const errs = errCount(index)
+                return {
                 key: index + 1,
                 label: (<Space>
                             <Typography.Text>{formProps.values.experiences[index].company ? 
                             formProps.values.experiences[index].company : `Experience ${index + 1}`}</Typography.Text>
-                            {errCount(index) ?
+                            {errs ?
                                 <Tag icon={<CloseCircleOutlined />} color="error">
-                                  {`${errCount(index)} ${errCount(index) > 1 ? "errors" : "error"}`}
+                                  {`${errs} ${errs > 1 ? "errors" : "error"}`}
                                 </Tag>
                             : null}   
                         </Space>),
@@ -105,7 +112,8 @@ const ExperiencesForm = (props: OtherProps) => {
                 />),
                 extra: (<DeleteOutlined onClick={() => remover(index)}/>),
                 style: panelStyle
-            }));
+            };
+        });
         }
             
 
@@ -130,16 +138,16 @@ const ExperiencesForm = (props: OtherProps) => {
                 return (
                     <Form {...formItemLayout} layout="vertical">
                          <Row gutter={24}>
-                            <Col span={isIntro ? 16 : 24}>
+                            <Col span={isIntro ? 14 : 24}>
                                 <div style={{ marginBottom: "12px"}}>
                                     <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>    
-                                    {description ? <div style={{ marginLeft: "12px" }}>
+                                    {description ? <Card>
                                         <Typography.Title level={5} style={{ margin: '0 0 12px 0', color: '#a1a1a1' }}>{description}</Typography.Title>
                                         <Space direction="vertical">
                                             <Typography.Text style={{ color: '#a1a1a1' }}>Employers scan your resume to see if you&apos;re a match.</Typography.Text>
                                             <Typography.Text style={{ color: '#a1a1a1' }}>We&apos;ll suggest bullet points that make a great impression.</Typography.Text>
                                         </Space>
-                                    </div> : null}
+                                    </Card> : null}
                                 </div>
                                 <FieldArray
                                     name='experiences'
@@ -163,6 +171,8 @@ const ExperiencesForm = (props: OtherProps) => {
                                                 onClick={() => arrayHelpers.push({
                                                     id: props.values.experiences.length + 1,
                                                     title: '',
+                                                    company: '',
+                                                    sector: '',
                                                     isCurrent: false,
                                                     startDate: new Date(),
                                                     endDate: new Date(),
@@ -176,7 +186,7 @@ const ExperiencesForm = (props: OtherProps) => {
                                     )}
                                 />
                             </Col>
-                        {isIntro ? <Col span={8}>
+                        {isIntro ? <Col span={10}>
                             <ReadOnlyJobPosting jobPosting={jobPosting} />
                         </Col> : null}
                         </Row>

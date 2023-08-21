@@ -55,7 +55,7 @@ const SelectCvOptionModal = ({ onSelect, onCancel, loading, open, title }: {
             onCancel={onCancel}
         >
             {loading ? 
-            <Spin tip="Loading. our minions might take a while to finish..." size="large">
+            <Spin tip="Loading... Take a deep breath..." size="large">
                 <CvOption /> 
             </Spin> :
             <CvOption />

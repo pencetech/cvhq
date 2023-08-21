@@ -399,7 +399,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             content: <EducationForm 
                 isIntro 
                 title="Showcase your academic qualifications" 
-                description="Things to note:" 
+                description="Things to note" 
                 value={formData.education} 
                 onSubmit={insertEducation} 
                 actions={midNextActions} 

@@ -33,7 +33,7 @@ const AchievementPlus = (props: AchievementPlusProps) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <Card>
                 <Row gutter={12}>
-                    <Col span={6}>
+                    <Col span={4}>
                     <Statistic
                             title="Match Factor"
                             value={MATCH.matchFactor}
@@ -41,7 +41,7 @@ const AchievementPlus = (props: AchievementPlusProps) => {
                             precision={0}
                         />
                     </Col>
-                    <Col span={18}>
+                    <Col span={20}>
                         <p style={{ margin: 0 }}>{MATCH.reason}</p>
                     </Col>
                 </Row>
