@@ -71,17 +71,23 @@ const ExperiencesForm = (props: OtherProps) => {
 
             const errCount = (index: number) => {
                 if (formProps.errors.experiences && formProps.errors.experiences[index]) {
-                    const touchedExperience = formProps.touched.experiences ? 
-                        formProps.touched?.experiences[index] as FormikTouched<Experience> : {}
+                    const touchedExperience =  formProps.touched.experiences ? 
+                        formProps.touched.experiences[index] : null
+
                     const erroredExperience  = formProps.errors.experiences ?
-                        formProps.errors.experiences[index] as FormikErrors<Experience> : {}
+                        formProps.errors.experiences[index] as FormikErrors<Experience> : null
                     console.log("aggregate touched: ", formProps.touched.experiences)
-                    console.log(touchedExperience)
+                    console.log("aggregate errors: ", formProps.errors.experiences)
                     const filteredError = Object.entries(formProps.errors.experiences[index])
                     .filter((field, i) => {
-                        
-                        return touchedExperience[field[0] as keyof FormikTouched<Experience>] && 
+                        if (touchedExperience &&
+                            erroredExperience && 
+                            touchedExperience[field[0] as keyof FormikTouched<Experience>] &&
                             erroredExperience[field[0] as keyof FormikErrors<Experience>]
+                            ) {
+                            return true;
+                        }
+                        return false;
                     })
                     return countErrors(filteredError);
                 } else {
