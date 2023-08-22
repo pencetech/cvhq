@@ -83,7 +83,6 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
         if (data && data.length > 0) {
             return data
             .map((ex) => ({
-                id: ex.seq_id,
                 title: ex.title,
                 company: ex.company,
                 sector: ex.sector,
@@ -95,7 +94,6 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
         }
 
         return [{
-            id: 1,
             title: '',
             company: '',
             sector: '',
@@ -119,7 +117,6 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
 
         if (data && data.length > 0) {
             return data.map((e) => ({
-                id: e.seq_id,
                 subject: e.subject,
                 institution: e.institution,
                 degree: e.degree,
@@ -129,12 +126,11 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
         }
 
         return [{
-            id: 1,
             subject: '',
-                institution: '',
-                degree: '',
-                startDate: '',
-                endDate: ''
+            institution: '',
+            degree: '',
+            startDate: '',
+            endDate: ''
         }]
     }
 

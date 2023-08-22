@@ -85,7 +85,6 @@ const EducationForm = (props: OtherProps) => {
                                             type='dashed' 
                                             block
                                             onClick={() => arrayHelpers.push({
-                                                id: props.values.education.length + 1,
                                                 title: '',
                                                 isCurrent: false,
                                                 startDate: '',
