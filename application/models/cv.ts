@@ -13,7 +13,7 @@ export interface JobPosting {
     addOn?: string;
 }
 export interface Experience {
-    id: number;
+    id?: number;
     title: string;
     company: string;
     sector: string;
@@ -24,7 +24,7 @@ export interface Experience {
 }
 
 export interface Education {
-    id: number,
+    id?: number,
     subject: string,
     institution: string,
     degree: string,
