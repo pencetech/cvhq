@@ -208,10 +208,10 @@ const ProfilePageComponent = ({ id, profile, files, profileName }: {
 
     return (
         <Row gutter={16}>
-            <Col span={14}>
+            <Col span={16}>
                 {profile ? <ProfileCard title={profileName} profileId={id} profile={formData} onUpdate={(value) => setFormData(value)}/> : "profile empty"}  
             </Col>
-            <Col span={10}>
+            <Col span={8}>
                 {fileData ? <FileListComponent 
                     profileName={profileName}
                     profileId={id}

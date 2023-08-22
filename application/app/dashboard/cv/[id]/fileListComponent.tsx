@@ -74,11 +74,7 @@ const FileListComponent = ({ files, onFileClick, profileName, profileId, onGener
       renderItem={(item, _) => (
         <List.Item
           actions={[
-            <Button 
-              key="download" 
-              type="primary" 
-              icon={<DownloadOutlined />} 
-              onClick={() => onFileClick(item.filename)} />
+            <DownloadOutlined key="download" onClick={() => onFileClick(item.filename)} />
         ]}
         >
           <List.Item.Meta
