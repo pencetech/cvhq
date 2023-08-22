@@ -82,7 +82,7 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: {
 
     const setExperience = async (experience: Experience[]) => {
         await supabase.from('experience')
-        .upsert(experience.map(exp => ({
+        .upsert(experience.map((exp, i) => ({
             title: exp.title,
             company: exp.company,
             sector: exp.sector,
@@ -91,7 +91,7 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: {
             end_date: exp.isCurrent ? null : exp.endDate,
             achievements: exp.achievements,
             profile_id: profileId,
-            seq_id: exp.id,
+            seq_id: i + 1,
             is_deleted: false
         })), { onConflict: 'profile_id, seq_id' })
     }
@@ -114,14 +114,14 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: {
 
     const setEducation = async (education: Education[]) => {
         await supabase.from('education')
-        .upsert(education.map(ed => ({
+        .upsert(education.map((ed, i) => ({
             subject: ed.subject,
             institution: ed.institution,
             degree: ed.degree,
             start_date: ed.startDate,
             end_date: ed.endDate,
             profile_id: profileId,
-            seq_id: ed.id,
+            seq_id: i + 1,
             is_deleted: false
         })), { onConflict: 'profile_id, seq_id' });
     }

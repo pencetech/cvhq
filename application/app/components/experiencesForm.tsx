@@ -175,7 +175,6 @@ const ExperiencesForm = (props: OtherProps) => {
                                                 type='dashed' 
                                                 block
                                                 onClick={() => arrayHelpers.push({
-                                                    id: props.values.experiences.length + 1,
                                                     title: '',
                                                     company: '',
                                                     sector: '',

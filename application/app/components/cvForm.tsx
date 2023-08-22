@@ -94,7 +94,6 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             requirements: ''
         },
         experiences: [{
-            id: 1,
             title: '',
             company: '',
             sector: '',
@@ -104,7 +103,6 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             achievements: ''
         }],
         education: [{
-            id: 1,
             subject: '',
             institution: '',
             degree: '',
@@ -199,7 +197,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             }
         }
         await supabase.from('experience')
-            .upsert(experiences.map(exp => ({
+            .upsert(experiences.map((exp, i) => ({
                 profile_id: profileId,
                 title: exp.title,
                 company: exp.company,
@@ -208,7 +206,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 start_date: exp.startDate,
                 end_date: exp.isCurrent ? null : exp.endDate,
                 achievements: exp.achievements,
-                seq_id: exp.id,
+                seq_id: i + 1,
                 is_deleted: false
             })
         ), { onConflict: 'profile_id, seq_id' })
@@ -228,14 +226,14 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             }
         }
         await supabase.from('education')
-            .upsert(education.map(ed => ({
+            .upsert(education.map((ed, i) => ({
                 profile_id: profileId,
                 subject: ed.subject,
                 institution: ed.institution,
                 degree: ed.degree,
                 start_date: ed.startDate,
                 end_date: ed.endDate,
-                seq_id: ed.id,
+                seq_id: i + 1,
                 is_deleted: false
             })
         ), { onConflict: 'profile_id, seq_id' })
