@@ -79,7 +79,7 @@ const ExperiencesForm = (props: OtherProps) => {
                     console.log("aggregate touched: ", formProps.touched.experiences)
                     console.log("aggregate errors: ", formProps.errors.experiences)
                     const filteredError = Object.entries(formProps.errors.experiences[index])
-                    .filter((field, i) => {
+                    .filter(field => {
                         if (touchedExperience &&
                             erroredExperience && 
                             touchedExperience[field[0] as keyof FormikTouched<Experience>] &&

@@ -156,26 +156,6 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
         }
     }
 
-    const getFiles = async () => {
-        if (session) {
-            let { data, error, status } = await supabase
-                .from('cv_file')
-                .select('filename, inserted_at')
-                .eq('profile_id', params.id)
-                .order('inserted_at', { ascending: false });
-
-            if (error && status !== 406) {
-                throw error;
-            }
-
-            const files = data?.map(file => ({
-                filename: file.filename,
-                createdAt: file.inserted_at
-            }))
-            return files;
-        }
-    }
-
     const getProfile = async () => {
         try {
             if (session) {
@@ -212,12 +192,11 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
     }
 
     const profile = await getProfile();
-    const files = await getFiles();
     const profileName = await getProfileName();
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            { profile && files ? <ProfilePageComponent profileName={profileName ? profileName : "Info"} id={params.id} profile={profile} files={files} /> : "empty data"}
+            { profile ? <ProfilePageComponent profileName={profileName ? profileName : "Info"} id={params.id} profile={profile} /> : "empty data"}
         </div>
     )
 }

@@ -3,17 +3,15 @@ import { FC } from 'react';
 import dayjs from 'dayjs';
 import { Row, Button, Col, DatePicker, theme } from 'antd';
 import { FormikProps } from 'formik';
-import { Education } from '@/models/cv';
+import { Education, SecondaryInput } from '@/models/cv';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 
-interface EducationCard {
-    education: Education[]
-}
+
 interface EducationCardProps {
-    formProps: FormikProps<EducationCard>, 
+    formProps: FormikProps<SecondaryInput>, 
     index: number
 }
 

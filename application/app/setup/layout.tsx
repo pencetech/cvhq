@@ -40,10 +40,13 @@ const SetupLayout = ({
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Header style={{
-                display: 'flex', 
-                alignItems: 'center',
-                backgroundColor: '#111111'
+            <Header style={{ 
+              display: 'flex', 
+              position: 'sticky',
+              top: 0,
+              zIndex: 99,
+              width: '100%',
+              alignItems: 'center',
             }}>
                 <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Space align="center">

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { BioSkillset, Education, Experience, FormData, JobPosting, Skillset, UserBio } from '@/models/cv';
+import { SecondaryInput, Education, Experience, FormData, JobPosting, Skillset, UserBio } from '@/models/cv';
 import { Button, Space, Steps, message, theme } from 'antd';
 import JobPostingForm from './jobPostingForm';
 import ExperiencesForm from './experiencesForm';
@@ -237,10 +237,6 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 is_deleted: false
             })
         ), { onConflict: 'profile_id, seq_id' })
-        messageApi.success("Education saved!");
-        handleProgress({
-            education: education
-        });
     }
 
     const deleteExperience = async (index: number) => {
@@ -330,18 +326,20 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         setIsDownloadModalOpen(false);
     };
 
-    const handleSubmit = async (values: BioSkillset) => {
+    const handleSubmit = async (values: SecondaryInput) => {
         setLoading(true);
         await insertSkillset(values.skillsets);
+        await insertEducation(values.education);
         await insertUserBio(values.userBio);
-        messageApi.success("Your bio and skillset saved!");
         const summary = await handleGenerateSummary(values.skillsets);
         const mergingValue = { 
             skillset: values.skillsets, 
             summary: { summary: summary ? summary : "" },
+            education: values.education,
             userBio: values.userBio
         }
         setFormData(oldData => ({ ...oldData, ...mergingValue }));
+        messageApi.success("Your final touches saved!");
         showDownloadModal();
         setLoading(false);
     }
@@ -392,25 +390,13 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             />
         },
         {
-            key: 'education',
-            label: 'Education',
-            content: <EducationForm 
-                isIntro 
-                title="Showcase your academic qualifications" 
-                description="Things to note" 
-                value={formData.education} 
-                onSubmit={insertEducation} 
-                actions={midNextActions} 
-                />
-        },
-        {
             key: 'bio-skillsets',
             label: 'Final touches',
             content: <FinalTouchesForm 
                 isIntro 
                 title="Final touches" 
-                description="Add your bio and unique skills that make you stand out." 
-                value={{ skillsets: formData.skillset, userBio: formData.userBio }} 
+                description="Add your bio, education, and unique skills that make you stand out." 
+                value={{ skillsets: formData.skillset, userBio: formData.userBio, education: formData.education }} 
                 onSubmit={handleSubmit} 
                 actions={endActions} 
             />

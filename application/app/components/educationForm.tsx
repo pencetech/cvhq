@@ -7,7 +7,7 @@ import EducationCard from '@/app/components/educationCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import * as Yup from 'yup';
-import { Education, EducationArray } from '@/models/cv';
+import { Education, EducationArray, SecondaryInput } from '@/models/cv';
 import { CaretRightOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 
 interface OtherProps {
@@ -56,7 +56,7 @@ const EducationForm = (props: OtherProps) => {
 
     const getItems: (
         panelStyle: React.CSSProperties, 
-        formProps: FormikProps<EducationArray>,
+        formProps: FormikProps<SecondaryInput>,
         values: Education[],
         remover: (i: number) => void) => CollapseProps['items'] = (panelStyle, formProps, values, remover) => {
             const errCount = (index: number) => formProps.errors.education && formProps.errors.education[index] ?

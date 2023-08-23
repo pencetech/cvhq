@@ -3,11 +3,6 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import HomePageComponent from './homePageComponent';
 import { Profiles } from '@/models/cv';
 
-type FileData = {
-  filename: string,
-  description: string
-}
-
 export const revalidate = 0;
 
 const HomePage = async () => {

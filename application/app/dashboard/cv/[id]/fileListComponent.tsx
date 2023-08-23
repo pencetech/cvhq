@@ -4,12 +4,14 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { FilePdfTwoTone, DownloadOutlined } from '@ant-design/icons';
-import { List, Button, Divider, Card, Typography } from 'antd';
+import { List, Button, Divider, Card, Typography, theme } from 'antd';
 import { CvFile } from '@/models/cv';
 import { usePathname } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { useState, useEffect } from 'react';
+
+const { useToken } = theme;
 
 const FileListComponent = ({ files, onFileClick, profileName, profileId, onGenerateClick }: { 
   files: CvFile[], 
@@ -19,6 +21,7 @@ const FileListComponent = ({ files, onFileClick, profileName, profileId, onGener
   onGenerateClick: (() => Promise<void>)
 }) => {
   const pathName = usePathname();
+  const { token } = useToken();
   const [user, setUser] = useState('');
   const supabase = createClientComponentClient<Database>();
 
@@ -63,10 +66,10 @@ const FileListComponent = ({ files, onFileClick, profileName, profileId, onGener
   return (
   <Card>
     <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Typography.Title level={4} style={{ margin: 0 }}>{`Versions - ${profileName}`}</Typography.Title>
-      <Button type='primary' onClick={onGenerateClick}>Generate new version</Button>
+      <Typography.Title level={4} style={{ margin: 0 }}>{`Files - ${profileName}`}</Typography.Title>
+      <Button type='primary' onClick={onGenerateClick}>Generate new file</Button>
     </div> 
-    <Typography.Paragraph style={{ marginTop: "12px" }}>Make sure you&apos;ve saved all tabs before generating new CV versions.</Typography.Paragraph>
+    <Typography.Paragraph style={{ marginTop: "12px" }}>Make sure you&apos;ve saved all tabs before generating new CV file.</Typography.Paragraph>
     <Divider />
     <List
       itemLayout="horizontal"
@@ -74,7 +77,7 @@ const FileListComponent = ({ files, onFileClick, profileName, profileId, onGener
       renderItem={(item, _) => (
         <List.Item
           actions={[
-            <DownloadOutlined key="download" onClick={() => onFileClick(item.filename)} />
+            <DownloadOutlined key="download" style={{color: token.colorInfo }} onClick={() => onFileClick(item.filename)} />
         ]}
         >
           <List.Item.Meta

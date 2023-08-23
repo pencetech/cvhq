@@ -16,20 +16,18 @@ const ReadOnlyJobPosting = ({ jobPosting }: { jobPosting: JobPosting }) => {
         {
             key: '3',
             label: 'Vertical',
-            children: jobPosting.sector,
-            span: 2
+            children: jobPosting.sector
         },
         {
             key: '4',
             label: 'Requirements',
-            children: jobPosting.requirements,
-            span: 2
+            children: jobPosting.requirements
         }
     ]
 
     return (
         <Affix offsetTop={120}>
-            <Descriptions title="Job Posting" column={2} items={items} size="small" bordered />
+            <Descriptions title="Job Posting" column={1} items={items} size="small" bordered />
         </Affix>
     )
 }

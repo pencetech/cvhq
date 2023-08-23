@@ -51,8 +51,9 @@ export interface ProfileName {
     profileName: string
 }
 
-export interface BioSkillset {
+export interface SecondaryInput {
     userBio: UserBio,
+    education: Education[],
     skillsets: Skillset
 }
 
