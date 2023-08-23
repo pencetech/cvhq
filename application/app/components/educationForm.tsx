@@ -122,12 +122,12 @@ const EducationForm = (props: OtherProps) => {
                                         defaultActiveKey={['1']}
                                         expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                                         style={{ background: token.colorBgContainer }}
-                                        items={getItems(
-                                            panelStyle,
-                                            props,
-                                            props.values.education,
-                                            (index: number) => arrayHelpers.remove(index)
-                                        )}
+                                        // items={getItems(
+                                        //     panelStyle,
+                                        //     props,
+                                        //     props.values.education,
+                                        //     (index: number) => arrayHelpers.remove(index)
+                                        // )}
                                     />
                                        <Button 
                                             type='dashed' 
