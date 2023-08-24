@@ -20,10 +20,6 @@ type ProfileData = {
   description: string
 }
 
-const DISCLAIMER_TEXT = "CVHQ is currently in beta. If you experience any usability issues, please leave some feedback. Thanks for visiting!";
-
-export const revalidate = 0;
-
 const DashboardLayoutComponent = ({
     user, profiles, children
   }: {

@@ -368,21 +368,23 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: {
                 profileId={profileId}
                 files={fileData ? fileData : []} 
                 onFileClick={fetchAndDownloadCV}
-                onGenerateClick={handleGenerateClick}
              /> 
         }
     ]
+
+    const generateButton = (<Button type='primary' onClick={handleGenerateClick}>Generate CV</Button>)
 
     return (
         <>
             {contextHolder}
             <Typography.Title level={2}>{title}</Typography.Title>
             <Tabs
-            title={title}
-            size="large"
-            items={rawItems}
-            activeKey={activeTab}
-            onChange={handleTabChange}
+                title={title}
+                size="large"
+                items={rawItems}
+                tabBarExtraContent={generateButton}
+                activeKey={activeTab}
+                onChange={handleTabChange}
         />
         <CvDownloadModal 
             userId={user} 
