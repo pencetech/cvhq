@@ -123,7 +123,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const handleRetrySummary = async () => {
         setLoading(true);
         const summary = await handleGenerateSummary();
-        handleChangeSummary(summary? summary : '');
+        handleChangeSummary(summary ? summary : '');
         setLoading(false);
     }
     const handleGenerateSummary = async (sk?: Skillset) => {
@@ -147,7 +147,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     }
 
     const handleChangeSummary = (summary: string) => {
-        const values = { 
+        const values = {
             summary: {
                 summary: summary
             }
@@ -157,26 +157,26 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
 
     const insertUserBio = async (user: UserBio) => {
         await supabase.from('user_bio')
-        .upsert({
-            user_id: userId,
-            first_name: user.firstName,
-            last_name: user.lastName,
-            email: user.email,
-            phone: user.phone,
-            address: user.address
-        }, { onConflict: 'user_id' })
+            .upsert({
+                user_id: userId,
+                first_name: user.firstName,
+                last_name: user.lastName,
+                email: user.email,
+                phone: user.phone,
+                address: user.address
+            }, { onConflict: 'user_id' })
     }
 
     const insertJobPosting = async (job: JobPosting) => {
         await supabase.from('job_posting')
-        .upsert({
-            profile_id: profileId,
-            title: job.title,
-            company: job.company,
-            sector: job.sector,
-            requirements: job.requirements,
-            add_on: job.addOn
-        }, { onConflict: 'profile_id' })
+            .upsert({
+                profile_id: profileId,
+                title: job.title,
+                company: job.company,
+                sector: job.sector,
+                requirements: job.requirements,
+                add_on: job.addOn
+            }, { onConflict: 'profile_id' })
         messageApi.success("Job posting saved!");
 
         if (!isPreferenceChosen) {
@@ -209,7 +209,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 seq_id: i + 1,
                 is_deleted: false
             })
-        ), { onConflict: 'profile_id, seq_id' })
+            ), { onConflict: 'profile_id, seq_id' })
         messageApi.success("Experience saved!");
         handleProgress({
             experiences: experiences
@@ -236,7 +236,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 seq_id: i + 1,
                 is_deleted: false
             })
-        ), { onConflict: 'profile_id, seq_id' })
+            ), { onConflict: 'profile_id, seq_id' })
     }
 
     const deleteExperience = async (index: number) => {
@@ -259,10 +259,10 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
 
     const insertSkillset = async (sk: Skillset) => {
         await supabase.from('skillset')
-        .upsert({
-            profile_id: profileId,
-            skillsets: sk.skillsets
-        }, { onConflict: 'profile_id' })
+            .upsert({
+                profile_id: profileId,
+                skillsets: sk.skillsets
+            }, { onConflict: 'profile_id' })
     }
 
     const handleCvSelect = async (value: string) => {
@@ -320,7 +320,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
 
     const showDownloadModal = () => {
         setIsDownloadModalOpen(true);
-      };
+    };
 
     const handleCancelDownloadModal = () => {
         setIsDownloadModalOpen(false);
@@ -332,8 +332,8 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         await insertEducation(values.education);
         await insertUserBio(values.userBio);
         const summary = await handleGenerateSummary(values.skillsets);
-        const mergingValue = { 
-            skillset: values.skillsets, 
+        const mergingValue = {
+            skillset: values.skillsets,
             summary: { summary: summary ? summary : "" },
             education: values.education,
             userBio: values.userBio
@@ -361,44 +361,44 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             <Button type='primary' htmlType="submit" loading={loading}>{loading ? "Generating" : "Generate CV"}</Button>
         </Space>
     )
-        // to handle async compatibility throughout the app, we're making this 
+    // to handle async compatibility throughout the app, we're making this 
     const rawItems = [
         {
             key: 'job',
             label: 'Job Posting',
-            content: <JobPostingForm 
-            isIntro 
-            title="Where are you applying to?" 
-            description="We'll use this to create a CV specific to this job." 
-            value={formData.jobPosting} 
-            onSubmit={insertJobPosting} 
-            actions={startNextAction} />
+            content: <JobPostingForm
+                isIntro
+                title="Where are you applying to?"
+                description="We'll use this to create a CV specific to this job."
+                value={formData.jobPosting}
+                onSubmit={insertJobPosting}
+                actions={startNextAction} />
         },
         {
             key: 'experiences',
             label: 'Experiences',
-            content: <ExperiencesForm 
-                isIntro 
+            content: <ExperiencesForm
+                isIntro
                 title="Let's fill out your work history"
-                profileId={profileId} 
-                description="Things to note:" 
-                userBio={formData.userBio} 
-                jobPosting={formData.jobPosting} 
-                value={formData.experiences} 
-                onSubmit={insertExperience} 
-                actions={midNextActions} 
+                profileId={profileId}
+                description="Things to note:"
+                userBio={formData.userBio}
+                jobPosting={formData.jobPosting}
+                value={formData.experiences}
+                onSubmit={insertExperience}
+                actions={midNextActions}
             />
         },
         {
             key: 'bio-skillsets',
             label: 'Final touches',
-            content: <FinalTouchesForm 
-                isIntro 
-                title="Final touches" 
-                description="Add your bio, education, and unique skills that make you stand out." 
-                value={{ skillsets: formData.skillset, userBio: formData.userBio, education: formData.education }} 
-                onSubmit={handleSubmit} 
-                actions={endActions} 
+            content: <FinalTouchesForm
+                isIntro
+                title="Final touches"
+                description="Add your bio, education, and unique skills that make you stand out."
+                value={{ skillsets: formData.skillset, userBio: formData.userBio, education: formData.education }}
+                onSubmit={handleSubmit}
+                actions={endActions}
             />
         }
     ]
@@ -406,7 +406,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const items = rawItems.map((item) => ({
         key: item.key,
         title: item.label,
-      }));
+    }));
 
     const contentStyle = {
         lineHeight: '260px',
@@ -417,26 +417,26 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
 
     return (
         <>
-        <Steps
-            items={items}
-            current={activeStepIndex}
-            size="small"
-            style={{ margin: '16px 0', minHeight: '100%' }}
-        />
-        {contextHolder}
-        <div style={contentStyle}>{rawItems[activeStepIndex].content}</div>
-          <CvDownloadModal 
-            userId={userId} 
-            profileId={profileId} 
-            formData={formData} 
-            open={isDownloadModalOpen}
-            onCancel={handleCancelDownloadModal} 
-            onFetchSummary={handleRetrySummary}
-            onChangeSummary={handleChangeSummary}
-            loading={loading}
-            nextLink="/dashboard/home" 
+            <Steps
+                items={items}
+                current={activeStepIndex}
+                size="small"
+                style={{ margin: '16px 0', minHeight: '100%' }}
             />
-            <SelectCvOptionModal 
+            {contextHolder}
+            <div style={contentStyle}>{rawItems[activeStepIndex].content}</div>
+            <CvDownloadModal
+                userId={userId}
+                profileId={profileId}
+                formData={formData}
+                open={isDownloadModalOpen}
+                onCancel={handleCancelDownloadModal}
+                onFetchSummary={handleRetrySummary}
+                onChangeSummary={handleChangeSummary}
+                loading={loading}
+                nextLink="/dashboard/home"
+            />
+            <SelectCvOptionModal
                 loading={sampleCvLoading}
                 title="Pick your preference"
                 onSelect={handleCvSelect}

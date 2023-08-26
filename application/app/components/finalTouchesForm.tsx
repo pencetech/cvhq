@@ -80,30 +80,30 @@ const FinalTouchesForm = (props: OtherProps) => {
     }
 
     const getItems: (
-        panelStyle: React.CSSProperties, 
+        panelStyle: React.CSSProperties,
         formProps: FormikProps<SecondaryInput>,
         values: Education[],
         remover: (i: number) => void) => CollapseProps['items'] = (panelStyle, formProps, values, remover) => {
             const errCount = (index: number) => {
                 if (formProps.errors.education && formProps.errors.education[index]) {
-                    const touched =  formProps.touched.education ? 
+                    const touched = formProps.touched.education ?
                         formProps.touched.education[index] : null
 
-                    const errored  = formProps.errors.education ?
+                    const errored = formProps.errors.education ?
                         formProps.errors.education[index] as FormikErrors<Education> : null
                     console.log("aggregate touched: ", formProps.touched.education)
                     console.log("aggregate errors: ", formProps.errors.education)
                     const filteredError = Object.entries(formProps.errors.education[index])
-                    .filter(field => {
-                        if (touched &&
-                            errored && 
-                            touched[field[0] as keyof FormikErrors<Education>] &&
-                            errored[field[0] as keyof FormikErrors<Education>]
+                        .filter(field => {
+                            if (touched &&
+                                errored &&
+                                touched[field[0] as keyof FormikErrors<Education>] &&
+                                errored[field[0] as keyof FormikErrors<Education>]
                             ) {
-                            return true;
-                        }
-                        return false;
-                    })
+                                return true;
+                            }
+                            return false;
+                        })
                     return countErrors(filteredError);
                 } else {
                     return 0;
@@ -115,23 +115,23 @@ const FinalTouchesForm = (props: OtherProps) => {
                 return {
                     key: index + 1,
                     label: (<Space>
-                        <Typography.Text>{formProps.values.education[index].institution ? 
+                        <Typography.Text>{formProps.values.education[index].institution ?
                             formProps.values.education[index].institution : `Education ${index + 1}`}</Typography.Text>
                         {errs ?
                             <Tag icon={<CloseCircleOutlined />} color="error">
-                              {`${errs} ${errs > 1 ? "errors" : "error"}`}
+                                {`${errs} ${errs > 1 ? "errors" : "error"}`}
                             </Tag>
-                        : null}   
+                            : null}
                     </Space>),
                     children: (<EducationCard
                         formProps={formProps}
                         index={index}
                     />),
-                    extra: (<DeleteOutlined onClick={() => remover(index)}/>),
+                    extra: (<DeleteOutlined onClick={() => remover(index)} />),
                     style: panelStyle
                 }
             }
-                );
+            );
         }
 
 
@@ -148,11 +148,11 @@ const FinalTouchesForm = (props: OtherProps) => {
                 await onSubmit(values);
             }}
         >
-            { props => {
+            {props => {
                 withFormikDevtools(props);
                 return (
                     <>
-                        <div style={{ marginBottom: "12px"}}>
+                        <div style={{ marginBottom: "12px" }}>
                             <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>
                             <Typography.Title level={5} style={{ margin: '0 0 12px 0', color: '#a1a1a1' }}>{description}</Typography.Title>
                         </div>
@@ -193,13 +193,13 @@ const FinalTouchesForm = (props: OtherProps) => {
                             <Row gutter={[24, 24]}>
                                 <Col span={isIntro ? 12 : 24}>
                                     <Card type="inner" title="Education" style={{ margin: "12px 0" }}>
-                                    {description ? <div style={{ marginLeft: "12px" }}>
-                                    <Space direction="vertical">
-                                        <Typography.Text style={{ color: '#a1a1a1' }}>Include formal education, sorted from the most recent one. </Typography.Text>
-                                        <Typography.Text style={{ color: '#a1a1a1' }}>If you&apos;ve taken at least a GED or a Bachelor, we recommend not adding your high school diploma details.</Typography.Text>
-                                    </Space>
-                                    <Divider />
-                                </div> : null} 
+                                        {description ? <div style={{ marginLeft: "12px" }}>
+                                            <Space direction="vertical">
+                                                <Typography.Text style={{ color: '#a1a1a1' }}>Include formal education, sorted from the most recent one. </Typography.Text>
+                                                <Typography.Text style={{ color: '#a1a1a1' }}>If you&apos;ve taken at least a GED or a Bachelor, we recommend not adding your high school diploma details.</Typography.Text>
+                                            </Space>
+                                            <Divider />
+                                        </div> : null}
                                         <FieldArray
                                             name='education'
                                             render={(arrayHelpers: any) => (
@@ -216,17 +216,17 @@ const FinalTouchesForm = (props: OtherProps) => {
                                                             (index: number) => arrayHelpers.remove(index)
                                                         )}
                                                     />
-                                                    <Button 
-                                                            type='dashed' 
-                                                            block
-                                                            onClick={() => arrayHelpers.push({
-                                                                title: '',
-                                                                isCurrent: false,
-                                                                startDate: '',
-                                                                endDate: '',
-                                                                achievements: ''
-                                                            })}
-                                                        >+ Add education</Button>
+                                                    <Button
+                                                        type='dashed'
+                                                        block
+                                                        onClick={() => arrayHelpers.push({
+                                                            title: '',
+                                                            isCurrent: false,
+                                                            startDate: '',
+                                                            endDate: '',
+                                                            achievements: ''
+                                                        })}
+                                                    >+ Add education</Button>
                                                 </Space>
                                             )}
                                         />
@@ -239,7 +239,7 @@ const FinalTouchesForm = (props: OtherProps) => {
                                         <Row style={{ marginTop: 16 }} gutter={24} justify="start">
                                             <Col span={24} key={1}>
                                                 <Form.Item required={true} name='skillsets.skillsets' label='Skillsets'>
-                                                    <Input.TextArea name='skillsets.skillsets' showCount autoSize={{ minRows: 3, maxRows: 15 }}/>
+                                                    <Input.TextArea name='skillsets.skillsets' showCount autoSize={{ minRows: 3, maxRows: 15 }} />
                                                 </Form.Item>
                                             </Col>
                                         </Row>
@@ -252,7 +252,7 @@ const FinalTouchesForm = (props: OtherProps) => {
                                         {actions}
                                     </Row>
                                 </Col>
-                            </Row>        
+                            </Row>
                         </Form>
                     </>
                 )

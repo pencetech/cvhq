@@ -23,8 +23,8 @@ mutation generateCV($input: CvInput!) {
   }
 `
 
-const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onChangeSummary, onCancel, formData, nextLink }: { 
-    open: boolean, 
+const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onChangeSummary, onCancel, formData, nextLink }: {
+    open: boolean,
     loading: boolean,
     profileId: number,
     userId: string,
@@ -34,7 +34,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
     formData: FormData,
     nextLink: string
 }) => {
-    
+
     const [format, setFormat] = useState("");
     const queryClient = useQueryClient();
     const inputRef = useRef<TextAreaRef>(null);
@@ -92,7 +92,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
         const currPath = currPathNoQuery
             .split("/")
             .filter(v => v.length > 0);
-        const currPage = currPath[currPath.length-1];
+        const currPage = currPath[currPath.length - 1];
         window.analytics?.track("Download CV", {
             title: `Downloaded CV in ${currPage}`,
             userId: userId,
@@ -119,7 +119,7 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
             open={open}
             width={1000}
             footer={[
-                <Button 
+                <Button
                     key="download"
                     type="primary"
                     onClick={handleGenerateCV}
@@ -128,29 +128,29 @@ const CvDownloadModal = ({ profileId, userId, open, loading, onFetchSummary, onC
                 >{generateCVLoading ? "Downloading" : "Download"}</Button>
             ]}
             onCancel={onCancel}
-            >
+        >
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: "center", gap: "8px" }}>
                 <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '8px' }}>
-                <Card size="small" title="Summary" style={{ width: '100%' }}>
-                    <Input.TextArea 
-                    name="okay"
-                    showCount 
-                    maxLength={400}
-                    value={formData.summary?.summary}
-                    style={{ width: '100%' }} 
-                    autoSize={{ minRows: 4, maxRows: 15 }}
-                    onChange={e => onChangeSummary(e.target.value)}
-                    bordered={false}
-                    disabled={loading}
-                    ref={inputRef}
-                    />
-                </Card>
-                <Row justify='end'>
-                    <Space direction="horizontal">
-                        <Button onClick={() => toggleEditing()}>Edit</Button>
-                        <Button onClick={async () => await handleGenerateSummary()} loading={loading}>{loading ? "Loading" : "Retry"}</Button>
-                    </Space>
-                </Row>
+                    <Card size="small" title="Summary" style={{ width: '100%' }}>
+                        <Input.TextArea
+                            name="okay"
+                            showCount
+                            maxLength={400}
+                            value={formData.summary?.summary}
+                            style={{ width: '100%' }}
+                            autoSize={{ minRows: 4, maxRows: 15 }}
+                            onChange={e => onChangeSummary(e.target.value)}
+                            bordered={false}
+                            disabled={loading}
+                            ref={inputRef}
+                        />
+                    </Card>
+                    <Row justify='end'>
+                        <Space direction="horizontal">
+                            <Button onClick={() => toggleEditing()}>Edit</Button>
+                            <Button onClick={async () => await handleGenerateSummary()} loading={loading}>{loading ? "Loading" : "Retry"}</Button>
+                        </Space>
+                    </Row>
                 </div>
                 <Typography.Title level={3} style={{ margin: "0" }}>Choose a template</Typography.Title>
                 <Row justify="start" style={{ width: '100%' }}>
