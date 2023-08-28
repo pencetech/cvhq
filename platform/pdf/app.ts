@@ -2,6 +2,7 @@ import createError from 'http-errors';
 import fs from 'fs';
 import express, { NextFunction, Request, Response } from 'express';
 import path from 'path';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { pdfToPng } from 'pdf-to-png-converter';
 import { create } from 'express-handlebars';
@@ -25,6 +26,7 @@ var hbs = create({
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
