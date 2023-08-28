@@ -1,9 +1,9 @@
 "use client";
 import ProfileCard from "@/app/components/profileCard"
 import { Col, Row } from "antd"
-import { CvFile, FormData } from "@/models/cv"
+import { FormData } from "@/models/cv"
 import { useState } from "react";
-import ReadOnlyJobPosting from "@/app/components/readOnlyJobPosting";
+import RightDashboard from "@/app/components/rightDashboard";
 
 const ProfilePageComponent = ({ id, profile, profileName }: {
     id: number,
@@ -27,7 +27,7 @@ const ProfilePageComponent = ({ id, profile, profileName }: {
                 {profile ? <ProfileCard title={profileName} profileId={id} profile={formData} onUpdate={(value) => setFormData(value)}/> : "profile empty"}  
             </Col>
             <Col span={8}>
-                <ReadOnlyJobPosting jobPosting={formData.jobPosting} />
+                <RightDashboard jobPosting={formData.jobPosting} />
             </Col>
         </Row>
     )

@@ -2,12 +2,9 @@
 import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Education, Experience, FormData, JobPosting, UserBio, Skillset, SecondaryInput } from '@/models/cv';
-import { Button, Modal, Tabs, message, theme, Typography } from 'antd';
-import BioForm from './bioForm';
+import { Button, Modal, Tabs, message, Typography } from 'antd';
 import JobPostingForm from './jobPostingForm';
 import ExperiencesForm from './experiencesForm';
-import EducationForm from './educationForm';
-import SkillsetForm from './skillsetForm';
 import { Database } from '@/types/supabase';
 import FileListComponent from '../dashboard/cv/[id]/fileListComponent';
 import { useQuery } from '@tanstack/react-query';
@@ -16,6 +13,7 @@ import { Mutation } from '../__generated__/graphql';
 import { usePathname } from 'next/navigation';
 import CvDownloadModal from './cvDownloadModal';
 import FinalTouchesForm from './finalTouchesForm';
+import { isEducationNotExist, isEducationNotFilled, isExperiencesNotExist, isExperiencesNotFilled, isJobPostingNotFilled, isSkillsetNotFilled, isUserBioNotFilled } from '@/models/validations/userBioValidation';
 
 const GENERATE_SUMMARY = gql`
 mutation generateSummary($input: CvInput!) {
@@ -92,37 +90,13 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: {
     })
 
     const isAllFieldsFilled = () => {
-        const userBioNotFilled = !profile.userBio.firstName ||
-            !profile.userBio.lastName ||
-            !profile.userBio.email ||
-            !profile.userBio.phone ||
-            !profile.userBio.address;
-
-        const jobPostingNotFilled = !profile.jobPosting.title ||
-            !profile.jobPosting.company ||
-            !profile.jobPosting.sector ||
-            !profile.jobPosting.requirements;
-
-        const experiencesNotExist = !(profile.experiences.length > 0);
-
-        const experiencesNotFilled = profile.experiences.map(exp => {
-            return !exp.title ||
-                !exp.company ||
-                !exp.sector ||
-                !exp.startDate ||
-                !exp.achievements;
-        });
-
-        const educationNotExist = !(profile.education.length > 0);
-
-        const educationNotFilled = profile.education.map(ed => {
-            return !ed.subject ||
-                !ed.institution ||
-                !ed.degree ||
-                !ed.startDate ||
-                !ed.endDate;
-        })
-        const skillsetNotFilled = !profile.skillset.skillsets
+        const userBioNotFilled = isUserBioNotFilled(profile.userBio);
+        const jobPostingNotFilled = isJobPostingNotFilled(profile.jobPosting);
+        const experiencesNotExist = isExperiencesNotExist(profile.experiences);
+        const experiencesNotFilled = isExperiencesNotFilled(profile.experiences);
+        const educationNotExist = isEducationNotExist(profile.education);
+        const educationNotFilled = isEducationNotFilled(profile.education);
+        const skillsetNotFilled = isSkillsetNotFilled(profile.skillset);
 
         const validationSchema = {
             userBio: userBioNotFilled,
@@ -333,14 +307,13 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: {
         {
             key: 'job',
             label: 'Job Posting',
-            children: <JobPostingForm isIntro={false} title="Job Posting" value={profile.jobPosting} onSubmit={setJobPosting} actions={saveButton} />
+            children: <JobPostingForm title="Job Posting" value={profile.jobPosting} onSubmit={setJobPosting} actions={saveButton} />
         },
         {
             key: 'experiences',
             label: 'Experiences',
             children: <ExperiencesForm 
                 profileId={profileId}
-                isIntro={false}
                 title="Experiences" 
                 value={profile.experiences} 
                 onSubmit={setExperienceArray} 
@@ -353,7 +326,6 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: {
             key: 'others',
             label: 'Bio, Education & Skillsets',
             children: <FinalTouchesForm 
-            isIntro={false}
             title="Bio, Education & Skillsets" 
             value={{ skillsets: profile.skillset, userBio: profile.userBio, education: profile.education }} 
             onSubmit={setOtherInput} 

@@ -10,12 +10,10 @@ import 'formik-antd/es/form/style';
 import * as Yup from 'yup';
 import { Experience, Experiences, JobPosting, UserBio } from '@/models/cv';
 import { CaretRightOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
-import ReadOnlyJobPosting from './readOnlyJobPosting';
 
 interface OtherProps {
     title: string;
     description?: string;
-    isIntro: boolean;
     value: Experience[];
     userBio: UserBio;
     jobPosting: JobPosting;
@@ -48,7 +46,7 @@ const experienceValidationSchema = Yup.object().shape({
 });
 
 const ExperiencesForm = (props: OtherProps) => {
-    const { title, description, isIntro, onSubmit, profileId, value, userBio, jobPosting, actions } = props;
+    const { title, description, onSubmit, profileId, value, userBio, jobPosting, actions } = props;
     const { token } = theme.useToken();
 
     const panelStyle: React.CSSProperties = {
@@ -144,7 +142,7 @@ const ExperiencesForm = (props: OtherProps) => {
                 return (
                     <Form {...formItemLayout} layout="vertical">
                          <Row gutter={24}>
-                            <Col span={isIntro ? 14 : 24}>
+                            <Col span={24}>
                                 <div style={{ marginBottom: "12px"}}>
                                     <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>    
                                     {description ? <Card>
@@ -191,9 +189,6 @@ const ExperiencesForm = (props: OtherProps) => {
                                     )}
                                 />
                             </Col>
-                        {isIntro ? <Col span={10}>
-                            <ReadOnlyJobPosting jobPosting={jobPosting} />
-                        </Col> : null}
                         </Row>
                     </Form>
                 )

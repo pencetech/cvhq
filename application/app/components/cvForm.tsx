@@ -1,17 +1,19 @@
 "use client";
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { SecondaryInput, Education, Experience, FormData, JobPosting, Skillset, UserBio } from '@/models/cv';
-import { Button, Space, Steps, message, theme } from 'antd';
+import { Button, Col, Row, Space, Steps, message, theme } from 'antd';
+import Image from 'next/image';
+import axios from 'axios';
 import JobPostingForm from './jobPostingForm';
 import ExperiencesForm from './experiencesForm';
-import EducationForm from './educationForm';
 import { Database } from '@/types/supabase';
 import CvDownloadModal from './cvDownloadModal';
 import { gql, useMutation } from '@apollo/client';
-import { Mutation } from '../__generated__/graphql';
+import { CvType, Mutation } from '../__generated__/graphql';
 import FinalTouchesForm from './finalTouchesForm';
 import SelectCvOptionModal from './selectCVOptionModal';
+import RightDashboard from './rightDashboard';
 
 const GENERATE_SUMMARY = gql`
 mutation generateSummary($input: CvInput!) {
@@ -39,43 +41,13 @@ const GENERATE_SAMPLE_CV = gql`
 
 const YEARS_OF_EXPERIENCE = 3;
 
-const MOCK_GENERATED_EXPERIENCE = [{
-    id: 1,
-    title: "Ok",
-    company: "Ok",
-    sector: "Ok",
-    isCurrent: false,
-    startDate: "Ok",
-    endDate: "Ok",
-    achievements: "Ok"
-},
-{
-    id: 2,
-    title: "can",
-    company: "can",
-    sector: "can",
-    isCurrent: false,
-    startDate: "can",
-    endDate: "can",
-    achievements: "can"
-},
-{
-    id: 3,
-    title: "chill",
-    company: "chill",
-    sector: "chill",
-    isCurrent: false,
-    startDate: "chill",
-    endDate: "chill",
-    achievements: "chill"
-}]
-
 const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
     const { token } = theme.useToken();
     const supabase = createClientComponentClient<Database>();
     const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
     const [isCvModalOpen, setIsCvModalOpen] = useState(false);
+    const [cvType, setCvType] = useState<CvType>(CvType.Base);
     const [isPreferenceChosen, setIsPreferenceChosen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
@@ -361,24 +333,49 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             <Button type='primary' htmlType="submit" loading={loading}>{loading ? "Generating" : "Generate CV"}</Button>
         </Space>
     )
+
+    const jobPostingAnimation = (
+        <div style={{width: '100%', height: '100%', position: 'relative'}}>
+                <Image
+                fill 
+                style={{ objectFit: "contain", borderRadius: '15px', border: '1px solid #d9d9d9', }}
+                src='/job_posting.gif'
+                alt='animation of copying job requirements from Indeed or LinkedIn onto our page.'
+                />
+        </div>
+    );
+
+    const ColumnLayout = ({ left, right }: { left: ReactNode, right: ReactNode }) => (
+        <Row gutter={24}>
+            <Col span={12}>
+                {left}
+            </Col>
+            <Col span={12}>
+                {right}
+            </Col>
+        </Row>
+    );
     // to handle async compatibility throughout the app, we're making this 
     const rawItems = [
         {
             key: 'job',
             label: 'Job Posting',
-            content: <JobPostingForm
-                isIntro
+            content: <ColumnLayout left={(
+                <JobPostingForm
                 title="Where are you applying to?"
                 description="We'll use this to create a CV specific to this job."
                 value={formData.jobPosting}
                 onSubmit={insertJobPosting}
                 actions={startNextAction} />
+            )}
+                right={jobPostingAnimation}
+            />
         },
         {
             key: 'experiences',
             label: 'Experiences',
-            content: <ExperiencesForm
-                isIntro
+            content: <ColumnLayout left={(
+                <ExperiencesForm
                 title="Let's fill out your work history"
                 profileId={profileId}
                 description="Things to note:"
@@ -388,17 +385,20 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 onSubmit={insertExperience}
                 actions={midNextActions}
             />
+            )}
+                right={<RightDashboard profile={formData} />}/>
         },
         {
             key: 'bio-skillsets',
             label: 'Final touches',
-            content: <FinalTouchesForm
-                isIntro
+            content: <ColumnLayout left={(<FinalTouchesForm
                 title="Final touches"
                 description="Add your bio, education, and unique skills that make you stand out."
                 value={{ skillsets: formData.skillset, userBio: formData.userBio, education: formData.education }}
                 onSubmit={handleSubmit}
                 actions={endActions}
+            />)}
+            right={<RightDashboard profile={formData} />}
             />
         }
     ]

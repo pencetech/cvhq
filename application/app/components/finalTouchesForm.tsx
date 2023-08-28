@@ -16,7 +16,6 @@ const { useToken } = theme;
 interface OtherProps {
     title: string;
     description?: string;
-    isIntro: boolean;
     value: SecondaryInput;
     onSubmit: (value: SecondaryInput) => Promise<void>;
     actions: React.ReactNode;
@@ -65,7 +64,7 @@ const finalTouchesValidationSchema = Yup.object().shape({
 })
 
 const FinalTouchesForm = (props: OtherProps) => {
-    const { title, description, isIntro, onSubmit, value, actions } = props;
+    const { title, description, onSubmit, value, actions } = props;
     const { token } = useToken();
 
     const panelStyle: React.CSSProperties = {
@@ -158,7 +157,7 @@ const FinalTouchesForm = (props: OtherProps) => {
                         </div>
                         <Form {...formItemLayout} layout="vertical">
                             <Row gutter={[24, 24]}>
-                                <Col span={isIntro ? 12 : 24}>
+                                <Col span={24}>
                                     <Card type="inner" title="Your Bio" style={{ margin: "12px 0" }}>
                                         <Row style={{ marginTop: 16 }} gutter={24} justify="start">
                                             <Col span={12} key={1}>
@@ -191,7 +190,7 @@ const FinalTouchesForm = (props: OtherProps) => {
                                 </Col>
                             </Row>
                             <Row gutter={[24, 24]}>
-                                <Col span={isIntro ? 12 : 24}>
+                                <Col span={24}>
                                     <Card type="inner" title="Education" style={{ margin: "12px 0" }}>
                                         {description ? <div style={{ marginLeft: "12px" }}>
                                             <Space direction="vertical">
@@ -234,7 +233,7 @@ const FinalTouchesForm = (props: OtherProps) => {
                                 </Col>
                             </Row>
                             <Row gutter={[24, 24]}>
-                                <Col span={isIntro ? 12 : 24}>
+                                <Col span={24}>
                                     <Card type="inner" title="Skillsets" style={{ margin: "12px 0" }}>
                                         <Row style={{ marginTop: 16 }} gutter={24} justify="start">
                                             <Col span={24} key={1}>
@@ -247,7 +246,7 @@ const FinalTouchesForm = (props: OtherProps) => {
                                 </Col>
                             </Row>
                             <Row gutter={[24, 24]}>
-                                <Col span={isIntro ? 12 : 24}>
+                                <Col span={24}>
                                     <Row justify='end'>
                                         {actions}
                                     </Row>

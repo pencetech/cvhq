@@ -1,35 +1,38 @@
 import { Affix, Descriptions, type DescriptionsProps } from "antd";
-import { JobPosting } from "../__generated__/graphql";
+import CvPreview from "./cvPreview";
+import { FormData } from "@/models/cv";
 
-const ReadOnlyJobPosting = ({ jobPosting }: { jobPosting: JobPosting }) => {
+const RightDashboard = ({ profile }: { profile: FormData }) => {
+    
     const items: DescriptionsProps['items'] = [
         {
             key: '1',
             label: 'Title',
-            children: jobPosting.title
+            children: profile.jobPosting.title
         },
         {
             key: '2',
             label: 'Company',
-            children: jobPosting.company
+            children: profile.jobPosting.company
         },
         {
             key: '3',
             label: 'Vertical',
-            children: jobPosting.sector
+            children: profile.jobPosting.sector
         },
         {
             key: '4',
             label: 'Requirements',
-            children: jobPosting.requirements
+            children: profile.jobPosting.requirements
         }
     ]
 
     return (
         <Affix offsetTop={120}>
+            <CvPreview profile={profile} />
             <Descriptions title="Job Posting" column={1} items={items} size="small" bordered />
         </Affix>
     )
 }
 
-export default ReadOnlyJobPosting;
+export default RightDashboard;
