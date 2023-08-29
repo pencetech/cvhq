@@ -12,6 +12,7 @@ import * as helpers from './lib/helpers';
 import indexRouter from './routes/index';
 import cvRouter from './routes/cv';
 import { CvInput } from './types/cv';
+import { PngOutput } from './types/pngOutput';
 
 var app = express();
 app.set('views', path.join(__dirname, 'views/handlebars'));
@@ -64,8 +65,21 @@ app.put('/image', async (req, res) => {
       disableFontFace: false
     })
 
+    const stringPngPages: PngOutput[] = pngPages.map(page => {
+      const stringifiedBuffer = page.content.toString('base64');
+      const uri = 'data:image/png;base64,' + stringifiedBuffer;
+      return {
+        pageNumber: page.pageNumber,
+        name: page.name,
+        content: uri,
+        path: page.path,
+        width: page.width, 
+        height: page.height,
+      }
+    })
+
     res.setHeader('Content-Type', "application/json")
-    res.send(pngPages);
+    res.send(stringPngPages);
     await browserApi.handBack(page);
 
   })

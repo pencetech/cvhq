@@ -66,6 +66,7 @@ var http_errors_1 = __importDefault(require("http-errors"));
 var fs_1 = __importDefault(require("fs"));
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
+var cors_1 = __importDefault(require("cors"));
 var cookie_parser_1 = __importDefault(require("cookie-parser"));
 var pdf_to_png_converter_1 = require("pdf-to-png-converter");
 var express_handlebars_1 = require("express-handlebars");
@@ -86,6 +87,7 @@ var hbs = (0, express_handlebars_1.create)({
 // view engine setup
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
+app.use((0, cors_1.default)());
 app.use((0, morgan_1.default)('dev'));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
@@ -107,7 +109,7 @@ app.put('/image', function (req, res) { return __awaiter(void 0, void 0, void 0,
             skillsets: cvInput.skillsets,
             css: css
         }, function (err, html) { return __awaiter(void 0, void 0, void 0, function () {
-            var page, pdfBuffer, pngPages;
+            var page, pdfBuffer, pngPages, stringPngPages;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -135,8 +137,20 @@ app.put('/image', function (req, res) { return __awaiter(void 0, void 0, void 0,
                             })];
                     case 5:
                         pngPages = _a.sent();
+                        stringPngPages = pngPages.map(function (page) {
+                            var stringifiedBuffer = page.content.toString('base64');
+                            var uri = 'data:image/png;base64,' + stringifiedBuffer;
+                            return {
+                                pageNumber: page.pageNumber,
+                                name: page.name,
+                                content: uri,
+                                path: page.path,
+                                width: page.width,
+                                height: page.height,
+                            };
+                        });
                         res.setHeader('Content-Type', "application/json");
-                        res.send(pngPages);
+                        res.send(stringPngPages);
                         return [4 /*yield*/, browser_1.default.handBack(page)];
                     case 6:
                         _a.sent();

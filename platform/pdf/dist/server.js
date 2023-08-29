@@ -13,7 +13,7 @@ var http_1 = __importDefault(require("http"));
 /**
  * Get port from environment and store in Express.
  */
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '3001');
 app_1.default.set('port', port);
 /**
  * Create HTTP server.
