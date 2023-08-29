@@ -1,11 +1,11 @@
 "use client";
 import { RedoOutlined } from "@ant-design/icons";
-import { Button, Card, Carousel, Divider, Image, Radio } from "antd";
+import { Button, Card, Divider, Image, Pagination, Radio, Segmented, Spin } from "antd";
 import { useState } from "react";
 import { CvType } from "../__generated__/graphql";
 import { isEducationNotExist, isEducationNotFilled, isSkillsetNotFilled, isUserBioNotFilled } from "@/models/validations/userBioValidation";
 import axios from "axios";
-import { QueryFunctionContext, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FormData } from "@/models/cv";
 import { PngPageOutput } from "@/models/pngOutput";
 
@@ -22,19 +22,19 @@ const SAMPLE_SUMMARY = {
 }
 
 const SAMPLE_EDUCATION = [{
-        subject: 'Business Administration and Management',
-        institution: 'Harvard Business School',
-        degree: 'MBA',
-        startDate: '2023-08-26T19:54:22+00:00',
-        endDate: '2023-08-26T19:54:22+00:00',
-    },
-    {
-        subject: 'Mathematics, English, Economics',
-        institution: 'Raffles Institution',
-        degree: 'A Levels',
-        startDate: '2023-08-26T19:54:22+00:00',
-        endDate: '2023-08-26T19:54:22+00:00',
-    }
+    subject: 'Business Administration and Management',
+    institution: 'Harvard Business School',
+    degree: 'MBA',
+    startDate: '2023-08-26T19:54:22+00:00',
+    endDate: '2023-08-26T19:54:22+00:00',
+},
+{
+    subject: 'Mathematics, English, Economics',
+    institution: 'Raffles Institution',
+    degree: 'A Levels',
+    startDate: '2023-08-26T19:54:22+00:00',
+    endDate: '2023-08-26T19:54:22+00:00',
+}
 ]
 
 const SAMPLE_SKILLSETS = {
@@ -46,9 +46,10 @@ const CvPreview = ({
 }: {
     profile: FormData
 }) => {
-    const [cvType, setCvType] = useState<CvType>(CvType.Base);
+    const [cvType, setCvType] = useState<CvType | string>(CvType.Base);
+    const [currPage, setCurrPage] = useState<number>(1);
     const queryClient = useQueryClient();
-    const getCvPreview = async (queryFormData: FormData, cvType: CvType) => {
+    const getCvPreview = async (queryFormData: FormData, cvType: CvType | string) => {
 
         try {
             const res = await axios.put<PngPageOutput[]>(`${process.env.NEXT_PUBLIC_PDF_URL}/image`, {
@@ -60,12 +61,11 @@ const CvPreview = ({
                 skillset: isSkillsetNotFilled(queryFormData.skillset) ? SAMPLE_SKILLSETS : queryFormData.skillset,
                 cvType: cvType
             })
-
             return res.data;
         } catch (err) {
             console.log(err);
         }
-        
+
     }
 
     const { data: cvPreviewData, isFetching } = useQuery({
@@ -83,33 +83,38 @@ const CvPreview = ({
 
     const images = cvPreviewData?.map((img, i) => (
         <div key={i}>
-            <Image width={200} src={img.content.toString()} alt="cv-preview" />
+            <Image width={300} placeholder src={img.content} alt="cv-preview" />
         </div>
     ))
 
     return (
         <Card
+            size="small"
             extra={<>
-                <Radio.Group
+                <Segmented
                     options={typeOptions}
                     defaultValue={CvType.Base}
-                    onChange={e => setCvType(e.target.value)}
-                    optionType="button"
-                    buttonStyle="solid"
+                    onChange={num => setCvType(num as string)}
                 />
                 <Divider type="vertical" />
-                <Button 
-                    shape="round" 
-                    type="primary" 
+                <Button
+                    shape="circle"
+                    type="primary"
+                    size='small'
                     loading={isFetching}
-                    onClick={handleRefresh} 
-                    icon={<RedoOutlined />} 
+                    onClick={handleRefresh}
+                    icon={<RedoOutlined />}
                 />
             </>}
         >
-            <Carousel>
-                {images}
-            </Carousel>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px'}}>
+                {isFetching ? <Spin /> :
+                    <>
+                        {images ? images[currPage - 1] : null}
+                    </>
+                }
+                <Pagination onChange={(page, pageSize) => setCurrPage(page)} defaultCurrent={1} total={cvPreviewData ? cvPreviewData.length : 0} pageSize={1} simple />
+            </div>
         </Card>
     )
 }

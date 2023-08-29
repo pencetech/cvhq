@@ -1,7 +1,7 @@
 export type PngPageOutput = {
     pageNumber: number,
     name: string;
-    content: Buffer;
+    content: string;
     path: string;
     width: number, 
     height: number,

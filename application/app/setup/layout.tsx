@@ -67,8 +67,8 @@ const SetupLayout = ({
                     </Space>
                 </div>
             </Header>
-            <Content style={{ padding: 0 }}>
-                <Card style={{ margin: 16, background: '#FFFFFF' }}>{children}</Card>
+            <Content style={{ display: 'flex', justifyContent: 'space-between', padding: 0, margin: '0 auto', maxWidth: '1264px', width: '100%' }}>
+                <Card style={{ margin: 16, background: '#FFFFFF', width: '100%' }}>{children}</Card>
             </Content>
       </Layout>
     )

@@ -347,10 +347,10 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
 
     const ColumnLayout = ({ left, right }: { left: ReactNode, right: ReactNode }) => (
         <Row gutter={24}>
-            <Col span={12}>
+            <Col span={16}>
                 {left}
             </Col>
-            <Col span={12}>
+            <Col span={8}>
                 {right}
             </Col>
         </Row>
