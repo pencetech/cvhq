@@ -1,13 +1,14 @@
 "use client";
 import { RedoOutlined } from "@ant-design/icons";
-import { Button, Card, Divider, Image, Pagination, Radio, Segmented, Spin } from "antd";
+import { Button, Card, Divider, Image, Pagination, Segmented, Spin, Typography, theme } from "antd";
 import { useState } from "react";
 import { CvType } from "../__generated__/graphql";
 import { isEducationNotExist, isEducationNotFilled, isSkillsetNotFilled, isUserBioNotFilled } from "@/models/validations/userBioValidation";
 import axios from "axios";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FormData } from "@/models/cv";
 import { PngPageOutput } from "@/models/pngOutput";
+
+const { useToken } = theme;
 
 const SAMPLE_BIO = {
     firstName: 'John',
@@ -46,9 +47,11 @@ const CvPreview = ({
 }: {
     profile: FormData
 }) => {
-    const [cvType, setCvType] = useState<CvType | string>(CvType.Base);
+    const [cvType, setCvType] = useState<CvType>(CvType.Base);
     const [currPage, setCurrPage] = useState<number>(1);
-    const queryClient = useQueryClient();
+    const [loading, setLoading] = useState<boolean>(false);
+    const [pngOutput, setPngOutput] = useState<PngPageOutput[]>([]);
+    const { token } = useToken();
     const getCvPreview = async (queryFormData: FormData, cvType: CvType | string) => {
 
         try {
@@ -68,12 +71,18 @@ const CvPreview = ({
 
     }
 
-    const { data: cvPreviewData, isFetching } = useQuery({
-        queryKey: ['cv-preview', { profile, cvType }],
-        queryFn: () => getCvPreview(profile, cvType)
-    })
-    const handleRefresh = async () => {
-        queryClient.invalidateQueries({ queryKey: ['cv-preview'] })
+    const handleChangeCvType = async (type: CvType) => {
+        setCvType(type);
+        await handleRefresh(profile, type);
+    }
+
+    const handleRefresh = async (content: FormData, type: CvType) => {
+        setLoading(true);
+        const newPngOutput = await getCvPreview(content, type);
+        if (newPngOutput) {
+            setPngOutput(newPngOutput);
+        }
+        setLoading(false);
     }
 
     const typeOptions = [
@@ -81,7 +90,7 @@ const CvPreview = ({
         { label: 'Prime', value: CvType.Prime }
     ]
 
-    const images = cvPreviewData?.map((img, i) => (
+    const images = pngOutput.map((img, i) => (
         <div key={i}>
             <Image width={300} placeholder src={img.content} alt="cv-preview" />
         </div>
@@ -94,26 +103,26 @@ const CvPreview = ({
                 <Segmented
                     options={typeOptions}
                     defaultValue={CvType.Base}
-                    onChange={num => setCvType(num as string)}
+                    onChange={num => handleChangeCvType(num as CvType)}
                 />
                 <Divider type="vertical" />
                 <Button
                     shape="circle"
                     type="primary"
                     size='small'
-                    loading={isFetching}
-                    onClick={handleRefresh}
+                    loading={loading}
+                    onClick={() => handleRefresh(profile, cvType)}
                     icon={<RedoOutlined />}
                 />
             </>}
         >
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px'}}>
-                {isFetching ? <Spin /> :
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                {loading ? <Spin /> :
                     <>
-                        {images ? images[currPage - 1] : null}
+                        {pngOutput.length > 0 ? images[currPage - 1] : <Typography.Text>Click  <RedoOutlined style={{ color: token.colorFill }}/>  to load.</Typography.Text>}
                     </>
                 }
-                <Pagination onChange={(page, pageSize) => setCurrPage(page)} defaultCurrent={1} total={cvPreviewData ? cvPreviewData.length : 0} pageSize={1} simple />
+                <Pagination onChange={(page, pageSize) => setCurrPage(page)} current={currPage} total={pngOutput.length} simple />
             </div>
         </Card>
     )

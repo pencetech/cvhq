@@ -335,13 +335,13 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     )
 
     const jobPostingAnimation = (
-        <div style={{width: '100%', height: '100%', position: 'relative'}}>
-                <Image
-                fill 
+        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <Image
+                fill
                 style={{ objectFit: "contain", borderRadius: '15px', border: '1px solid #d9d9d9', }}
                 src='/job_posting.gif'
                 alt='animation of copying job requirements from Indeed or LinkedIn onto our page.'
-                />
+            />
         </div>
     );
 
@@ -362,11 +362,11 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             label: 'Job Posting',
             content: <ColumnLayout left={(
                 <JobPostingForm
-                title="Where are you applying to?"
-                description="We'll use this to create a CV specific to this job."
-                value={formData.jobPosting}
-                onSubmit={insertJobPosting}
-                actions={startNextAction} />
+                    title="Where are you applying to?"
+                    description="We'll use this to create a CV specific to this job."
+                    value={formData.jobPosting}
+                    onSubmit={insertJobPosting}
+                    actions={startNextAction} />
             )}
                 right={jobPostingAnimation}
             />
@@ -374,19 +374,15 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         {
             key: 'experiences',
             label: 'Experiences',
-            content: <ColumnLayout left={(
+            content:
                 <ExperiencesForm
-                title="Let's fill out your work history"
-                profileId={profileId}
-                description="Things to note:"
-                userBio={formData.userBio}
-                jobPosting={formData.jobPosting}
-                value={formData.experiences}
-                onSubmit={insertExperience}
-                actions={midNextActions}
-            />
-            )}
-                right={<RightDashboard profile={formData} />}/>
+                    title="Let's fill out your work history"
+                    profileId={profileId}
+                    description="Things to note:"
+                    profile={formData}
+                    onSubmit={insertExperience}
+                    actions={midNextActions}
+                />
         },
         {
             key: 'bio-skillsets',
@@ -398,7 +394,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 onSubmit={handleSubmit}
                 actions={endActions}
             />)}
-            right={<RightDashboard profile={formData} />}
+                right={<RightDashboard profile={formData} />}
             />
         }
     ]

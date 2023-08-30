@@ -13,6 +13,7 @@ import indexRouter from './routes/index';
 import cvRouter from './routes/cv';
 import { CvInput } from './types/cv';
 import { PngOutput } from './types/pngOutput';
+import dayjs from 'dayjs';
 
 var app = express();
 app.set('views', path.join(__dirname, 'views/handlebars'));
@@ -40,6 +41,16 @@ app.use('/cv', cvRouter);
 app.put('/image', async (req, res) => {
   const cvInput = req.body as CvInput;
   const css = fs.readFileSync(cvInput.cvType === "BASE" ? 'public/stylesheets/base.css' : 'public/stylesheets/prime.css')
+  cvInput.education.map(ed => {
+    ed.startDate = dayjs(ed.startDate).format('MMM YYYY');
+    ed.endDate = dayjs(ed.endDate).format('MMM YYYY');
+  })
+  cvInput.experiences.map(exp => {
+    exp.startDate = dayjs(exp.startDate).format('MMM YYYY');
+    if (exp.endDate) {
+      exp.endDate = dayjs(exp.endDate).format('MMM YYYY');
+    }
+  })
   res.render('main', {
     layout: 'index',
     userBio: cvInput.userBio,

@@ -27,7 +27,7 @@ const ProfilePageComponent = ({ id, profile, profileName }: {
                 {profile ? <ProfileCard title={profileName} profileId={id} profile={formData} onUpdate={(value) => setFormData(value)}/> : "profile empty"}  
             </Col>
             <Col span={8}>
-                <RightDashboard jobPosting={formData.jobPosting} />
+                <RightDashboard profile={formData} />
             </Col>
         </Row>
     )

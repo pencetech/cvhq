@@ -1,22 +1,22 @@
 "use client";
 import React from 'react';
-import { Formik, FieldArray, FormikProps, FormikErrors, FormikTouched, FieldMetaProps } from "formik";
+import { Formik, FieldArray, FormikProps, FormikErrors, FormikTouched } from "formik";
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Row, Col, Space, Typography, Collapse, theme, Tag, Card } from 'antd';
+import { Button, Row, Space, Typography, Collapse, theme, Tag, Card } from 'antd';
 import type { CollapseProps } from 'antd';
 import ExperiencePlusCard from './experiencePlusCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import * as Yup from 'yup';
-import { Experience, Experiences, JobPosting, UserBio } from '@/models/cv';
+import { Experience, Experiences, FormData, JobPosting, UserBio } from '@/models/cv';
 import { CaretRightOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
+import ColumnLayout from './columnLayout';
+import RightDashboard from './rightDashboard';
 
 interface OtherProps {
     title: string;
     description?: string;
-    value: Experience[];
-    userBio: UserBio;
-    jobPosting: JobPosting;
+    profile: FormData;
     onSubmit: (value: Experience[]) => Promise<void>;
     profileId: number;
     actions: React.ReactNode;
@@ -46,7 +46,7 @@ const experienceValidationSchema = Yup.object().shape({
 });
 
 const ExperiencesForm = (props: OtherProps) => {
-    const { title, description, onSubmit, profileId, value, userBio, jobPosting, actions } = props;
+    const { title, description, onSubmit, profileId, profile, actions } = props;
     const { token } = theme.useToken();
 
     const panelStyle: React.CSSProperties = {
@@ -109,8 +109,8 @@ const ExperiencesForm = (props: OtherProps) => {
                 children: (<ExperiencePlusCard
                     formProps={formProps}
                     value={value}
-                    userBio={userBio}
-                    jobPosting={jobPosting}
+                    userBio={profile.userBio}
+                    jobPosting={profile.jobPosting}
                     profileId={profileId}
                     index={index}
                 />),
@@ -129,7 +129,7 @@ const ExperiencesForm = (props: OtherProps) => {
     return (
         <Formik
             initialValues={{
-                experiences: value
+                experiences: profile.experiences
             }}
             validationSchema={experienceValidationSchema}
             enableReinitialize
@@ -141,9 +141,9 @@ const ExperiencesForm = (props: OtherProps) => {
                 withFormikDevtools(props);
                 return (
                     <Form {...formItemLayout} layout="vertical">
-                         <Row gutter={24}>
-                            <Col span={24}>
-                                <div style={{ marginBottom: "12px"}}>
+                         <ColumnLayout left={
+                            <>
+                            <div style={{ marginBottom: "12px"}}>
                                     <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>    
                                     {description ? <Card>
                                         <Typography.Title level={5} style={{ margin: '0 0 12px 0', color: '#a1a1a1' }}>{description}</Typography.Title>
@@ -188,8 +188,12 @@ const ExperiencesForm = (props: OtherProps) => {
                                         </Space>
                                     )}
                                 />
-                            </Col>
-                        </Row>
+                            </>
+                         }
+                         right={
+                            <RightDashboard profile={{...profile, ...props.values }} />
+                         }
+                         />
                     </Form>
                 )
             }}

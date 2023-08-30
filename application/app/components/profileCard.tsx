@@ -315,11 +315,9 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: {
             children: <ExperiencesForm 
                 profileId={profileId}
                 title="Experiences" 
-                value={profile.experiences} 
                 onSubmit={setExperienceArray} 
                 actions={saveButton} 
-                userBio={profile.userBio}
-                jobPosting={profile.jobPosting}
+                profile={profile}
             />
         },
         {
