@@ -45,12 +45,14 @@ app.put('/image', async (req, res) => {
     ed.startDate = dayjs(ed.startDate).format('MMM YYYY');
     ed.endDate = dayjs(ed.endDate).format('MMM YYYY');
   })
+  
   cvInput.experiences.map(exp => {
     exp.startDate = dayjs(exp.startDate).format('MMM YYYY');
     if (exp.endDate) {
       exp.endDate = dayjs(exp.endDate).format('MMM YYYY');
     }
   })
+
   res.render('main', {
     layout: 'index',
     userBio: cvInput.userBio,
