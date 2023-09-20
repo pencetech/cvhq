@@ -176,12 +176,12 @@ const DashboardLayoutComponent = ({
           <Breadcrumbs />
           <Content
             style={{
-              margin: 0,
               minHeight: 280,
-              overflow: "initial"
+              overflow: "initial",
+              display: 'flex', justifyContent: 'space-between', padding: 0, margin: '0 auto', maxWidth: '1264px', width: '100%'
             }}
           >
-            <Card style={{ margin: 0, background: '#FFFFFF' }}>{children}</Card>
+            <Card style={{ margin: 0, background: '#FFFFFF', width: '100%' }}>{children}</Card>
           </Content>
         </Layout>
       </Layout>

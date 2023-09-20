@@ -1,0 +1,19 @@
+name: Deploy memcached Production
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - platform/memcached/**
+      - .github/workflows/memcached-production.yaml
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./platform/memcached
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only -t ${{ secrets.FLY_API_TOKEN_CVHQ }} --config ./fly.production.toml

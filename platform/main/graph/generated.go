@@ -45,6 +45,10 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Benchmark struct {
+		Status func(childComplexity int) int
+	}
+
 	CVContent struct {
 		Education   func(childComplexity int) int
 		Experiences func(childComplexity int) int
@@ -104,10 +108,12 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		EnhanceAchievement func(childComplexity int, input model.AchievementInput) int
-		GenerateCv         func(childComplexity int, input model.CvInput) int
-		GenerateSampleCv   func(childComplexity int, input model.SampleCvInput) int
-		GenerateSummary    func(childComplexity int, input model.CvInput) int
+		EnhanceAchievement    func(childComplexity int, input model.AchievementInput) int
+		GenerateBenchmarkList func(childComplexity int, input model.MatchFactorInput) int
+		GenerateCv            func(childComplexity int, input model.CvInput) int
+		GenerateMatchFactor   func(childComplexity int, input model.MatchFactorInput) int
+		GenerateSampleCv      func(childComplexity int, input model.SampleCvInput) int
+		GenerateSummary       func(childComplexity int, input model.CvInput) int
 	}
 
 	Query struct {
@@ -138,6 +144,8 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	EnhanceAchievement(ctx context.Context, input model.AchievementInput) (*model.EnhancedAchievement, error)
+	GenerateBenchmarkList(ctx context.Context, input model.MatchFactorInput) (*model.Benchmark, error)
+	GenerateMatchFactor(ctx context.Context, input model.MatchFactorInput) (*model.Match, error)
 	GenerateCv(ctx context.Context, input model.CvInput) (*model.CvFile, error)
 	GenerateSummary(ctx context.Context, input model.CvInput) (*model.Summary, error)
 	GenerateSampleCv(ctx context.Context, input model.SampleCvInput) (*model.SampleCv, error)
@@ -161,6 +169,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Benchmark.status":
+		if e.complexity.Benchmark.Status == nil {
+			break
+		}
+
+		return e.complexity.Benchmark.Status(childComplexity), true
 
 	case "CVContent.education":
 		if e.complexity.CVContent.Education == nil {
@@ -412,6 +427,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EnhanceAchievement(childComplexity, args["input"].(model.AchievementInput)), true
 
+	case "Mutation.generateBenchmarkList":
+		if e.complexity.Mutation.GenerateBenchmarkList == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_generateBenchmarkList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.GenerateBenchmarkList(childComplexity, args["input"].(model.MatchFactorInput)), true
+
 	case "Mutation.generateCV":
 		if e.complexity.Mutation.GenerateCv == nil {
 			break
@@ -423,6 +450,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.GenerateCv(childComplexity, args["input"].(model.CvInput)), true
+
+	case "Mutation.generateMatchFactor":
+		if e.complexity.Mutation.GenerateMatchFactor == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_generateMatchFactor_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.GenerateMatchFactor(childComplexity, args["input"].(model.MatchFactorInput)), true
 
 	case "Mutation.generateSampleCv":
 		if e.complexity.Mutation.GenerateSampleCv == nil {
@@ -537,6 +576,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputEducationInput,
 		ec.unmarshalInputExperienceInput,
 		ec.unmarshalInputJobPostingInput,
+		ec.unmarshalInputMatchFactorInput,
 		ec.unmarshalInputSampleCvInput,
 		ec.unmarshalInputSkillsetInput,
 		ec.unmarshalInputSummaryInput,
@@ -672,6 +712,21 @@ func (ec *executionContext) field_Mutation_enhanceAchievement_args(ctx context.C
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_generateBenchmarkList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.MatchFactorInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNMatchFactorInput2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐMatchFactorInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_generateCV_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -679,6 +734,21 @@ func (ec *executionContext) field_Mutation_generateCV_args(ctx context.Context, 
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNCvInput2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐCvInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_generateMatchFactor_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.MatchFactorInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNMatchFactorInput2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐMatchFactorInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -784,6 +854,50 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _Benchmark_status(ctx context.Context, field graphql.CollectedField, obj *model.Benchmark) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Benchmark_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Benchmark_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Benchmark",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _CVContent_userBio(ctx context.Context, field graphql.CollectedField, obj *model.CVContent) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_CVContent_userBio(ctx, field)
@@ -2394,6 +2508,126 @@ func (ec *executionContext) fieldContext_Mutation_enhanceAchievement(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_enhanceAchievement_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_generateBenchmarkList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_generateBenchmarkList(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().GenerateBenchmarkList(rctx, fc.Args["input"].(model.MatchFactorInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Benchmark)
+	fc.Result = res
+	return ec.marshalNBenchmark2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐBenchmark(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_generateBenchmarkList(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "status":
+				return ec.fieldContext_Benchmark_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Benchmark", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_generateBenchmarkList_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_generateMatchFactor(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_generateMatchFactor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().GenerateMatchFactor(rctx, fc.Args["input"].(model.MatchFactorInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Match)
+	fc.Result = res
+	return ec.marshalNMatch2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐMatch(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_generateMatchFactor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "matchFactor":
+				return ec.fieldContext_Match_matchFactor(ctx, field)
+			case "reason":
+				return ec.fieldContext_Match_reason(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Match", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_generateMatchFactor_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -5359,6 +5593,44 @@ func (ec *executionContext) unmarshalInputJobPostingInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputMatchFactorInput(ctx context.Context, obj interface{}) (model.MatchFactorInput, error) {
+	var it model.MatchFactorInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"experience", "jobPosting"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "experience":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("experience"))
+			data, err := ec.unmarshalNExperienceInput2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐExperienceInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Experience = data
+		case "jobPosting":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("jobPosting"))
+			data, err := ec.unmarshalNJobPostingInput2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐJobPostingInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.JobPosting = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSampleCvInput(ctx context.Context, obj interface{}) (model.SampleCvInput, error) {
 	var it model.SampleCvInput
 	asMap := map[string]interface{}{}
@@ -5545,6 +5817,45 @@ func (ec *executionContext) unmarshalInputUserBioInput(ctx context.Context, obj 
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var benchmarkImplementors = []string{"Benchmark"}
+
+func (ec *executionContext) _Benchmark(ctx context.Context, sel ast.SelectionSet, obj *model.Benchmark) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, benchmarkImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Benchmark")
+		case "status":
+			out.Values[i] = ec._Benchmark_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
 
 var cVContentImplementors = []string{"CVContent"}
 
@@ -5986,6 +6297,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "enhanceAchievement":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_enhanceAchievement(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "generateBenchmarkList":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_generateBenchmarkList(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "generateMatchFactor":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_generateMatchFactor(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -6635,6 +6960,20 @@ func (ec *executionContext) unmarshalNAchievementInput2githubᚗcomᚋpencetech�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNBenchmark2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐBenchmark(ctx context.Context, sel ast.SelectionSet, v model.Benchmark) graphql.Marshaler {
+	return ec._Benchmark(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNBenchmark2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐBenchmark(ctx context.Context, sel ast.SelectionSet, v *model.Benchmark) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Benchmark(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6939,6 +7278,10 @@ func (ec *executionContext) unmarshalNJobPostingInput2ᚖgithubᚗcomᚋpencetec
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNMatch2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐMatch(ctx context.Context, sel ast.SelectionSet, v model.Match) graphql.Marshaler {
+	return ec._Match(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNMatch2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐMatch(ctx context.Context, sel ast.SelectionSet, v *model.Match) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -6947,6 +7290,11 @@ func (ec *executionContext) marshalNMatch2ᚖgithubᚗcomᚋpencetechᚋcvhqᚋg
 		return graphql.Null
 	}
 	return ec._Match(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNMatchFactorInput2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐMatchFactorInput(ctx context.Context, v interface{}) (model.MatchFactorInput, error) {
+	res, err := ec.unmarshalInputMatchFactorInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNSampleCv2githubᚗcomᚋpencetechᚋcvhqᚋgraphᚋmodelᚐSampleCv(ctx context.Context, sel ast.SelectionSet, v model.SampleCv) graphql.Marshaler {

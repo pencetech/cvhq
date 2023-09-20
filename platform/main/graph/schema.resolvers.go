@@ -42,6 +42,16 @@ func (r *mutationResolver) EnhanceAchievement(ctx context.Context, input model.A
 	return &enhanced, nil
 }
 
+// GenerateBenchmarkList is the resolver for the generateBenchmarkList field.
+func (r *mutationResolver) GenerateBenchmarkList(ctx context.Context, input model.MatchFactorInput) (*model.Benchmark, error) {
+	panic(fmt.Errorf("not implemented: GenerateBenchmarkList - generateBenchmarkList"))
+}
+
+// GenerateMatchFactor is the resolver for the generateMatchFactor field.
+func (r *mutationResolver) GenerateMatchFactor(ctx context.Context, input model.MatchFactorInput) (*model.Match, error) {
+	panic(fmt.Errorf("not implemented: GenerateMatchFactor - generateMatchFactor"))
+}
+
 // GenerateCv is the resolver for the generateCV field.
 func (r *mutationResolver) GenerateCv(ctx context.Context, input model.CvInput) (*model.CvFile, error) {
 	var cv model.CvFile
@@ -121,7 +131,7 @@ func (r *mutationResolver) GenerateSampleCv(ctx context.Context, input model.Sam
 		log.Println("ERROR: prompt injection failed -> ", err)
 		return nil, err
 	}
-	
+
 	objStr, err := r.ChatBridge.ChatCompletionWithSystemPrompt(SampleCvSystemPrompt, content)
 	fmt.Print(objStr)
 	if err != nil {

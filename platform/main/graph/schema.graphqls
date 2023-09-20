@@ -147,9 +147,18 @@ type SampleCv {
   experiences: [Experience!]!
 }
 
+input MatchFactorInput {
+  experience: ExperienceInput!
+  jobPosting: JobPostingInput!
+}
+
 type EnhancedAchievement {
   match: Match!
   achievements: String!
+}
+
+type Benchmark {
+  status: String!
 }
 
 type Query {
@@ -159,6 +168,8 @@ type Query {
 
 type Mutation {
   enhanceAchievement(input: AchievementInput!): EnhancedAchievement!
+  generateBenchmarkList(input: MatchFactorInput!): Benchmark!
+  generateMatchFactor(input: MatchFactorInput!): Match!
   generateCV(input: CvInput!): CvFile! # With summary check!
   generateSummary(input: CvInput!): Summary!
   generateSampleCv(input: SampleCvInput!): SampleCv!

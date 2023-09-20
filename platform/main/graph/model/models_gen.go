@@ -14,6 +14,10 @@ type AchievementInput struct {
 	Experience *ExperienceInput `json:"experience"`
 }
 
+type Benchmark struct {
+	Status string `json:"status"`
+}
+
 type CVContent struct {
 	UserBio     *UserBio      `json:"userBio"`
 	Summary     *Summary      `json:"summary"`
@@ -113,6 +117,11 @@ type JobPostingInput struct {
 type Match struct {
 	MatchFactor *int   `json:"matchFactor,omitempty"`
 	Reason      string `json:"reason"`
+}
+
+type MatchFactorInput struct {
+	Experience *ExperienceInput `json:"experience"`
+	JobPosting *JobPostingInput `json:"jobPosting"`
 }
 
 type SampleCv struct {
