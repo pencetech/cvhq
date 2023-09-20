@@ -40,10 +40,13 @@ const SetupLayout = ({
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Header style={{
-                display: 'flex', 
-                alignItems: 'center',
-                backgroundColor: '#111111'
+            <Header style={{ 
+              display: 'flex', 
+              position: 'sticky',
+              top: 0,
+              zIndex: 99,
+              width: '100%',
+              alignItems: 'center',
             }}>
                 <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Space align="center">
@@ -54,7 +57,7 @@ const SetupLayout = ({
                           fill={false}
                           priority 
                       />
-                      <Tag color="#2db7f5" style={{ color: "#111111", fontSize: "12px" }}>BETA</Tag>
+                      <Tag color="#2db7f5" style={{ color: "#111111" }}>BETA</Tag>
                     </Space>
                     <Space>
                       <Link href="https://tally.so/r/3NDNxO" target="_blank">
@@ -64,8 +67,8 @@ const SetupLayout = ({
                     </Space>
                 </div>
             </Header>
-            <Content style={{ padding: 0 }}>
-                <Card style={{ margin: 16, background: '#FFFFFF' }}>{children}</Card>
+            <Content style={{ display: 'flex', justifyContent: 'space-between', padding: 0, margin: '0 auto', maxWidth: '1264px', width: '100%' }}>
+                <Card style={{ margin: 16, background: '#FFFFFF', width: '100%' }}>{children}</Card>
             </Content>
       </Layout>
     )

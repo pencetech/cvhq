@@ -4,8 +4,10 @@
 import { useState, type PropsWithChildren } from 'react';
 import { useServerInsertedHTML } from 'next/navigation';
 import { Plus_Jakarta_Sans } from 'next/font/google';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, theme } from 'antd';
 import { createCache, extractStyle, StyleProvider } from '@ant-design/cssinjs';
+
+const { compactAlgorithm } = theme;
 
 const font = Plus_Jakarta_Sans({ subsets: ["cyrillic-ext"] });
 
@@ -32,6 +34,7 @@ export const AntdProvider = ({ children }: PropsWithChildren) => {
             token: {
                 fontFamily: font.style.fontFamily,
             },
+            // algorithm: compactAlgorithm         
           }}
         >
           <RootStyleRegistry>{children}</RootStyleRegistry>

@@ -43,7 +43,7 @@ var express_1 = __importDefault(require("express"));
 var router = express_1.default.Router();
 var browser_1 = __importDefault(require("../modules/browser"));
 /* PUT users listing. */
-router.put('/', function (req, res, next) {
+router.put('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var page, pdfBuffer;
         return __generator(this, function (_a) {
@@ -59,6 +59,7 @@ router.put('/', function (req, res, next) {
                     _a.sent();
                     return [4 /*yield*/, page.pdf({
                             printBackground: true,
+                            preferCSSPageSize: true,
                             format: 'A4',
                         })];
                 case 4:

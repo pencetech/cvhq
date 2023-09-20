@@ -1,16 +1,19 @@
 "use client";
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { BioSkillset, Education, Experience, FormData, JobPosting, Skillset, UserBio } from '@/models/cv';
-import { Button, Space, Steps, message, theme } from 'antd';
+import { SecondaryInput, Education, Experience, FormData, JobPosting, Skillset, UserBio } from '@/models/cv';
+import { Button, Col, Row, Space, Steps, message, theme } from 'antd';
+import Image from 'next/image';
+import axios from 'axios';
 import JobPostingForm from './jobPostingForm';
 import ExperiencesForm from './experiencesForm';
-import EducationForm from './educationForm';
 import { Database } from '@/types/supabase';
 import CvDownloadModal from './cvDownloadModal';
 import { gql, useMutation } from '@apollo/client';
-import { Mutation } from '../__generated__/graphql';
+import { CvType, Mutation } from '../__generated__/graphql';
 import FinalTouchesForm from './finalTouchesForm';
+import SelectCvOptionModal from './selectCVOptionModal';
+import RightDashboard from './rightDashboard';
 
 const GENERATE_SUMMARY = gql`
 mutation generateSummary($input: CvInput!) {
@@ -19,12 +22,33 @@ mutation generateSummary($input: CvInput!) {
     }
 }
 `
+const GENERATE_SAMPLE_CV = gql`
+    mutation generateSampleCv($input: SampleCvInput!) {
+        generateSampleCv(input: $input) {
+            experiences {
+                id
+                title
+                company
+                sector
+                isCurrent
+                startDate
+                endDate
+                achievements
+            }
+        }
+    }
+`
+
+const YEARS_OF_EXPERIENCE = 3;
 
 const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) => {
     const [activeStepIndex, setActiveStepIndex] = useState(0);
     const { token } = theme.useToken();
     const supabase = createClientComponentClient<Database>();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+    const [isCvModalOpen, setIsCvModalOpen] = useState(false);
+    const [cvType, setCvType] = useState<CvType>(CvType.Base);
+    const [isPreferenceChosen, setIsPreferenceChosen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const [formData, setFormData] = useState<FormData>({
@@ -65,24 +89,13 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         }
     });
 
-    const cvInput = {
-        id: 1,
-        cvContent: {
-            userBio: formData.userBio,
-            experiences: formData.experiences,
-            summary: formData.summary,
-            education: formData.education,
-            skillsets: formData.skillset
-        },
-        jobPosting: formData.jobPosting,
-        cvType: "BASE"
-    }
     const [generateSummary, { data: graphSummaryData, loading: generateSummaryLoading }] = useMutation<Mutation>(GENERATE_SUMMARY);
+    const [generateSampleCv, { data: sampleCvData, loading: sampleCvLoading }] = useMutation<Mutation>(GENERATE_SAMPLE_CV);
 
     const handleRetrySummary = async () => {
         setLoading(true);
         const summary = await handleGenerateSummary();
-        handleChangeSummary(summary? summary : '');
+        handleChangeSummary(summary ? summary : '');
         setLoading(false);
     }
     const handleGenerateSummary = async (sk?: Skillset) => {
@@ -106,7 +119,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     }
 
     const handleChangeSummary = (summary: string) => {
-        const values = { 
+        const values = {
             summary: {
                 summary: summary
             }
@@ -116,27 +129,31 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
 
     const insertUserBio = async (user: UserBio) => {
         await supabase.from('user_bio')
-        .upsert({
-            user_id: userId,
-            first_name: user.firstName,
-            last_name: user.lastName,
-            email: user.email,
-            phone: user.phone,
-            address: user.address
-        }, { onConflict: 'user_id' })
+            .upsert({
+                user_id: userId,
+                first_name: user.firstName,
+                last_name: user.lastName,
+                email: user.email,
+                phone: user.phone,
+                address: user.address
+            }, { onConflict: 'user_id' })
     }
 
     const insertJobPosting = async (job: JobPosting) => {
         await supabase.from('job_posting')
-        .upsert({
-            profile_id: profileId,
-            title: job.title,
-            company: job.company,
-            sector: job.sector,
-            requirements: job.requirements,
-            add_on: job.addOn
-        }, { onConflict: 'profile_id' })
+            .upsert({
+                profile_id: profileId,
+                title: job.title,
+                company: job.company,
+                sector: job.sector,
+                requirements: job.requirements,
+                add_on: job.addOn
+            }, { onConflict: 'profile_id' })
         messageApi.success("Job posting saved!");
+
+        if (!isPreferenceChosen) {
+            showCvModal();
+        }
         handleProgress({
             jobPosting: job
         });
@@ -164,7 +181,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 seq_id: i + 1,
                 is_deleted: false
             })
-        ), { onConflict: 'profile_id, seq_id' })
+            ), { onConflict: 'profile_id, seq_id' })
         messageApi.success("Experience saved!");
         handleProgress({
             experiences: experiences
@@ -191,11 +208,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
                 seq_id: i + 1,
                 is_deleted: false
             })
-        ), { onConflict: 'profile_id, seq_id' })
-        messageApi.success("Education saved!");
-        handleProgress({
-            education: education
-        });
+            ), { onConflict: 'profile_id, seq_id' })
     }
 
     const deleteExperience = async (index: number) => {
@@ -218,10 +231,44 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
 
     const insertSkillset = async (sk: Skillset) => {
         await supabase.from('skillset')
-        .upsert({
-            profile_id: profileId,
-            skillsets: sk.skillsets
-        }, { onConflict: 'profile_id' })
+            .upsert({
+                profile_id: profileId,
+                skillsets: sk.skillsets
+            }, { onConflict: 'profile_id' })
+    }
+
+    const handleCvSelect = async (value: string) => {
+        setIsPreferenceChosen(true);
+        if (value == "pre-filled") {
+            const { data } = await generateSampleCv({
+                variables: {
+                    input: {
+                        title: formData.jobPosting.title,
+                        yearsOfExperience: YEARS_OF_EXPERIENCE,
+                        sector: formData.jobPosting.sector,
+                        jobRequirements: formData.jobPosting.requirements
+                    }
+                }
+            })
+            if (data?.generateSampleCv.experiences) {
+                const mockExperience = {
+                    experiences: data?.generateSampleCv.experiences.map(exp => ({
+                        id: Number(exp.id),
+                        title: exp.title,
+                        company: exp.company,
+                        sector: exp.sector,
+                        isCurrent: exp.isCurrent,
+                        startDate: exp.startDate,
+                        endDate: exp.endDate ? exp.endDate : '',
+                        achievements: exp.achievements
+                    }))
+                }
+                setFormData(oldData => ({ ...oldData, ...mockExperience }))
+            }
+        }
+        handleCancelCvModal();
+        // if pre-filled, query list of experiences from prompts
+        // if empty, proceed to an empty experience field
     }
 
     const handleBack = (e: any) => {
@@ -235,27 +282,37 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
         setActiveStepIndex(activeStepIndex + 1);
     }
 
-    const showModal = () => {
-        setIsModalOpen(true);
-      };
+    const showCvModal = () => {
+        setIsCvModalOpen(true);
+    }
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
+    const handleCancelCvModal = () => {
+        setIsCvModalOpen(false);
+    }
+
+    const showDownloadModal = () => {
+        setIsDownloadModalOpen(true);
     };
 
-    const handleSubmit = async (values: BioSkillset) => {
+    const handleCancelDownloadModal = () => {
+        setIsDownloadModalOpen(false);
+    };
+
+    const handleSubmit = async (values: SecondaryInput) => {
         setLoading(true);
         await insertSkillset(values.skillsets);
+        await insertEducation(values.education);
         await insertUserBio(values.userBio);
-        messageApi.success("Your bio and skillset saved!");
         const summary = await handleGenerateSummary(values.skillsets);
-        const mergingValue = { 
-            skillset: values.skillsets, 
+        const mergingValue = {
+            skillset: values.skillsets,
             summary: { summary: summary ? summary : "" },
+            education: values.education,
             userBio: values.userBio
         }
         setFormData(oldData => ({ ...oldData, ...mergingValue }));
-        showModal();
+        messageApi.success("Your final touches saved!");
+        showDownloadModal();
         setLoading(false);
     }
 
@@ -276,56 +333,68 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
             <Button type='primary' htmlType="submit" loading={loading}>{loading ? "Generating" : "Generate CV"}</Button>
         </Space>
     )
-        // to handle async compatibility throughout the app, we're making this 
+
+    const jobPostingAnimation = (
+        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <Image
+                fill
+                style={{ objectFit: "contain", borderRadius: '15px', border: '1px solid #d9d9d9', }}
+                src='/job_posting.gif'
+                alt='animation of copying job requirements from Indeed or LinkedIn onto our page.'
+            />
+        </div>
+    );
+
+    const ColumnLayout = ({ left, right }: { left: ReactNode, right: ReactNode }) => (
+        <Row gutter={24}>
+            <Col span={16}>
+                {left}
+            </Col>
+            <Col span={8}>
+                {right}
+            </Col>
+        </Row>
+    );
+    // to handle async compatibility throughout the app, we're making this 
     const rawItems = [
         {
             key: 'job',
             label: 'Job Posting',
-            content: <JobPostingForm 
-            isIntro 
-            title="Where are you applying to?" 
-            description="We'll use this to create a CV specific to this job." 
-            value={formData.jobPosting} 
-            onSubmit={insertJobPosting} 
-            actions={startNextAction} />
+            content: <ColumnLayout left={(
+                <JobPostingForm
+                    title="Where are you applying to?"
+                    description="We'll use this to create a CV specific to this job."
+                    value={formData.jobPosting}
+                    onSubmit={insertJobPosting}
+                    actions={startNextAction} />
+            )}
+                right={jobPostingAnimation}
+            />
         },
         {
             key: 'experiences',
             label: 'Experiences',
-            content: <ExperiencesForm 
-                isIntro 
-                title="Let's fill out your work history"
-                profileId={profileId} 
-                description="Things to note:" 
-                userBio={formData.userBio} 
-                jobPosting={formData.jobPosting} 
-                value={formData.experiences} 
-                onSubmit={insertExperience} 
-                actions={midNextActions} 
-            />
-        },
-        {
-            key: 'education',
-            label: 'Education',
-            content: <EducationForm 
-                isIntro 
-                title="Showcase your academic qualifications" 
-                description="Things to note:" 
-                value={formData.education} 
-                onSubmit={insertEducation} 
-                actions={midNextActions} 
+            content:
+                <ExperiencesForm
+                    title="Let's fill out your work history"
+                    profileId={profileId}
+                    description="Things to note:"
+                    profile={formData}
+                    onSubmit={insertExperience}
+                    actions={midNextActions}
                 />
         },
         {
             key: 'bio-skillsets',
             label: 'Final touches',
-            content: <FinalTouchesForm 
-                isIntro 
-                title="Final touches" 
-                description="Add your bio and unique skills that make you stand out." 
-                value={{ skillsets: formData.skillset, userBio: formData.userBio }} 
-                onSubmit={handleSubmit} 
-                actions={endActions} 
+            content: <ColumnLayout left={(<FinalTouchesForm
+                title="Final touches"
+                description="Add your bio, education, and unique skills that make you stand out."
+                value={{ skillsets: formData.skillset, userBio: formData.userBio, education: formData.education }}
+                onSubmit={handleSubmit}
+                actions={endActions}
+            />)}
+                right={<RightDashboard profile={formData} />}
             />
         }
     ]
@@ -333,7 +402,7 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
     const items = rawItems.map((item) => ({
         key: item.key,
         title: item.label,
-      }));
+    }));
 
     const contentStyle = {
         lineHeight: '260px',
@@ -344,24 +413,31 @@ const CvForm = ({ profileId, userId }: { profileId: number, userId: string }) =>
 
     return (
         <>
-        <Steps
-            items={items}
-            current={activeStepIndex}
-            size="small"
-            style={{ margin: '16px 0', minHeight: '100%' }}
-        />
-        {contextHolder}
-        <div style={contentStyle}>{rawItems[activeStepIndex].content}</div>
-          <CvDownloadModal 
-            userId={userId} 
-            profileId={profileId} 
-            formData={formData} 
-            open={isModalOpen}
-            onCancel={handleCancel} 
-            onFetchSummary={handleRetrySummary}
-            onChangeSummary={handleChangeSummary}
-            loading={loading}
-            nextLink="/dashboard/home" 
+            <Steps
+                items={items}
+                current={activeStepIndex}
+                size="small"
+                style={{ margin: '16px 0', minHeight: '100%' }}
+            />
+            {contextHolder}
+            <div style={contentStyle}>{rawItems[activeStepIndex].content}</div>
+            <CvDownloadModal
+                userId={userId}
+                profileId={profileId}
+                formData={formData}
+                open={isDownloadModalOpen}
+                onCancel={handleCancelDownloadModal}
+                onFetchSummary={handleRetrySummary}
+                onChangeSummary={handleChangeSummary}
+                loading={loading}
+                nextLink="/dashboard/home"
+            />
+            <SelectCvOptionModal
+                loading={sampleCvLoading}
+                title="Pick your preference"
+                onSelect={handleCvSelect}
+                onCancel={handleCancelCvModal}
+                open={isCvModalOpen}
             />
         </>
     )

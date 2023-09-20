@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import * as dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -9,35 +9,23 @@ import { List, Button, Divider, Modal, message, Typography } from 'antd';
 import Link from 'next/link';
 import { ProfileName, Profiles } from '@/models/cv';
 import ProfileNameForm from '@/app/components/profileNameForm';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
 
-const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
+const HomePageComponent = ({ profiles, user }: { profiles: Profiles, user?: User }) => {
   const supabase = createClientComponentClient<Database>();
   const [messageApi, contextHolder] = message.useMessage();
   const queryClient = useQueryClient();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<string>();
-  useEffect(() => {
-    const getUser = async () => {
-        const {
-            data: { session },
-        } = await supabase.auth.getSession();
-
-        setUser(session?.user.id);
-    }
-
-    getUser();
-  }, [supabase.auth])
   
   const getProfiles = async () => {
     let { data, error, status } = await supabase
     .from('cv_profile')
     .select('id, name, inserted_at')
-    .eq('user_id', user)
+    .eq('user_id', user?.id)
     .order('inserted_at', { ascending: false })
 
     if (error && status !== 406) {
@@ -46,8 +34,8 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
 
     return data?.map((obj: any) => {
       return {
-        id: obj.profile_id,
-        description: obj.profile_name,
+        id: obj.id,
+        description: obj.name,
         createdAt: obj.inserted_at
       }}) as Profiles
   }; 
@@ -84,7 +72,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
     if (user) {
       const { error } = await supabase.from('cv_profile')
       .insert({
-          user_id: user,
+          user_id: user.id,
           name: value.profileName
       })
 
@@ -102,7 +90,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
 
   const getCurrProfile = async (profileName: ProfileName) => {
     const { data, error } = await supabase.from('cv_profile')
-    .select('id').eq('user_id', user).eq('name', profileName.profileName)
+    .select('id').eq('user_id', user?.id).eq('name', profileName.profileName)
 
     if (error) {
       messageApi.error('An error occured.')
@@ -117,7 +105,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
     if (user) {
       const { data, error, status } = await supabase
       .rpc('migrate_new_profile_data', {
-        user_id_input: user,
+        user_id_input: user.id,
         prev_profile_id_input: prevId,
         curr_profile_id_input: currId
       })

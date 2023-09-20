@@ -20,10 +20,6 @@ type ProfileData = {
   description: string
 }
 
-const DISCLAIMER_TEXT = "CVHQ is currently in beta. If you experience any usability issues, please leave some feedback. Thanks for visiting!";
-
-export const revalidate = 0;
-
 const DashboardLayoutComponent = ({
     user, profiles, children
   }: {
@@ -129,52 +125,63 @@ const DashboardLayoutComponent = ({
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Alert message={DISCLAIMER_TEXT} banner action={
-        <Link href="https://tally.so/r/3NDNxO" target="_blank">
-          <Button type="text">Give feedback</Button>
-        </Link>
-      }/>
-      <Header style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Space align="center">
-                      <Image 
-                          src={Logo}
-                          alt="CVHQ logo"
-                          height={18}
-                          fill={false}
-                          priority 
-                      />
-                      <Tag color="#2db7f5" style={{ color: "#111111", fontSize: "12px" }}>BETA</Tag>
-                    </Space>
-                    <Space>
-                      <Link href="https://tally.so/r/3NDNxO" target="_blank">
-                        <Button type="text" style={{ color: '#FFFFFF' }}>Feedback</Button>
-                      </Link>
-                      <Button type="text" style={{ color: "#FFFFFF" }} onClick={handleSignOut}>Sign out</Button>
-                    </Space>
-                </div>
+    <Layout style={{ minHeight: '100vh' }}>
+      <Header style={{ 
+        display: 'flex', 
+        position: 'sticky',
+        top: 0,
+        zIndex: 99,
+        width: '100%',
+        alignItems: 'center',
+      }}>
+        <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Space align="center">
+              <Image 
+                  src={Logo}
+                  alt="CVHQ logo"
+                  height={18}
+                  fill={false}
+                  priority 
+              />
+              <Tag color="#2db7f5" style={{ color: "#111111", fontSize: "12px" }}>BETA</Tag>
+            </Space>
+            <Space>
+              <Link href="https://tally.so/r/3NDNxO" target="_blank">
+                <Button type="text" style={{ color: '#FFFFFF' }}>Feedback</Button>
+              </Link>
+              <Button type="text" style={{ color: "#FFFFFF" }} onClick={handleSignOut}>Sign out</Button>
+            </Space>
+        </div>
       </Header>
       <Layout hasSider>
-        <Sider width={256} style={{ background: colorBgContainer }}>
+        <Sider width={256} style={{ 
+          background: colorBgContainer,
+          overflow: 'auto',
+          position: 'fixed',
+          height: 'inherit',
+          left: 0,
+          top: 64,
+          bottom: 0,
+        }}>
           <Menu
             onClick={handleClick}
             mode="inline"
             defaultSelectedKeys={['home']}
             selectedKeys={selectedKeys()}
-            style={{ height: '100%', borderRight: 0 }}
+            style={{ height: '100%', overflow: 'auto', scrollbarGutter: 'stable', borderRight: 0 }}
             items={items}
           />
         </Sider>
-        <Layout style={{ padding: '0 24px 24px' }}>
+        <Layout style={{ padding: '0 24px 24px', marginLeft: '256px' }}>
           <Breadcrumbs />
           <Content
             style={{
-              margin: 0,
-              minHeight: 280
+              minHeight: 280,
+              overflow: "initial",
+              display: 'flex', justifyContent: 'space-between', padding: 0, margin: '0 auto', maxWidth: '1264px', width: '100%'
             }}
           >
-            <Card style={{ margin: 0, background: '#FFFFFF' }}>{children}</Card>
+            <Card style={{ margin: 0, background: '#FFFFFF', width: '100%' }}>{children}</Card>
           </Content>
         </Layout>
       </Layout>

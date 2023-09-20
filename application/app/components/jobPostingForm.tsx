@@ -14,7 +14,6 @@ import { sectors } from "@/models/sector";
 interface OtherProps {
     title: string;
     description?: string;
-    isIntro: boolean;
     value: JobPosting;
     onSubmit: (value: JobPosting) => Promise<void>;
     actions: React.ReactNode;
@@ -37,7 +36,7 @@ const jobPostingValidationSchema = Yup.object().shape({
 })
 
 const JobPostingForm = (props: OtherProps) => {
-    const { title, description, isIntro, onSubmit, value, actions } = props;
+    const { title, description, onSubmit, value, actions } = props;
 
     const formItemLayout = {
         labelCol: { span: 24 },
@@ -58,7 +57,7 @@ const JobPostingForm = (props: OtherProps) => {
                     
                     <Form {...formItemLayout} layout="vertical">
                         <Row gutter={24}>
-                            <Col span={isIntro ? 12 : 24}>
+                            <Col span={24}>
                             <div style={{ marginBottom: "12px"}}>
                                 <Typography.Title level={3} style={{ margin: '0 0 12px 0' }}>{title}</Typography.Title>
                                 <Typography.Title level={5} style={{ margin: '0 0 12px 0', color: '#a1a1a1' }}>{description}</Typography.Title>
@@ -92,19 +91,8 @@ const JobPostingForm = (props: OtherProps) => {
                             </Form.Item>
                             <Row justify='end'>
                                 {actions}
-                            </Row>
-                            
+                            </Row>   
                         </Col>
-                        {isIntro ? <Col span={12}>
-                        <div style={{width: '100%', height: '100%', position: 'relative'}}>
-                                <Image
-                                fill 
-                                style={{ objectFit: "contain", borderRadius: '15px', border: '1px solid #d9d9d9', }}
-                                src='/job_posting.gif'
-                                alt='animation of copying job requirements from Indeed or LinkedIn onto our page.'
-                                />
-                                </div>
-                            </Col> : null}
                     </Row>
                     </Form>
                 )

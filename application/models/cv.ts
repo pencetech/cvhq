@@ -39,12 +39,21 @@ export interface Summary {
     summary: string
 }
 
+export interface EducationArray {
+    education: Education[]
+}
+
+export interface Experiences {
+    experiences: Experience[]
+}
+
 export interface ProfileName {
     profileName: string
 }
 
-export interface BioSkillset {
+export interface SecondaryInput {
     userBio: UserBio,
+    education: Education[],
     skillsets: Skillset
 }
 
@@ -62,6 +71,11 @@ export interface FormData {
     skillset: Skillset,
     summary?: Summary
 };
+
+export interface AchivementPlus {
+    description: string,
+    isAdded: boolean
+}
 
 export interface ProfileMeta {
     id: number,

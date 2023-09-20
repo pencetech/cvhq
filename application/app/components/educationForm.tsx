@@ -1,13 +1,14 @@
 "use client";
 import React from 'react';
-import { Formik, FieldArray } from "formik";
+import { Formik, FieldArray, FormikProps, FormikErrors } from "formik";
 import { withFormikDevtools } from "formik-devtools-extension";
-import { Button, Typography, Space, Row, Col } from 'antd';
+import { Button, Typography, Space, Row, Col, theme, type CollapseProps, Collapse, Tag } from 'antd';
 import EducationCard from '@/app/components/educationCard';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 import * as Yup from 'yup';
-import { Education } from '@/models/cv';
+import { Education, EducationArray, SecondaryInput } from '@/models/cv';
+import { CaretRightOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 
 interface OtherProps {
     title: string;
@@ -40,6 +41,46 @@ const educationValidationSchema = Yup.object().shape({
 
 const EducationForm = (props: OtherProps) => {
     const { title, description, isIntro, onSubmit, value, actions } = props;
+    const { token } = theme.useToken();
+
+    const panelStyle: React.CSSProperties = {
+        marginBottom: 24,
+        background: token.colorFillAlter,
+        borderRadius: token.borderRadiusLG,
+        border: 'none',
+    };
+
+    const countErrors = (error: FormikErrors<Education>[]) => {
+        return Object.values(error).reduce((a, item) => a + (item ? 1 : 0), 0)
+    }
+
+    const getItems: (
+        panelStyle: React.CSSProperties, 
+        formProps: FormikProps<SecondaryInput>,
+        values: Education[],
+        remover: (i: number) => void) => CollapseProps['items'] = (panelStyle, formProps, values, remover) => {
+            const errCount = (index: number) => formProps.errors.education && formProps.errors.education[index] ?
+                countErrors(formProps.errors.education[index] as FormikErrors<Education>[]) : 0;
+
+            return values.map((value, index) => (
+                {
+                    key: index + 1,
+                    label: (<Space>
+                        <Typography.Text>{`Experience ${index + 1}`}</Typography.Text>
+                        {errCount(index) ?
+                            <Tag icon={<CloseCircleOutlined />} color="error">
+                              {`${errCount(index)} ${errCount(index) > 1 ? "errors" : "error"}`}
+                            </Tag>
+                        : null}   
+                    </Space>),
+                    children: (<EducationCard
+                        formProps={formProps}
+                        index={index}
+                    />),
+                    extra: (<DeleteOutlined onClick={() => remover(index)}/>),
+                    style: panelStyle
+                }));
+        }
 
     const formItemLayout = {
         labelCol: { span: 24 },
@@ -76,11 +117,18 @@ const EducationForm = (props: OtherProps) => {
                             name='education'
                             render={(arrayHelpers: any) => (
                                 <Space direction='vertical' className='w-full'>
-                                    {props.values.education.map((ed, index) => (
-                                        <React.Fragment key={index}>
-                                            <EducationCard formProps={props} index={index} onClick={() => arrayHelpers.remove(index)} />
-                                        </React.Fragment>
-                                    ))}
+                                    <Collapse
+                                        bordered={false}
+                                        defaultActiveKey={['1']}
+                                        expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                                        style={{ background: token.colorBgContainer }}
+                                        // items={getItems(
+                                        //     panelStyle,
+                                        //     props,
+                                        //     props.values.education,
+                                        //     (index: number) => arrayHelpers.remove(index)
+                                        // )}
+                                    />
                                        <Button 
                                             type='dashed' 
                                             block

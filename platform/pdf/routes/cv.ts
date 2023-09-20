@@ -3,7 +3,7 @@ const router = express.Router();
 import browserApi from '../modules/browser';
 
 /* PUT users listing. */
-router.put('/', async function(req, res, next) {
+router.put('/', async function(req, res) {
   var page = await browserApi.newPage();
   await page.setContent(req.body.html);
 

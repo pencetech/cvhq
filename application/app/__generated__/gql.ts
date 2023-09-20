@@ -13,6 +13,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\nmutation generateCV($input: CvInput!) {\n    generateCV(input: $input) {\n      filename\n    }\n  }\n": types.GenerateCvDocument,
+    "\nmutation generateSummary($input: CvInput!) {\n    generateSummary(input: $input) {\n        summary\n    }\n}\n": types.GenerateSummaryDocument,
     "\nmutation enhanceAchievement($input: AchievementInput!) {\n    enhanceAchievement(input: $input) {\n      match {\n        matchFactor\n        reason\n      }\n      achievements\n    }\n  }\n": types.EnhanceAchievementDocument,
 };
 
@@ -30,6 +32,14 @@ const documents = {
  */
 export function gql(source: string): unknown;
 
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nmutation generateCV($input: CvInput!) {\n    generateCV(input: $input) {\n      filename\n    }\n  }\n"): (typeof documents)["\nmutation generateCV($input: CvInput!) {\n    generateCV(input: $input) {\n      filename\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nmutation generateSummary($input: CvInput!) {\n    generateSummary(input: $input) {\n        summary\n    }\n}\n"): (typeof documents)["\nmutation generateSummary($input: CvInput!) {\n    generateSummary(input: $input) {\n        summary\n    }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

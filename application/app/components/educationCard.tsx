@@ -3,38 +3,25 @@ import { FC } from 'react';
 import dayjs from 'dayjs';
 import { Row, Button, Col, DatePicker, theme } from 'antd';
 import { FormikProps } from 'formik';
-import { Education } from '@/models/cv';
+import { Education, SecondaryInput } from '@/models/cv';
 import Input from 'formik-antd/es/input';
 import 'formik-antd/es/input/style';
 import Form from 'formik-antd/es/form';
 import 'formik-antd/es/form/style';
 
-interface EducationCard {
-    education: Education[]
-}
+
 interface EducationCardProps {
-    formProps: FormikProps<EducationCard>, 
-    index: number,
-    onClick: () => Promise<void>
+    formProps: FormikProps<SecondaryInput>, 
+    index: number
 }
 
 const EducationCard: FC<EducationCardProps> = ({
-    formProps, index, onClick
+    formProps, index
 }: EducationCardProps) => {
     const { token } = theme.useToken();
 
-    const containerStyle: React.CSSProperties = {
-        position: 'relative',
-        overflow: 'hidden',
-        padding: 36,
-        marginTop: 16,
-        backgroundColor: "#f5f5f5",
-        border: `1px solid ${token.colorBorderSecondary}`,
-        borderRadius: token.borderRadiusLG,
-      };
-
     return (
-        <div style={containerStyle}>
+        <div>
             <Row gutter={24} justify="start">
                 <Col span={12} key={1}>
                     <Form.Item required={true} name={`education[${index}].subject`} label='Subject'>
@@ -79,9 +66,6 @@ const EducationCard: FC<EducationCardProps> = ({
                         />
                     </Form.Item>
                 </Col>
-            </Row>
-            <Row justify='end'>
-                <Button onClick={onClick}>Remove</Button>
             </Row>
         </div>
     )
