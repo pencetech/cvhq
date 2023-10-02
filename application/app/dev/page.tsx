@@ -43,7 +43,7 @@ const DevPage = () => {
             setFileList([]);
             message.success('upload successfully.');
         }
-        
+
         setUploading(false);
     }
 
@@ -91,3 +91,5 @@ const DevPage = () => {
     )
      
 }
+
+export default DevPage;
