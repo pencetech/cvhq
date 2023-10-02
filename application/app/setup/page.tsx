@@ -64,7 +64,7 @@ const SetupPage = () => {
 
   const getCurrProfile = async (profileName: ProfileName) => {
     const { data, error } = await supabase.from('cv_profile')
-    .select('id').eq('user_id', user).eq('name', profileName.profileName)
+    .select('id').eq('user_id', user ? user : '').eq('name', profileName.profileName)
 
     if (error) {
       messageApi.error('An error occured.')

@@ -50,7 +50,7 @@ const DashboardLayoutComponent = ({
     let { data, error, status } = await supabase
     .from('cv_profile')
     .select('id, name')
-    .eq('user_id', user?.id)
+    .eq('user_id', user ? user.id : '')
     .order('inserted_at', { ascending: false })
     if (error && status !== 406) {
         throw error

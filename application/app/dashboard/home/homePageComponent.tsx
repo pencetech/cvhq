@@ -37,7 +37,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
     let { data, error, status } = await supabase
     .from('cv_profile')
     .select('id, name, inserted_at')
-    .eq('user_id', user)
+    .eq('user_id', user ? user : '')
     .order('inserted_at', { ascending: false })
 
     if (error && status !== 406) {
@@ -102,7 +102,7 @@ const HomePageComponent = ({ profiles }: { profiles: Profiles }) => {
 
   const getCurrProfile = async (profileName: ProfileName) => {
     const { data, error } = await supabase.from('cv_profile')
-    .select('id').eq('user_id', user).eq('name', profileName.profileName)
+    .select('id').eq('user_id', user ? user : '').eq('name', profileName.profileName)
 
     if (error) {
       messageApi.error('An error occured.')
