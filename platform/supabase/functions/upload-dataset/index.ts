@@ -93,7 +93,7 @@ serve(async (req) => {
       .single()
 
     const arrayCsv = sanitizedData.split('\n')
-    const header = arayCsv[0].split(',')
+    const header = arrayCsv[0].split(',')
     const contentArray = arrayCsv.map((line, index) => {
       if (index > 0) {
         const content = line.split(',')
