@@ -33,7 +33,7 @@ const DevPage = () => {
         const file = singleFile as RcFile;
         const stringFile = await file.text();
         setUploading(true);
-        const { data: uploadData, error: uploadError } = await supabase.functions.invoke('upload_dataset', {
+        const { data: uploadData, error: uploadError } = await supabase.functions.invoke('upload-dataset', {
             body: { filename: singleFile.fileName, data: stringFile }
         })
 
