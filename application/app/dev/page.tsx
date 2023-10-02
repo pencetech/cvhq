@@ -63,7 +63,7 @@ const DevPage = () => {
 
     const UploadComponent = () => (
     <>
-        <Dragger>
+        <Dragger {...props}>
             <p className="ant-upload-drag-icon">
             <InboxOutlined />
             </p>
