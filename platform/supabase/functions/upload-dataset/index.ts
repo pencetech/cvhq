@@ -6,7 +6,7 @@ import { codeBlock, oneLine } from 'https://esm.sh/common-tags@1.8.2'
 import {
   Configuration,
   OpenAIApi,
-} from 'https://esm.sh/openai'
+} from 'https://esm.sh/openai@3.2.1'
 
 const openAiKey = Deno.env.get('OPENAI_KEY')
 const supabaseUrl = Deno.env.get('SUPABASE_URL')
