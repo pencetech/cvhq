@@ -7,7 +7,6 @@ import {
   Configuration,
   OpenAIApi,
 } from 'https://esm.sh/openai'
-import { ApplicationError, UserError } from '../common/errors.ts'
 
 const openAiKey = Deno.env.get('OPENAI_KEY')
 const supabaseUrl = Deno.env.get('SUPABASE_URL')
@@ -26,27 +25,27 @@ serve(async (req) => {
     }
 
     if (!openAiKey) {
-      throw new ApplicationError('Missing environment variable OPENAI_KEY')
+      throw new Error('Missing environment variable OPENAI_KEY')
     }
 
     if (!supabaseUrl) {
-      throw new ApplicationError('Missing environment variable SUPABASE_URL')
+      throw new Error('Missing environment variable SUPABASE_URL')
     }
 
     if (!supabaseServiceKey) {
-      throw new ApplicationError('Missing environment variable SUPABASE_SERVICE_ROLE_KEY')
+      throw new Error('Missing environment variable SUPABASE_SERVICE_ROLE_KEY')
     }
 
     const requestData = await req.json()
 
     if (!requestData) {
-      throw new UserError('Missing request body')
+      throw new Error('Missing request body')
     }
 
     const { filename, data } = requestData
 
     if (!data) {
-      throw new UserError('Missing data in request body')
+      throw new Error('Missing data in request body')
     }
 
     // Intentionally log the query
@@ -69,7 +68,7 @@ serve(async (req) => {
     const [results] = moderationResponse.data.results
 
     if (results.flagged) {
-      throw new UserError('Flagged content', {
+      throw new Error('Flagged content', {
         flagged: true,
         categories: results.categories,
       })
@@ -104,7 +103,7 @@ serve(async (req) => {
     })
 
     if (embeddingResponse.status !== 200) {
-      throw new ApplicationError('Failed to create embedding for question', embeddingResponse)
+      throw new Error('Failed to create embedding for question', embeddingResponse)
     }
 
     const embeddingList = embeddingResponse.data
@@ -120,10 +119,10 @@ serve(async (req) => {
       .select()
 
     if (upsertDatasetRowsError) {
-      throw new ApplicationError('Failed to store dataset rows', upsertDatasetRowsError)
+      throw new Error('Failed to store dataset rows', upsertDatasetRowsError)
     }
   } catch (err: unknown) {
-    if (err instanceof UserError) {
+    if (err instanceof Error) {
       return new Response(
         JSON.stringify({
           error: err.message,
@@ -134,7 +133,7 @@ serve(async (req) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       )
-    } else if (err instanceof ApplicationError) {
+    } else if (err instanceof Error) {
       // Print out application errors with their additional data
       console.error(`${err.message}: ${JSON.stringify(err.data)}`)
     } else {
