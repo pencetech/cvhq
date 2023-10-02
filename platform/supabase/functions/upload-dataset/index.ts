@@ -1,4 +1,5 @@
 import { serve } from 'https://deno.land/std@0.170.0/http/server.ts'
+import { v4 as uuidv4 } from 'https://esm.sh/uuid'
 import 'https://deno.land/x/xhr@0.2.1/mod.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js'
 import { codeBlock, oneLine } from 'https://esm.sh/common-tags@1.8.2'
@@ -42,7 +43,7 @@ serve(async (req) => {
       throw new UserError('Missing request body')
     }
 
-    const { data } = requestData
+    const { filename, data } = requestData
 
     if (!data) {
       throw new UserError('Missing data in request body')
@@ -54,6 +55,10 @@ serve(async (req) => {
     const sanitizedData = data.trim()
 
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey)
+    // Set the Auth context of the user that called the function.
+    // This way your row-level-security (RLS) policies are applied.
+    supabaseClient.auth.setAuth(req.headers.get('Authorization')!.replace('Bearer ', ''))
+    const userId = supabaseClient.auth.user().id
 
     const configuration = new Configuration({ apiKey: openAiKey })
     const openai = new OpenAIApi(configuration)
@@ -69,6 +74,19 @@ serve(async (req) => {
         categories: results.categories,
       })
     }
+
+    const datasetUid = uuidv4();
+    const { error: upsertDatasetError, data: dataset } = await supabaseClient
+      .from('dataset')
+      .upsert({
+        dataset_uid: datasetUid,
+        user_id: userId,
+        name: filename,
+        checksum: null
+      })
+      .select()
+      .limit(1)
+      .single()
 
     const arrayCsv = sanitizedData.split('\n')
     const header = arayCsv[0].split(',')
@@ -89,20 +107,20 @@ serve(async (req) => {
       throw new ApplicationError('Failed to create embedding for question', embeddingResponse)
     }
 
-    const [{ embedding }] = embeddingResponse.data.data
+    const embeddingList = embeddingResponse.data
+    const dbInputList = embeddingList.map((embed, i) => ({
+      dataset_uid: datasetUid,
+      content: contentArray[i],
+      embedding: embed.embedding
+    }))
+    
+    const { error: upsertDatasetRowsError, data: datasetRows } = await supabaseClient
+      .from('dataset_rows')
+      .upsert(dbInputList)
+      .select()
 
-    const { error: matchError, data: pageSections } = await supabaseClient.rpc(
-      'match_page_sections',
-      {
-        embedding,
-        match_threshold: 0.78,
-        match_count: 10,
-        min_content_length: 50,
-      }
-    )
-
-    if (matchError) {
-      throw new ApplicationError('Failed to match page sections', matchError)
+    if (upsertDatasetRowsError) {
+      throw new ApplicationError('Failed to store dataset rows', upsertDatasetRowsError)
     }
   } catch (err: unknown) {
     if (err instanceof UserError) {

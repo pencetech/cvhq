@@ -46,10 +46,6 @@ function makeClient() {
   });
 }
 
-function makeSuspenseCache() {
-  return new SuspenseCache();
-}
-
 const emptyFormData: FormData = {
   userBio: {
       firstName: '',
@@ -98,7 +94,6 @@ export function ApolloWrapper({ children }: React.PropsWithChildren) {
   return (
     <ApolloNextAppProvider
       makeClient={makeClient}
-      makeSuspenseCache={makeSuspenseCache}
     >
       {children}
     </ApolloNextAppProvider>
