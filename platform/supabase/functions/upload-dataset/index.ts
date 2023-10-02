@@ -53,11 +53,16 @@ serve(async (req) => {
 
     const sanitizedData = data.trim()
 
-    const supabaseClient = createClient(supabaseUrl, supabaseServiceKey)
+    const supabaseClient = createClient(
+      supabaseUrl,
+      supabaseServiceKey,
+      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+    )
     // Set the Auth context of the user that called the function.
     // This way your row-level-security (RLS) policies are applied.
-    supabaseClient.auth.setAuth(req.headers.get('Authorization')!.replace('Bearer ', ''))
-    const userId = supabaseClient.auth.user().id
+    const {
+      data: { user: userId },
+    } = await supabaseClient.auth.getUser()
 
     const configuration = new Configuration({ apiKey: openAiKey })
     const openai = new OpenAIApi(configuration)
