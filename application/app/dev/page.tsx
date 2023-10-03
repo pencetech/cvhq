@@ -4,13 +4,18 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { InboxOutlined } from '@ant-design/icons';
 import type { UploadFile, RcFile, UploadProps } from 'antd/es/upload/interface';
-import { Button, message, Upload } from 'antd';
+import { Button, message, Upload, Input, Typography } from 'antd';
+import type { SearchProps } from 'antd/lib/input';
 
 const { Dragger } = Upload;
+const { Search } = Input;
+const { Paragraph } = Typography; 
 
 const DevPage = () => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [response, setResponse] = useState('');
     const [user, setUser] = useState('');
     const supabase = createClientComponentClient<Database>();
 
@@ -62,6 +67,20 @@ const DevPage = () => {
         fileList,
     };
 
+    const onSearch: SearchProps['onSearch'] = async (value: string, _e: any, info: any) => {
+        setLoading(true);
+        const { data: askData, error: askError } = await supabase.functions.invoke('similarity-search', {
+            body: { query: value }
+        })
+
+        if (askError) {
+            message.error('ask failed.');
+        } else {
+            setResponse(askData.choices.message.content);
+        }
+        setLoading(false);
+    }
+
     const UploadComponent = () => (
     <>
         <Dragger {...props}>
@@ -85,9 +104,26 @@ const DevPage = () => {
     </>
     )
 
+    const AskAway = () => (
+        <>
+        <Search
+            placeholder="input search text"
+            allowClear
+            enterButton="Search"
+            size="large"
+            loading={loading}
+            onSearch={onSearch}
+        />
+            {response ? <Paragraph>
+      <pre>{response}</pre>
+    </Paragraph> : null}
+        </>
+    ) 
+
     return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '12px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <UploadComponent />
+        <AskAway />
     </div>
     )
      
