@@ -59,7 +59,7 @@ serve(async (req) => {
     // Set the Auth context of the user that called the function.
     // This way your row-level-security (RLS) policies are applied.
     const {
-      data: { user: userId },
+      data: { user: user },
     } = await supabaseClient.auth.getUser()
 
     const configuration = new Configuration({ apiKey: openAiKey })
@@ -82,7 +82,7 @@ serve(async (req) => {
       .from('dataset')
       .upsert({
         dataset_uid: datasetUid,
-        user_id: userId,
+        user_id: user.id,
         name: filename,
         checksum: null
       })
@@ -95,7 +95,7 @@ serve(async (req) => {
     }
     // Intentionally log the query
     console.log(upsertDatasetError.message)
-
+    
     const arrayCsv = sanitizedData.split('\n')
     const header = arrayCsv[0].split(',')
     const contentArray = arrayCsv.map((line, index) => {
@@ -104,6 +104,7 @@ serve(async (req) => {
         return header.reduce((acc, currHead, i) => acc + ';' + currHead + '=' + content[i], '')
       }
     })
+    
 
 
     const embeddingResponse = await openai.createEmbedding({
