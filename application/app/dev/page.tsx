@@ -76,7 +76,7 @@ const DevPage = () => {
         if (askError) {
             message.error('ask failed.');
         } else {
-            setResponse(askData.choices.message.content);
+            setResponse(askData.choices[0].message.content);
         }
         setLoading(false);
     }
@@ -121,7 +121,7 @@ const DevPage = () => {
     ) 
 
     return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '12px' }}>
         <UploadComponent />
         <AskAway />
     </div>
