@@ -106,6 +106,8 @@ serve(async (req) => {
     let tokenCount = 0
     let contextText = ''
 
+    console.log(pageSections)
+
     for (let i = 0; i < pageSections.length; i++) {
       const pageSection = pageSections[i]
       const content = pageSection.content
