@@ -110,7 +110,7 @@ serve(async (req) => {
       throw new Error('Failed to create embedding for question', embeddingResponse)
     }
 
-    const embeddingList = embeddingResponse.data
+    const embeddingList = embeddingResponse.data.data
     console.log(embeddingResponse);
     const dbInputList = embeddingList.map((embed, i) => ({
       dataset_uid: datasetUid,
