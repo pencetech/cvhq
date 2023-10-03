@@ -103,7 +103,7 @@ serve(async (req) => {
 
     console.log(pageSections)
     let contextText = '';
-    
+
     for (let i = 0; i < pageSections.length; i++) {
       const pageSection = pageSections[i]
       const content = pageSection.content
@@ -193,7 +193,7 @@ serve(async (req) => {
       messages,
       max_tokens: 1024,
       temperature: 0,
-      stream: true,
+      stream: false,
     }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -214,7 +214,7 @@ serve(async (req) => {
     return new Response(response.body, {
       headers: {
         ...corsHeaders,
-        'Content-Type': 'text/event-stream',
+        'Content-Type': 'application/json',
       },
     })
   } catch (err: unknown) {
