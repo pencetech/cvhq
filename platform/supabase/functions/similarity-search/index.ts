@@ -92,14 +92,14 @@ serve(async (req) => {
       'match_dataset_rows',
       {
         embedding,
-        match_threshold: 0.58,
+        match_threshold: 0.78,
         match_count: 10,
         min_content_length: 50,
       }
     )
 
     if (matchError) {
-      throw new Error('Failed to match dataset rows', matchError)
+      throw new Error("Failed to match dataset rows: " + matchError.message)
     }
 
     const tokenizer = new GPT4Tokenizer({ type: 'gpt4' })
