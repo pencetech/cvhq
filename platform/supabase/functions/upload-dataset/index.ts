@@ -126,6 +126,12 @@ serve(async (req) => {
     if (upsertDatasetRowsError) {
       throw new Error('Failed to store dataset rows', upsertDatasetRowsError)
     }
+
+    return new Response(JSON.stringify(data), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    })
+    
   } catch (err: unknown) {
     if (err instanceof Error) {
       return new Response(
