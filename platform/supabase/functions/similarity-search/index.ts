@@ -10,7 +10,6 @@ import {
   CreateChatCompletionRequest,
   OpenAIApi,
 } from 'https://esm.sh/openai@3.2.1'
-import { ApplicationError, UserError } from '../common/errors.ts'
 
 const openAiKey = Deno.env.get('OPENAI_KEY')
 const supabaseUrl = Deno.env.get('SUPABASE_URL')
