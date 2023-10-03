@@ -102,19 +102,9 @@ serve(async (req) => {
       throw new Error("Failed to match dataset rows: " + matchError.message)
     }
 
-    const tokenizer = new GPT4Tokenizer({ type: 'gpt4' })
-    let tokenCount = 0
-    let contextText = ''
-
     for (let i = 0; i < pageSections.length; i++) {
       const pageSection = pageSections[i]
       const content = pageSection.content
-      const encoded = tokenizer.encode(content)
-      tokenCount += encoded.text.length
-
-      if (tokenCount >= 1500) {
-        break
-      }
 
       contextText += `${content.trim()}\n---\n`
     }
