@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.170.0/http/server.ts'
 import 'https://deno.land/x/xhr@0.2.1/mod.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.5.0'
 import { codeBlock, oneLine } from 'https://esm.sh/common-tags@1.8.2'
-// import GPT4Tokenizer from 'https://esm.sh/gpt4-tokenizer@1.3.0'
+import GPT4Tokenizer from 'https://esm.sh/gpt4-tokenizer@1.3.0'
 import {
   ChatCompletionRequestMessage,
   ChatCompletionRequestMessageRoleEnum,
@@ -102,9 +102,19 @@ serve(async (req) => {
       throw new Error("Failed to match dataset rows: " + matchError.message)
     }
 
+    const tokenizer = new GPT4Tokenizer({ type: 'gpt4' })
+    let tokenCount = 0
+    let contextText = ''
+
     for (let i = 0; i < pageSections.length; i++) {
       const pageSection = pageSections[i]
       const content = pageSection.content
+      const encoded = tokenizer.encode(content)
+      tokenCount += encoded.text.length
+
+      if (tokenCount >= 1500) {
+        break
+      }
 
       contextText += `${content.trim()}\n---\n`
     }
