@@ -101,7 +101,6 @@ serve(async (req) => {
       return header.reduce((acc, currHead, i) => acc + ';' + currHead + '=' + content[i], '')
     })
     
-    console.log({ contentArray })
     const embeddingResponse = await openai.createEmbedding({
       model: 'text-embedding-ada-002',
       input: contentArray,
@@ -112,6 +111,7 @@ serve(async (req) => {
     }
 
     const embeddingList = embeddingResponse.data
+    console.log(embeddingResponse);
     const dbInputList = embeddingList.map((embed, i) => ({
       dataset_uid: datasetUid,
       content: contentArray[i],
