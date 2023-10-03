@@ -10,7 +10,7 @@ begin
     (dataset_rows.embedding <#> embedding) * -1 as similarity
   from dataset_rows
   join dataset
-    on dataset_rows.dataset_id = dataset.id
+    on dataset_rows.dataset_uid = dataset.id
 
   -- The dot product is negative because of a Postgres limitation, so we negate it
   and (dataset_rows.embedding <#> embedding) * -1 > match_threshold
