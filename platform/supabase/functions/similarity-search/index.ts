@@ -102,7 +102,8 @@ serve(async (req) => {
     }
 
     console.log(pageSections)
-
+    let contextText = '';
+    
     for (let i = 0; i < pageSections.length; i++) {
       const pageSection = pageSections[i]
       const content = pageSection.content
