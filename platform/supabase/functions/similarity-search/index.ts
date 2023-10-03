@@ -92,7 +92,7 @@ serve(async (req) => {
       {
         embedding,
         match_threshold: 0.78,
-        match_count: 10,
+        match_count: 50,
         min_content_length: 50,
       }
     )
