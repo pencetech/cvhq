@@ -49,7 +49,7 @@ serve(async (req) => {
     }
 
     // Intentionally log the query
-    // console.log({ query })
+    console.log({ data })
 
     const sanitizedData = data.trim()
 
@@ -67,17 +67,17 @@ serve(async (req) => {
     const configuration = new Configuration({ apiKey: openAiKey })
     const openai = new OpenAIApi(configuration)
 
-    // Moderate the content to comply with OpenAI T&C
-    const moderationResponse = await openai.createModeration({ input: sanitizedData })
+    // // Moderate the content to comply with OpenAI T&C
+    // const moderationResponse = await openai.createModeration({ input: sanitizedData })
 
-    const [results] = moderationResponse.data.results
+    // const [results] = moderationResponse.data.results
 
-    if (results.flagged) {
-      throw new Error('Flagged content', {
-        flagged: true,
-        categories: results.categories,
-      })
-    }
+    // if (results.flagged) {
+    //   throw new Error('Flagged content', {
+    //     flagged: true,
+    //     categories: results.categories,
+    //   })
+    // }
 
     const datasetUid = uuidv4();
     const { error: upsertDatasetError, data: dataset } = await supabaseClient
@@ -131,7 +131,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
-    
+
   } catch (err: unknown) {
     if (err instanceof Error) {
       return new Response(
