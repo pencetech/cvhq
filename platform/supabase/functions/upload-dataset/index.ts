@@ -103,8 +103,7 @@ serve(async (req) => {
       }
     })
     
-
-
+    console.log({ contentArray })
     const embeddingResponse = await openai.createEmbedding({
       model: 'text-embedding-ada-002',
       input: contentArray,
