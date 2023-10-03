@@ -28,27 +28,27 @@ serve(async (req) => {
     }
 
     if (!openAiKey) {
-      throw new ApplicationError('Missing environment variable OPENAI_KEY')
+      throw new Error('Missing environment variable OPENAI_KEY')
     }
 
     if (!supabaseUrl) {
-      throw new ApplicationError('Missing environment variable SUPABASE_URL')
+      throw new Error('Missing environment variable SUPABASE_URL')
     }
 
     if (!supabaseServiceKey) {
-      throw new ApplicationError('Missing environment variable SUPABASE_SERVICE_ROLE_KEY')
+      throw new Error('Missing environment variable SUPABASE_SERVICE_ROLE_KEY')
     }
 
     const requestData = await req.json()
 
     if (!requestData) {
-      throw new UserError('Missing request data')
+      throw new Error('Missing request data')
     }
 
     const { query } = requestData
 
     if (!query) {
-      throw new UserError('Missing query in request data')
+      throw new Error('Missing query in request data')
     }
 
     // Intentionally log the query
@@ -56,7 +56,11 @@ serve(async (req) => {
 
     const sanitizedQuery = query.trim()
 
-    const supabaseClient = createClient(supabaseUrl, supabaseServiceKey)
+    const supabaseClient = createClient(
+      supabaseUrl, 
+      supabaseServiceKey,
+      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+    )
 
     const configuration = new Configuration({ apiKey: openAiKey })
     const openai = new OpenAIApi(configuration)
@@ -67,7 +71,7 @@ serve(async (req) => {
     const [results] = moderationResponse.data.results
 
     if (results.flagged) {
-      throw new UserError('Flagged content', {
+      throw new Error('Flagged content', {
         flagged: true,
         categories: results.categories,
       })
@@ -79,7 +83,7 @@ serve(async (req) => {
     })
 
     if (embeddingResponse.status !== 200) {
-      throw new ApplicationError('Failed to create embedding for question', embeddingResponse)
+      throw new Error('Failed to create embedding for question', embeddingResponse)
     }
 
     const [{ embedding }] = embeddingResponse.data.data
@@ -95,7 +99,7 @@ serve(async (req) => {
     )
 
     if (matchError) {
-      throw new ApplicationError('Failed to match dataset rows', matchError)
+      throw new Error('Failed to match dataset rows', matchError)
     }
 
     const tokenizer = new GPT4Tokenizer({ type: 'gpt4' })
@@ -211,7 +215,7 @@ serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.json()
-      throw new ApplicationError('Failed to generate completion', error)
+      throw new Error('Failed to generate completion', error)
     }
 
     // Proxy the streamed SSE response from OpenAI
@@ -222,7 +226,7 @@ serve(async (req) => {
       },
     })
   } catch (err: unknown) {
-    if (err instanceof UserError) {
+    if (err instanceof Error) {
       return new Response(
         JSON.stringify({
           error: err.message,
@@ -233,7 +237,7 @@ serve(async (req) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       )
-    } else if (err instanceof ApplicationError) {
+    } else if (err instanceof Error) {
       // Print out application errors with their additional data
       console.error(`${err.message}: ${JSON.stringify(err.data)}`)
     } else {
