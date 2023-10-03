@@ -90,6 +90,9 @@ serve(async (req) => {
       .limit(1)
       .single()
 
+    if (upsertDatasetError) {
+      throw new Error('Failed to store dataset rows', upsertDatasetError.message)
+    }
     // Intentionally log the query
     console.log(upsertDatasetError.message)
 
