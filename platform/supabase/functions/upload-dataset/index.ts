@@ -96,11 +96,9 @@ serve(async (req) => {
 
     const arrayCsv = sanitizedData.split('\n')
     const header = arrayCsv[0].split(',')
-    const contentArray = arrayCsv.map((line, index) => {
-      if (index > 0) {
-        const content = line.split(',')
-        return header.reduce((acc, currHead, i) => acc + ';' + currHead + '=' + content[i], '')
-      }
+    const contentArray = arrayCsv.shift().map((line, index) => {
+      const content = line.split(',')
+      return header.reduce((acc, currHead, i) => acc + ';' + currHead + '=' + content[i], '')
     })
     
     console.log({ contentArray })
