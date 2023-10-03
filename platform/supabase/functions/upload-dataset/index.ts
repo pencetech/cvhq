@@ -91,7 +91,7 @@ serve(async (req) => {
       .single()
 
     // Intentionally log the query
-    console.log("dataset persisted")
+    console.log(upsertDatasetError.message)
 
     const arrayCsv = sanitizedData.split('\n')
     const header = arrayCsv[0].split(',')
