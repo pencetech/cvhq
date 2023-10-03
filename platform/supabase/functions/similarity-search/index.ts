@@ -92,7 +92,7 @@ serve(async (req) => {
       'match_dataset_rows',
       {
         embedding,
-        match_threshold: 0.78,
+        match_threshold: 0.58,
         match_count: 10,
         min_content_length: 50,
       }
