@@ -48,16 +48,16 @@ serve(async (req) => {
       throw new Error('Missing data in request body')
     }
 
-    // Intentionally log the query
-    console.log({ data })
-
     const sanitizedData = data.trim()
-
+    
     const supabaseClient = createClient(
       supabaseUrl,
       supabaseServiceKey,
       { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
     )
+
+    // Intentionally log the query
+    console.log({ data })
     // Set the Auth context of the user that called the function.
     // This way your row-level-security (RLS) policies are applied.
     const {
