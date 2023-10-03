@@ -56,13 +56,14 @@ serve(async (req) => {
       { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
     )
 
-    // Intentionally log the query
-    console.log({ data })
     // Set the Auth context of the user that called the function.
     // This way your row-level-security (RLS) policies are applied.
     const {
       data: { user: userId },
     } = await supabaseClient.auth.getUser()
+
+    // Intentionally log the query
+    console.log("user obtained")
 
     const configuration = new Configuration({ apiKey: openAiKey })
     const openai = new OpenAIApi(configuration)
