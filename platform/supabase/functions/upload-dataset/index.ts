@@ -93,9 +93,7 @@ serve(async (req) => {
     if (upsertDatasetError) {
       throw new Error('Failed to store dataset' + upsertDatasetError.message)
     }
-    // Intentionally log the query
-    console.log(upsertDatasetError.message)
-    
+
     const arrayCsv = sanitizedData.split('\n')
     const header = arrayCsv[0].split(',')
     const contentArray = arrayCsv.map((line, index) => {
