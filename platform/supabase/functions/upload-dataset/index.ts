@@ -62,9 +62,6 @@ serve(async (req) => {
       data: { user: userId },
     } = await supabaseClient.auth.getUser()
 
-    // Intentionally log the query
-    console.log("user obtained")
-
     const configuration = new Configuration({ apiKey: openAiKey })
     const openai = new OpenAIApi(configuration)
 
@@ -92,6 +89,9 @@ serve(async (req) => {
       .select()
       .limit(1)
       .single()
+
+    // Intentionally log the query
+    console.log("dataset persisted")
 
     const arrayCsv = sanitizedData.split('\n')
     const header = arrayCsv[0].split(',')
