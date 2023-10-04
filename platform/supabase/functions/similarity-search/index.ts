@@ -64,25 +64,73 @@ serve(async (req) => {
     const configuration = new Configuration({ apiKey: openAiKey })
     const openai = new OpenAIApi(configuration)
 
-    // Moderate the content to comply with OpenAI T&C
-    const moderationResponse = await openai.createModeration({ input: sanitizedQuery })
+    const hydeMessages: ChatCompletionRequestMessage[] = [
+      {
+        role: ChatCompletionRequestMessageRoleEnum.System,
+        content: codeBlock`
+          ${oneLine`
+            You are a very enthusiastic data scientist in a company who loves
+            to help people! Given the following question, generate a hypothetical answer 
+            in the form of a matching entry in the database following this exact format:
+          `}
 
-    const [results] = moderationResponse.data.results
+          ${oneLine`
+          customer=CUSTOMER;age=AGE;merchant=MERCHANT;category=CATEGORY;amount=AMOUNT;fraud=FRAUD;status=STATUS;timestamp=TIMESTAMP;payment_method=PAYMENT_METHOD
+          `}
 
-    if (results.flagged) {
-      throw new Error('Flagged content', {
-        flagged: true,
-        categories: results.categories,
-      })
+          ${oneLine`
+          Pretend you have all the information you need to answer, 
+          but don't use any actual facts other than the one provided in the question. Instead,
+          use placeholders like CATEGORY or AGE.
+          `}
+        `,
+      },
+      {
+        role: ChatCompletionRequestMessageRoleEnum.User,
+        content: codeBlock`
+          Here is the question:
+          ${sanitizedQuery}
+
+          ${oneLine`
+            Make sure to return in text format.
+          `}
+        `,
+      }
+    ]
+
+    const hydeCompletionOptions: CreateChatCompletionRequest = {
+      model: 'gpt-4',
+      messages: hydeMessages,
+      max_tokens: 1024,
+      temperature: 0,
+      stream: false,
     }
+
+    const hydeResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      headers: {
+        Authorization: `Bearer ${openAiKey}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify(hydeCompletionOptions),
+    })
+
+    if (!hydeResponse.ok) {
+      const error = await hydeResponse.json()
+      throw new Error('Failed to generate completion', error)
+    }
+
+    const jsonResponse = await hydeResponse.json()
+    const fakeEntry = jsonResponse.body.choices[0].message.content
+    console.log("Fake entry: " + fakeEntry)
 
     const embeddingResponse = await openai.createEmbedding({
       model: 'text-embedding-ada-002',
-      input: sanitizedQuery.replaceAll('\n', ' '),
+      input: fakeEntry.replaceAll('\n', ' '),
     })
 
     if (embeddingResponse.status !== 200) {
-      throw new Error('Failed to create embedding for question', embeddingResponse)
+      throw new Error('Failed to create embedding for question')
     }
 
     const [{ embedding }] = embeddingResponse.data.data
@@ -110,26 +158,6 @@ serve(async (req) => {
 
       contextText += `${content.trim()}\n---\n`
     }
-
-    const prompt = codeBlock`
-      ${oneLine`
-        You are a very enthusiastic Supabase representative who loves
-        to help people! Given the following sections from the Supabase
-        documentation, answer the question using only that information,
-        outputted in markdown format. If you are unsure and the answer
-        is not explicitly written in the documentation, say
-        "Sorry, I don't know how to help with that."
-      `}
-
-      Context sections:
-      ${contextText}
-
-      Question: """
-      ${sanitizedQuery}
-      """
-
-      Answer as markdown (including related code snippets if available):
-    `
 
     const messages: ChatCompletionRequestMessage[] = [
       {
@@ -221,17 +249,13 @@ serve(async (req) => {
     if (err instanceof Error) {
       return new Response(
         JSON.stringify({
-          error: err.message,
-          data: err.data,
+          error: err.message
         }),
         {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       )
-    } else if (err instanceof Error) {
-      // Print out application errors with their additional data
-      console.error(`${err.message}: ${JSON.stringify(err.data)}`)
     } else {
       // Print out unexpected errors as is to help with debugging
       console.error(err)
