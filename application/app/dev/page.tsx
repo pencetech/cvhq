@@ -40,7 +40,7 @@ const DevPage = () => {
         setUploading(true);
         console.log(singleFile);
         const { data: uploadData, error: uploadError } = await supabase.functions.invoke('upload-dataset', {
-            body: { filename: singleFile.fileName, data: stringFile }
+            body: { filename: singleFile.name, data: stringFile }
         })
 
         if (uploadError) {
