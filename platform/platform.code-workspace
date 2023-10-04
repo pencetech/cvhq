@@ -5,24 +5,13 @@
       "path": "./"
     },
     {
-      "name": "pdf-server",
-      "path": "pdf"
-    },
-    {
-      "name": "main-server",
-      "path": "main"
-    },
-    {
       "name": "supabase-functions",
       "path": "supabase/functions"
     }
   ],
   "settings": {
     "files.exclude": {
-      "main/": true,
-      "pdf/": true,
       "supabase/functions/": true
-    },
-    "deno.importMap": "./supabase/functions/import_map.json"
+    }
   }
 }

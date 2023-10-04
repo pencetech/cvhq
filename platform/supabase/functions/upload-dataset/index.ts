@@ -2,7 +2,6 @@ import { serve } from 'https://deno.land/std@0.170.0/http/server.ts'
 import { v4 as uuidv4 } from 'https://esm.sh/uuid'
 import 'https://deno.land/x/xhr@0.2.1/mod.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js'
-import { codeBlock, oneLine } from 'https://esm.sh/common-tags@1.8.2'
 import {
   Configuration,
   OpenAIApi,
@@ -56,8 +55,6 @@ serve(async (req) => {
       { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
     )
 
-    // Set the Auth context of the user that called the function.
-    // This way your row-level-security (RLS) policies are applied.
     const {
       data: { user: user },
     } = await supabaseClient.auth.getUser()
@@ -65,24 +62,12 @@ serve(async (req) => {
     const configuration = new Configuration({ apiKey: openAiKey })
     const openai = new OpenAIApi(configuration)
 
-    // // Moderate the content to comply with OpenAI T&C
-    // const moderationResponse = await openai.createModeration({ input: sanitizedData })
-
-    // const [results] = moderationResponse.data.results
-
-    // if (results.flagged) {
-    //   throw new Error('Flagged content', {
-    //     flagged: true,
-    //     categories: results.categories,
-    //   })
-    // }
-
     const datasetUid = uuidv4();
     const { error: upsertDatasetError, data: dataset } = await supabaseClient
       .from('dataset')
       .upsert({
         dataset_uid: datasetUid,
-        user_id: user.id,
+        user_id: user?.id,
         name: filename,
         checksum: null
       })
