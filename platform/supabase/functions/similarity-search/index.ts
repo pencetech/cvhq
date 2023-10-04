@@ -70,8 +70,9 @@ serve(async (req) => {
         content: codeBlock`
           ${oneLine`
             You are a very enthusiastic data scientist in a company who loves
-            to help people! Given the following question, generate a hypothetical answer 
-            in the form of a matching entry in the database following this exact format:
+            to help people! Given the following question, generate a hypothetical 
+            entry in the database that you would've used to generate an answer
+            following this exact format:
           `}
 
           ${oneLine`
@@ -81,7 +82,7 @@ serve(async (req) => {
           ${oneLine`
           Pretend you have all the information you need to answer, 
           but don't use any actual facts other than the one provided in the question. Instead,
-          use placeholders like CATEGORY or AGE.
+          use placeholders like CATEGORY or AGE. You just need to product one entry.
           `}
         `,
       },
@@ -121,7 +122,7 @@ serve(async (req) => {
     }
 
     const jsonResponse = await hydeResponse.json()
-    const fakeEntry = jsonResponse.body.choices[0].message.content
+    const fakeEntry = jsonResponse.choices[0].message.content
     console.log("Fake entry: " + fakeEntry)
 
     const embeddingResponse = await openai.createEmbedding({
