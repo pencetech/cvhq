@@ -45,7 +45,7 @@ const ProfileCard = ({ title, profileId, profile, onUpdate }: {
             email: userBio.email,
             phone: userBio.phone,
             address: userBio.address
-        }).eq("user_id", user)
+        }).eq("user_id", user ? user : '')
         messageApi.success("User bio saved!");
     }
 

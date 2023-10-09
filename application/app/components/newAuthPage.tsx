@@ -36,7 +36,7 @@ export default function Login() {
     } = await supabase.auth.getUser()
 
     let { data, error } = await supabase.from('cv_profile')
-      .select('id').eq('user_id', user?.id)
+      .select('id').eq('user_id', user? user.id : '')
 
     if (error) {
       throw error;
@@ -64,7 +64,7 @@ export default function Login() {
 
     const isNoProfile = await checkNoProfile();
 
-    isNoProfile ? router.push("/setup") : router.push("/dashboard/home")
+    router.push("/dev")
   }
 
   return (

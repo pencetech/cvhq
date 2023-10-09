@@ -16,7 +16,7 @@ const ProfilePage = async ({ params }: { params: { id: number } }) => {
         let { data, error, status } = await supabase
         .from('user_bio')
         .select('first_name, last_name, phone, email, address')
-        .eq('user_id', user)
+        .eq('user_id', user ? user : '')
 
         if (error && status !== 406) {
             throw error

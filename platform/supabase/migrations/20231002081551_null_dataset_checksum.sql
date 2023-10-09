@@ -1,0 +1,1 @@
+ALTER TABLE "public"."dataset" ALTER COLUMN checksum DROP NOT NULL;

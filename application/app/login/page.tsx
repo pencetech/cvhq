@@ -36,7 +36,7 @@ const LoginPage = () => {
                                     color: '#ffffff'
                                 }}
                                 >
-                                What CVHQ does for you:
+                                What Pence does for you:
                                 </Typography.Text>
                             </Typography.Paragraph>
                             <Typography.Paragraph
@@ -45,7 +45,7 @@ const LoginPage = () => {
                             }}
                             >
                                 <Space>
-                                    <CheckCircleTwoTone twoToneColor="#52c41a" /> Provides a catchy CV summary
+                                    <CheckCircleTwoTone twoToneColor="#52c41a" /> Provides your customer with easy access to transaction insights
                                 </Space>
                             </Typography.Paragraph>
                             <Typography.Paragraph
@@ -54,7 +54,7 @@ const LoginPage = () => {
                             }}
                             >
                                 <Space>
-                                    <CheckCircleTwoTone twoToneColor="#52c41a" /> Enhances the wording of your experiences, powered by OpenAI&apos;s GPT-4
+                                    <CheckCircleTwoTone twoToneColor="#52c41a" /> Let them resolve disputes autonomously, no customer service touchpoints needed
                                 </Space>
                             </Typography.Paragraph>
                             <Typography.Paragraph
@@ -63,7 +63,7 @@ const LoginPage = () => {
                             }}
                             >
                                 <Space>
-                                    <CheckCircleTwoTone twoToneColor="#52c41a" /> Puts all content into nicely formatted sections
+                                    <CheckCircleTwoTone twoToneColor="#52c41a" /> Use AI technologies used by leading software companies like Notion and Zapier
                                 </Space>
                             </Typography.Paragraph>
                         </div>

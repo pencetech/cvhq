@@ -50,7 +50,7 @@ const DashboardLayoutComponent = ({
     let { data, error, status } = await supabase
     .from('cv_profile')
     .select('id, name')
-    .eq('user_id', user?.id)
+    .eq('user_id', user ? user.id : '')
     .order('inserted_at', { ascending: false })
     if (error && status !== 406) {
         throw error
@@ -145,7 +145,6 @@ const DashboardLayoutComponent = ({
                           fill={false}
                           priority 
                       />
-                      <Tag color="#2db7f5" style={{ color: "#111111", fontSize: "12px" }}>BETA</Tag>
                     </Space>
                     <Space>
                       <Link href="https://tally.so/r/3NDNxO" target="_blank">
