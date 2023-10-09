@@ -4,12 +4,12 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { InboxOutlined } from '@ant-design/icons';
 import type { UploadFile, RcFile, UploadProps } from 'antd/es/upload/interface';
-import { Button, message, Upload, Input, Typography, Col, Row, Space } from 'antd';
+import { Button, message, Upload, Input, Typography, Col, Row, Space, Select } from 'antd';
 import type { SearchProps } from 'antd/lib/input';
 
 const { Dragger } = Upload;
 const { Search } = Input;
-const { Paragraph } = Typography; 
+const { Paragraph, Title, Link } = Typography; 
 
 const DevPage = () => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -17,11 +17,12 @@ const DevPage = () => {
     const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState('');
     const [input, setInput] = useState('');
+    const [customerId, setCustomerId] = useState("1509141464");
     const [user, setUser] = useState('');
     const supabase = createClientComponentClient<Database>();
 
-    const QUESTION_1 = "What is the status of the latest transaction?"
-    const QUESTION_2 = "What is the total transaction amount for Tools category?"
+    const QUESTION_1 = "What is the status of the transaction with amount 73101?"
+    const QUESTION_2 = "What is the total transaction amount for Sports category?"
     const QUESTION_3 = "Which is the top category for my transaction in terms of total amount?"
 
     const getUser = useCallback(async () => {
@@ -76,10 +77,11 @@ const DevPage = () => {
         setLoading(true);
         try {
             const askResponse = await fetch('https://llama-index.fly.dev/query?' + new URLSearchParams({
-                text: value
+                text: value,
+                customer_id: customerId
             }))
-            const askData = await askResponse.text()
-            setResponse(askData);
+            const jsonResponse = await askResponse.json()
+            setResponse(jsonResponse.message);
             setLoading(false);
         } catch (e) {
             message.error('ask failed.');
@@ -115,42 +117,56 @@ const DevPage = () => {
     }
 
     const AskAway = () => (
-        <>
         <Space
-            wrap
-        >
+            direction="vertical"
+        >   
+            <Link href="https://docs.google.com/spreadsheets/d/1P_V0idry72hIEeIzkz1-PFj_UDwv40DRyA_ac02Q1OQ/edit?usp=sharing" target='_blank'>View data</Link>
+            <Title level={5}>Customer</Title>
+            <Select
+                defaultValue="1509141464"
+                style={{ width: "100%" }}
+                value={customerId}
+                onChange={value => setCustomerId(value)}
+                options={[
+                    { value: '1509141464', label: 'Staffard Dunkerk' },
+                    { value: '2708700685', label: 'Slade Skeermor' },
+                    { value: '24434892', label: 'Elysia Bichener' }
+                ]}
+            />
+            <Title level={5}>Question</Title>
             <Button
                 shape="round"
+                type="primary"
+                size="small"
                 onClick={() => handleClick(QUESTION_1)}
             >
                 {QUESTION_1}
             </Button>
             <Button
                 shape="round"
+                type="primary"
+                size="small"
                 onClick={() => handleClick(QUESTION_2)}
             >
                 {QUESTION_2}
             </Button>
             <Button
                 shape="round"
+                type="primary"
+                size="small"
                 onClick={() => handleClick(QUESTION_3)}
             >
                 {QUESTION_3}
             </Button>
-        </Space>
-            
             <Search
                 placeholder="input search text"
-                allowClear
                 enterButton="Search"
-                size="large"
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 loading={loading}
                 onSearch={onSearch}
             />
-        </>
-        
+        </Space>
     ) 
 
     const Response = () => (
@@ -161,12 +177,12 @@ const DevPage = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '12px' }}>
-            <Row>
-                <Col span={12}>
+            <Row gutter={[12, 12]}>
+                <Col span={10}>
                     <AskAway />
                 </Col>
-                <Col span={12}>
-                    <Response />
+                <Col span={14}>
+                    {response ? <Response /> : null}
                 </Col>
             </Row>
         </div>

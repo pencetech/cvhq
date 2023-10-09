@@ -67,13 +67,16 @@ def query_index():
         VectorStoreIndex,
     )
     query_text = request.args.get("text", None)
-    if query_text is None:
+    query_customer = request.args.get("customer_id", None)
+    if query_text is None or query_customer is None:
         return "No text found, please include a ?text=blah parameter in the URL", 400
     query_engine = SQLTableRetrieverQueryEngine(
         sql_database, obj_index.as_retriever(similarity_top_k=1)
         )
     
-    result = query_engine.query(query_text)
+    enhanced_query_text = query_text + "(customer: " + query_customer + ")"
+    
+    result = query_engine.query(enhanced_query_text)
     response = jsonify(message=str(result))
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response

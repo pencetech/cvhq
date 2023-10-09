@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image';
-import Logo from '@/public/CVHQblack.png';
+import Logo from '@/public/pencewhiteblack.png';
 import { Card, Space } from 'antd'
 import Login from './newAuthPage';
 
@@ -17,7 +17,7 @@ export default function AuthPage() {
       <Image 
             src={Logo}
             alt="CVHQ logo"
-            height={18}
+            height={36}
             fill={false}
             priority 
         />
