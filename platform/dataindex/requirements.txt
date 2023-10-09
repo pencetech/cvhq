@@ -1,0 +1,7 @@
+sqlalchemy
+llama_index
+flask
+python-decouple
+gunicorn
+pydantic
+markupsafe==2.0.1
