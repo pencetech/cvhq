@@ -7,8 +7,8 @@ import TanstackProvider from '@/lib/providers';
 
 
 export const metadata = {
-  title: 'CVHQ - A better CV builder',
-  description: 'Build CVs that match job postings.',
+  title: 'Pence - customer-led dispute resolution',
+  description: 'AI agents that help resolve customer tickets',
 }
 
 declare global {
