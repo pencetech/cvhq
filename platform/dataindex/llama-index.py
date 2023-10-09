@@ -6,7 +6,7 @@ from llama_index.indices.struct_store import SQLTableRetrieverQueryEngine
 from function_call import RouterQueryEngine, choices, router_prompt1
 from decouple import config
 from rows import customerRows, transactionRows
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 os.environ["OPENAI_API_KEY"] = config("OPENAI_KEY")
 app = Flask(__name__)
@@ -73,8 +73,10 @@ def query_index():
         sql_database, obj_index.as_retriever(similarity_top_k=1)
         )
     
-    response = query_engine.query(query_text)
-    return str(response), 200
+    result = query_engine.query(query_text)
+    response = jsonify(message=str(result))
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 if __name__ == "__main__":
