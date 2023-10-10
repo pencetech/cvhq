@@ -245,7 +245,7 @@ const DevPage = () => {
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: "12px" }}>
                                     {chatHistory.length > 0 ?
                                         <Select
-                                            style={{ minWidth: "500px" }}
+                                            style={{ minWidth: "500px", zIndex: 999 }}
                                             placeholder="Select a message"
                                             onSelect={(value, option) => setInput(option.label)}
                                             options={messages}
