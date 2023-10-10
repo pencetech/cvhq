@@ -45,7 +45,10 @@
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^4.32.5",
     "cross-env": "^7.0.3",
+    "daisyui": "^3.9.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "i": "^0.3.7",
+    "npm": "^10.2.0",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.3"
   },

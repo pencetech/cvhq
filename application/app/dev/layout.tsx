@@ -62,9 +62,14 @@ const DevLayout = ({
                     </Space>
                 </div>
             </Header>
-            <div style={{ display: 'flex', width: "100%", padding: 0, alignItems: "center", marginLeft: 'auto', marginRight: 'auto', maxWidth: "1440px" }}>
-                <Card style={{ background: '#FFFFFF', width: "100%" }}>{children}</Card>
-            </div>
+            {/* <div style={{ display: 'flex', width: "100%", padding: 0, marginLeft: 'auto', marginRight: 'auto', maxWidth: "1440px" }}> */}
+            <Content style={{ minHeight: 500, height: "100%", marginLeft: 'auto', marginRight: 'auto', width: "100%", maxWidth: "1440px" }}>
+              {/* <Card style={{ background: '#FFFFFF', width: "100%", height: "100%", boxSizing:  'border-box' }}> */}
+                {children}
+                {/* </Card> */}
+            </Content>
+                
+            {/* </div> */}
       </Layout>
     )
 }

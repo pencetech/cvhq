@@ -1,6 +1,6 @@
 import os
 from sqlalchemy import create_engine, insert, ForeignKey, MetaData, Table, Column, String, Integer, BigInteger, select, column, text, Boolean
-from llama_index import SQLDatabase, VectorStoreIndex
+from llama_index import SQLDatabase, VectorStoreIndex, Prompt
 from llama_index.objects import SQLTableNodeMapping, ObjectIndex, SQLTableSchema
 from llama_index.indices.struct_store import SQLTableRetrieverQueryEngine
 from function_call import RouterQueryEngine, choices, router_prompt1
@@ -70,8 +70,34 @@ def query_index():
     query_customer = request.args.get("customer_id", None)
     if query_text is None or query_customer is None:
         return "No text found, please include a ?text=blah parameter in the URL", 400
+    
+    TEMPLATE_STR = (
+    "You are a very enthusiastic data scientist in a company who loves to help people!"
+    "Given an input question, first create a syntactically correct {dialect} "
+    "query to run, then look at the results of the query and return the answer. "
+    "You can order the results by a relevant column to return the most "
+    "interesting examples in the database.\n\n"
+    "Never query for all the columns from a specific table, only ask for a "
+    "few relevant columns given the question.\n\n"
+    "Pay attention to use only the column names that you can see in the schema "
+    "description. "
+    "Be careful to not query for columns that do not exist. "
+    "Pay attention to which column is in which table. "
+    "Also, qualify column names with the table name when needed. "
+    "You are required to use the following format, each taking one line:\n\n"
+    "Question: Question here\n"
+    "SQLQuery: SQL Query to run\n"
+    "SQLResult: Result of the SQLQuery\n"
+    "Answer: Final answer here\n\n"
+    "Only use tables listed below.\n"
+    "{schema}\n\n"
+    "Question: {query_str}\n"
+    "SQLQuery: "
+)
+    QA_TEMPLATE = Prompt(TEMPLATE_STR)
+
     query_engine = SQLTableRetrieverQueryEngine(
-        sql_database, obj_index.as_retriever(similarity_top_k=1)
+        sql_database, obj_index.as_retriever(similarity_top_k=1), text_to_sql_prompt=QA_TEMPLATE
         )
     
     enhanced_query_text = query_text + "(customer: " + query_customer + ")"
