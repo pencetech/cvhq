@@ -25,7 +25,7 @@ const DevPage = () => {
     const [user, setUser] = useState('');
     const supabase = createClientComponentClient<Database>();
 
-    const QUESTION_1 = "What is the status of the transaction with amount 73101?"
+    const QUESTION_1 = "What is the status of the transaction with {transaction_id}?"
     const QUESTION_2 = "What is the total transaction amount for Sports category?"
     const QUESTION_3 = "Which is the top category for my transaction in terms of total amount?"
 
