@@ -244,12 +244,18 @@ const DevPage = () => {
                             <Footer style={{ borderRadius: "10px", backgroundColor: 'transparent' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: "12px" }}>
                                     {chatHistory.length > 0 ?
-                                        <Select
-                                            style={{ minWidth: "500px", zIndex: 999 }}
-                                            placeholder="Select a message"
-                                            onSelect={(value, option) => setInput(option.label)}
-                                            options={messages}
-                                        /> : null
+                                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                                    {messages.map((message, i) => (
+                                            <Button
+                                                shape="round"
+                                                key={i}
+                                                size="small"
+                                                onClick={() => handleClick(message.label)}
+                                            >
+                                                {message.label}
+                                            </Button>
+                                        ))}
+                                    </div> : null
                                     }
 
                                     <Search
