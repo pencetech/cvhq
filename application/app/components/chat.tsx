@@ -9,7 +9,10 @@ const Chat = ({ name, chatHistory }: { name: string, chatHistory: ChatHistory[] 
 
     const ChatBubble = (type: "start" | "end", content: string) => (
         <div className={`chat chat-${type} ${type === "end" ? "place-items-end grid-cols-[1fr_auto] grid-rows-none" : ""}`}>
-            <div className={`chat-bubble`} style={{ gridColumnStart: "1", backgroundColor: (type === "start" ? "#3f6600" : "#876800") }}>{content}</div>
+            <div className={`chat-bubble text-white`} style={{ 
+                gridColumnStart: "1", 
+                backgroundColor: (type === "start" ? "#3f6600" : "#876800"),
+            }}>{content}</div>
         </div>
     )
 
