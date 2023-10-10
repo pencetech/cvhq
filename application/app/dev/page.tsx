@@ -262,6 +262,7 @@ const DevPage = () => {
                                         placeholder="input search text"
                                         enterButton="Send"
                                         size="large"
+                                        onChange={e => setInput(e.target.value)}
                                         value={input}
                                         loading={loading}
                                         onSearch={onSearch}
