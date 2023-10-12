@@ -7,6 +7,7 @@ import { Layout, Button, Space, Typography, Card, List } from 'antd';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { useRouter } from 'next/navigation';
+import { RightOutlined } from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -113,6 +114,15 @@ const DevLayout = ({
               </List.Item>
             )}
           />
+          <Button 
+            type="primary" 
+            href="https://www.pence.so/upcoming" 
+            shape="round"
+            icon={<RightOutlined />}
+            style={{ margin: '16px' }}
+          >
+            <Typography.Text strong style={{ color: '#FFFFFF' }}>Learn more</Typography.Text>
+          </Button>
       </Sider>
       <Layout>
         <Header style={{
@@ -123,7 +133,7 @@ const DevLayout = ({
         }}>
           <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'end', maxWidth: "1440px" }}>
             <Space>
-              <Link href="https://tally.so/r/3NDNxO" target="_blank">
+              <Link href="https://tally.so/r/mDKOoN" target="_blank">
                 <Button type="text" style={{ color: '#111111' }}>Feedback</Button>
               </Link>
               <Button type="text" style={{ color: "#111111" }} onClick={handleSignOut}>Sign out</Button>
