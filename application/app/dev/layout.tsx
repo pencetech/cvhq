@@ -69,7 +69,7 @@ const DevLayout = ({
       <Sider
         breakpoint="lg"
         collapsedWidth="0"
-        style={{ backgroundColor: "#FFFFFF", zIndex: '99999999' }}
+        style={{ backgroundColor: "#FFFFFF", zIndex: '99999999', maxHeight: '100vh' }}
         width={256}
         onBreakpoint={(broken) => {
           console.log(broken);
