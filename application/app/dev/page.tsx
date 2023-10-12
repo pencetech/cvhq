@@ -168,83 +168,82 @@ const DevPage = () => {
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '12px', height: "100%" }}>
-            <Row gutter={[12, 12]}>
-                <Col span={18}>
-                    <Card>
-                        <Layout style={{ backgroundColor: "transparent", height: "100%" }}>
-                            <Content style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: 'flex-start',
-                                height: "100%",
-                                minHeight: "600px"
-                            }}>
-                                <Form.Item name="Customer" label="Chatting as">
-                                    <Select
-                                        defaultValue="1509141464"
-                                        value={customerId}
-                                        onChange={(value) => {
-                                            setChatHistory([])
-                                            setCustomerId(value)
-                                        }}
-                                        options={names}
-                                    />
-                                </Form.Item>
-                                {chatHistory.length === 0 ?
-                                    <div style={{ display: "flex", alignSelf: "center" }}>
-                                        <Space direction="vertical" align="center" size="middle">
-                                            <Title level={3}>{`Hi ${firstName(customerId)}, how can I help you?`}</Title>
-                                            {messages.map((message, i) => (
-                                                <Button
-                                                    shape="round"
-                                                    key={i}
-                                                    size="large"
-                                                    onClick={() => handleClick(message.label)}
-                                                >
-                                                    {message.label}
-                                                </Button>
-                                            ))}
-                                        </Space>
-                                    </div>
-                                    :
-                                    <div style={{ display: 'flex', flexDirection: 'column', width: "100%" }}>
-                                        <Chat chatHistory={chatHistory} name={firstName(customerId)} />
-                                    </div>
-                                }
-                            </Content>
-                            <Footer style={{ borderRadius: "10px", backgroundColor: 'transparent' }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: "12px" }}>
-                                    {chatHistory.length > 0 ?
-                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                                            {messages.map((message, i) => (
-                                                <Button
-                                                    shape="round"
-                                                    key={i}
-                                                    size="small"
-                                                    onClick={() => handleClick(message.label)}
-                                                >
-                                                    {message.label}
-                                                </Button>
-                                            ))}
-                                        </div> : null
-                                    }
-
-                                    <Search
-                                        placeholder="input search text"
-                                        enterButton="Send"
-                                        size="large"
-                                        onChange={e => setInput(e.target.value)}
-                                        value={input}
-                                        loading={loading}
-                                        onSearch={onSearch}
-                                    />
-                                    <Typography.Text type="secondary" style={{ alignSelf: "center" }}>This demo uses sample customer and transaction data. <Link href="https://docs.google.com/spreadsheets/d/1P_V0idry72hIEeIzkz1-PFj_UDwv40DRyA_ac02Q1OQ/edit?usp=sharing" target='_blank'>View data</Link></Typography.Text>
-                                </div>
-                            </Footer>
-                        </Layout>
-                    </Card>
-                </Col>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '12px', padding: '32px', height: "100%", minHeight: "300px"}}>
+            <Row gutter={[12, 12]} style={{ height: '100%' }} justify="center">
+                <Layout style={{ backgroundColor: "transparent", height: "100%", width: '100%' }}>
+                    <Content style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: 'flex-start',
+                        height: "100%"
+                    }}>
+                        <Form.Item name="Customer" label="Chatting as">
+                            <Select
+                                defaultValue="1509141464"
+                                value={customerId}
+                                onChange={(value) => {
+                                    setChatHistory([])
+                                    setCustomerId(value)
+                                }}
+                                options={names}
+                            />
+                        </Form.Item>
+                        {chatHistory.length === 0 ?
+                            <div style={{ display: "flex", alignSelf: "center" }}>
+                                <Space direction="vertical" align="center" size="middle">
+                                    <Title level={3}>{`Hi ${firstName(customerId)}, how can I help you?`}</Title>
+                                    {messages.map((message, i) => (
+                                        <Button
+                                            shape="round"
+                                            key={i}
+                                            size="large"
+                                            onClick={() => handleClick(message.label)}
+                                            style={{ whiteSpace: "normal", height: 'auto', marginBottom: '10px' }}
+                                        >
+                                            {message.label}
+                                        </Button>
+                                    ))}
+                                </Space>
+                            </div>
+                            :
+                            <div style={{ display: 'flex', flexDirection: 'column', width: "100%" }}>
+                                <Chat chatHistory={chatHistory} name={firstName(customerId)} />
+                            </div>
+                        }
+                    </Content>
+                    <Footer style={{ padding: '24px 24px', backgroundColor: 'transparent' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: "stretch", gap: '12px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: "12px" }}>
+                            {chatHistory.length > 0 ?
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                                    {messages.map((message, i) => (
+                                        <Button
+                                            shape="round"
+                                            key={i}
+                                            size="small"
+                                            style={{ whiteSpace: "normal", height: 'auto', marginBottom: '4px' }}
+                                            onClick={() => handleClick(message.label)}
+                                        >
+                                            {message.label}
+                                        </Button>
+                                    ))}
+                                </div> : null
+                            }
+                        </div>
+                        <Search
+                            placeholder="input search text"
+                            enterButton="Send"
+                            size="large"
+                            onChange={e => setInput(e.target.value)}
+                            value={input}
+                            loading={loading}
+                            onSearch={onSearch}
+                        />
+                        <Typography.Text type="secondary" style={{ alignSelf: "center" }}>This demo uses sample customer and transaction data. <Link href="https://docs.google.com/spreadsheets/d/1P_V0idry72hIEeIzkz1-PFj_UDwv40DRyA_ac02Q1OQ/edit?usp=sharing" target='_blank'>View data</Link></Typography.Text>
+                        </div>
+                        
+                    </Footer>
+                </Layout>
             </Row>
         </div>
     )

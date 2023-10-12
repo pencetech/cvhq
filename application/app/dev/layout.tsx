@@ -65,10 +65,12 @@ const DevLayout = ({
   })
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout hasSider style={{ minHeight: "100vh" }}>
       <Sider
         breakpoint="lg"
         collapsedWidth="0"
+        style={{ backgroundColor: "#FFFFFF", zIndex: '99999999' }}
+        width={256}
         onBreakpoint={(broken) => {
           console.log(broken);
         }}
@@ -76,24 +78,33 @@ const DevLayout = ({
           console.log(collapsed, type);
         }}
       >
-        <div className="demo-logo-vertical" />
-        <Card>
-          <Title level={5}>{`Upcoming Features`}</Title>
+        <Image
+              src={Logo}
+              alt="CVHQ logo"
+              height={36}
+              style={{ margin: '16px' }}
+              fill={false}
+              priority
+            />
+          <Title level={5} style={{ margin: '16px' }}>{`Upcoming Features`}</Title>
           <List
             itemLayout="horizontal"
             dataSource={futureData}
+            style={{ margin: '16px' }}
             renderItem={(item, index) => (
               <List.Item>
                 <List.Item.Meta
                   description={item.title}
+                  style={{ color: "#FFFFFF" }}
                 />
               </List.Item>
             )}
           />
-          <Title level={5}>{`Popular Use Cases`}</Title>
+          <Title level={5} style={{ margin: '16px' }}>{`Popular Use Cases`}</Title>
           <List
             itemLayout="horizontal"
             dataSource={popularData}
+            style={{ margin: '16px' }}
             renderItem={(item, index) => (
               <List.Item>
                 <List.Item.Meta
@@ -102,7 +113,6 @@ const DevLayout = ({
               </List.Item>
             )}
           />
-        </Card>
       </Sider>
       <Layout>
         <Header style={{
@@ -111,14 +121,7 @@ const DevLayout = ({
           justifyContent: 'center',
           backgroundColor: 'transparent'
         }}>
-          <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', maxWidth: "1440px" }}>
-            <Image
-              src={Logo}
-              alt="CVHQ logo"
-              height={36}
-              fill={false}
-              priority
-            />
+          <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'end', maxWidth: "1440px" }}>
             <Space>
               <Link href="https://tally.so/r/3NDNxO" target="_blank">
                 <Button type="text" style={{ color: '#111111' }}>Feedback</Button>
