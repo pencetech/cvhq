@@ -43,28 +43,28 @@ const DevPage = () => {
 
     const popularData = [
         {
-          title: 'Transaction status check',
+            title: 'Transaction status check',
         },
         {
-          title: 'Resolve refund cases',
+            title: 'Resolve refund cases',
         },
         {
-          title: 'Resolve dispute cases',
+            title: 'Resolve dispute cases',
         }
-      ];
+    ];
 
 
-      const futureData = [
+    const futureData = [
         {
-          title: 'Conversational',
+            title: 'Conversational',
         },
         {
-          title: 'Connect your own database',
+            title: 'Connect your own database',
         },
         {
-          title: 'Execute custom workflows',
+            title: 'Execute custom workflows',
         }
-      ];
+    ];
 
     const getUser = useCallback(async () => {
         const {
@@ -170,34 +170,6 @@ const DevPage = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '12px', height: "100%" }}>
             <Row gutter={[12, 12]}>
-                <Col span={6}>
-                    <Card>
-                            <Title level={5}>{`Upcoming Features`}</Title>
-                            <List
-                                itemLayout="horizontal"
-                                dataSource={futureData}
-                                renderItem={(item, index) => (
-                                    <List.Item>
-                                        <List.Item.Meta
-                                            description={item.title}
-                                        />
-                                    </List.Item>
-                                )}
-                            />
-                            <Title level={5}>{`Popular Use Cases`}</Title>
-                            <List
-                                itemLayout="horizontal"
-                                dataSource={popularData}
-                                renderItem={(item, index) => (
-                                    <List.Item>
-                                        <List.Item.Meta
-                                            description={item.title}
-                                        />
-                                    </List.Item>
-                                )}
-                            />
-                    </Card>
-                </Col>
                 <Col span={18}>
                     <Card>
                         <Layout style={{ backgroundColor: "transparent", height: "100%" }}>
@@ -244,18 +216,18 @@ const DevPage = () => {
                             <Footer style={{ borderRadius: "10px", backgroundColor: 'transparent' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: "12px" }}>
                                     {chatHistory.length > 0 ?
-                                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                                    {messages.map((message, i) => (
-                                            <Button
-                                                shape="round"
-                                                key={i}
-                                                size="small"
-                                                onClick={() => handleClick(message.label)}
-                                            >
-                                                {message.label}
-                                            </Button>
-                                        ))}
-                                    </div> : null
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                                            {messages.map((message, i) => (
+                                                <Button
+                                                    shape="round"
+                                                    key={i}
+                                                    size="small"
+                                                    onClick={() => handleClick(message.label)}
+                                                >
+                                                    {message.label}
+                                                </Button>
+                                            ))}
+                                        </div> : null
                                     }
 
                                     <Search
