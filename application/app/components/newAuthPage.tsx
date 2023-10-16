@@ -64,7 +64,7 @@ export default function Login() {
 
     const isNoProfile = await checkNoProfile();
 
-    router.push("/dev")
+    router.push("/dashboard/home")
   }
 
   return (
