@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image';
-import Logo from '@/public/pencewhiteblack.png';
+import Logo from '@/public/CVHQblack.png';
 import { Card, Space } from 'antd'
 import Login from './newAuthPage';
 

@@ -8,7 +8,7 @@ const LoginPage = () => {
         <Row gutter={16} style={{
             height: '100%'
         }}>
-            {/* <Col span={12}>
+            <Col span={12}>
                 <div style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -69,8 +69,8 @@ const LoginPage = () => {
                         </div>
                     </Space>
                 </div>
-            </Col> */}
-            {/* <Col span={12}> */}
+            </Col>
+            <Col span={12}>
             <div style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -81,7 +81,7 @@ const LoginPage = () => {
                 }}> 
                 <AuthPage />
             </div>
-            {/* </Col> */}
+            </Col>
         </Row>
     )
 }
