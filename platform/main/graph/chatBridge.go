@@ -76,6 +76,7 @@ func (c *ChatBridge) ChatCompletionWithSystemPrompt(system string, content strin
 		fmt.Printf("ChatCompletion error: %v\n", err)
 		return "", err
 	}
+	// benign comment
 
 	return resp.Choices[0].Message.Content, nil
 }
